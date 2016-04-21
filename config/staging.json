@@ -1,0 +1,12 @@
+{
+    "logger": {
+        "name": "gfw-umd-forest-api-STAGING",
+        "level": "debug",
+        "toFile": false,
+        "dirLogFile": null
+    },
+    "service": {
+        "uri": "http://gfw-umd-forest-api-staging.herokuapp.com",
+        "port": null
+    }
+}

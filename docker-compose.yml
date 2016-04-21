@@ -1,0 +1,10 @@
+prod:
+  extends:
+    file: base.yml
+    service: base
+  container_name: gfw-umd-forest-api
+  environment:
+    NODE_ENV: prod
+  command: start
+  volumes:
+    - ./app:/opt/gfw-umd-forest-api/app

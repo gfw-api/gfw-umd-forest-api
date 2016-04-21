@@ -1,0 +1,14 @@
+{
+    "logger": {
+        "name": "gfw-umd-forest-api",
+        "level": "info",
+        "toFile": false,
+        "dirLogFile": null
+    },
+    "service": {
+        "uri": "http://gfw-umd-forest-api.herokuapp.com",
+        "port": null
+    },
+    "cartoDB":{
+    }
+}

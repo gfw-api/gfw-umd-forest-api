@@ -1,0 +1,8 @@
+{
+    "logger": {
+        "name": "gfw-umd-forest-api-TEST",
+        "level": "debug",
+        "toFile": false,
+        "dirLogFile": null
+    }
+}
