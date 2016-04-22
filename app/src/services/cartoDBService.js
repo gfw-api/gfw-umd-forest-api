@@ -6,9 +6,29 @@ var Mustache = require('mustache');
 
 const IFL = 'SELECT iso, country, ifl_loss, ifl_loss_perc, ifl_treecover_2000, threshold, year \
             FROM loss_analysis_ifl \
-            WHERE iso = UPPER(\'{iso}\') \
+            WHERE iso = UPPER(\'{{iso}}\') \
                 AND id1 is null \
-                AND threshold = {thresh}';
+                AND threshold = {{thresh}}';
+
+const IFL_ID1 = 'SELECT iso, country, ifl_loss, ifl_loss_perc, ifl_treecover_2000, threshold, year, id1 \
+                FROM loss_analysis_ifl \
+                WHERE iso = UPPER(\'{{iso}}\') \
+                AND id1 = {{id1}} \
+                AND threshold = {{thresh}}';
+const ISO = 'SELECT iso, country, year, thresh, extent_2000 as extent, extent_perc, \
+            loss, loss_perc, gain, gain*12 as total_gain, gain_perc \
+            FROM umd_nat_final_1 \
+            WHERE iso = UPPER(\'{{iso}}\') \
+              AND thresh = {{thresh}} \
+              ORDER BY year';
+const ID1 = 'SELECT iso, country, region, year, thresh, extent_2000 as extent, \
+             extent_perc, loss, loss_perc, gain, gain*12 as total_gain, \
+             gain_perc, id1 \
+             FROM umd_subnat_final_1 \
+             WHERE iso = UPPER(\'{{iso}}\') \
+                AND thresh = {{thresh}} \
+                AND id1 = {{id1}} \
+             ORDER BY year';
 
 
 var executeThunk = function(client, sql, params){
@@ -32,8 +52,23 @@ class CartoDBService {
         this.client = new CartoDB.SQL({user:config.get('cartoDB.user'), api_key:config.get('cartoDB.apiKey')});
     }
 
-    * getIFL(iso, thresh){
-        let data = yield executeThunk(this.client, SELECT_SQL, {iso: iso, thresh: thresh});
+    * getIFLNational(iso, thresh){
+        let data = yield executeThunk(this.client, IFL, {iso: iso, thresh: thresh});
+        return data.rows;
+    }
+
+    * getIFLSubnational(iso, id1, thresh){
+        let data = yield executeThunk(this.client, IFL_ID1, {iso: iso, id1: id1, thresh: thresh});
+        return data.rows;
+    }
+
+    * getNational(iso, thresh){
+        let data = yield executeThunk(this.client, ISO, {iso: iso, thresh: thresh});
+        return data.rows;
+    }
+
+    * getSubnational(iso, id1, thresh){
+        let data = yield executeThunk(this.client, ID1, {iso: iso, id1: id1,thresh: thresh});
         return data.rows;
     }
 

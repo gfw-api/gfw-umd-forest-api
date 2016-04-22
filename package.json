@@ -28,6 +28,7 @@
   },
   "homepage": "https://github.com/gfw-api/gfw-umd-forest-api#readme",
   "dependencies": {
+    "async-client": "git+https://github.com/Vizzuality/async-client-nodejs.git#1.0.0",
     "bunyan": "1.7.1",
     "cartodb": "0.4.0",
     "co": "4.6.0",
@@ -37,15 +38,16 @@
     "jsonapi-serializer": "2.1.1",
     "koa": "1.1.2",
     "koa-bodyparser": "2.0.1",
+    "koa-cash": "2.0.0",
     "koa-logger": "1.3.0",
     "koa-mount": "1.3.0",
     "koa-router": "5.4.0",
     "koa-validate": "0.2.11",
-    "mustache": "2.2.1",
+    "lru-cache": "4.0.1",
     "microservice-client": "git+https://github.com/Vizzuality/microservice-client.git#1.0.3",
-    "async-client": "git+https://github.com/Vizzuality/async-client-nodejs.git#1.0.0"
+    "mustache": "2.2.1",
+    "python-shell": "0.4.0"
   },
-
   "devDependencies": {
     "co-mocha": "1.1.2",
     "blanket": "1.2.2",

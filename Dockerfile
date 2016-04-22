@@ -12,6 +12,7 @@ RUN mkdir -p /opt/$NAME
 ADD package.json /opt/$NAME/package.json
 RUN cd /opt/$NAME && npm install
 
+
 COPY entrypoint.sh /opt/$NAME/entrypoint.sh
 COPY config /opt/$NAME/config
 

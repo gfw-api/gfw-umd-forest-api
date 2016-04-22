@@ -38,6 +38,21 @@ app.use(function*(next) {
     this.response.type = 'application/vnd.api+json';
 });
 
+var cache = require('lru-cache')({
+    maxAge: 30000 // global max age
+});
+
+app.use(require('koa-cash')({
+    get(key, maxAge) {
+        logger.debug('Getting the cache key: %s', key);
+        return cache.get(key);
+    },
+    set(key, value) {
+        logger.debug('Setting in cache. key: %s, value: ', key, value);
+        cache.set(key, value);
+    }
+}));
+
 //load custom validator
 app.use(validate());
 
