@@ -1,4 +1,4 @@
-# GFW Story API
+# GFW UMD Forest API
 
 Master: [![Build Status](https://travis-ci.org/gfw-api/gfw-umd-forest-api.svg?branch=master)](https://travis-ci.org/gfw-api/gfw-umd-forest-api) Develop: [![Build Status](https://travis-ci.org/gfw-api/gfw-umd-forest-api.svg?branch=develop)](https://travis-ci.org/gfw-api/gfw-umd-forest-api)
 
