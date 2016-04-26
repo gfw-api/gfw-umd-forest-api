@@ -4,12 +4,7 @@ var path = require('path');
 var config = require('config');
 var CartoDB = require('cartodb');
 var Mustache = require('mustache');
-var PythonShell = require('python-shell');
 var NotFound = require('errors/notFound');
-var JSONAPIDeserializer = require('jsonapi-serializer').Deserializer;
-var fs = require('fs');
-
-var TMP_PATH = '/tmp';
 
 var deserializer = function(obj){
     return function(callback){
@@ -68,11 +63,6 @@ var executeThunk = function(client, sql, params) {
     };
 };
 
-var pythonRun = function(script, options) {
-    return function(callback) {
-        PythonShell.run(script, options, callback);
-    };
-};
 
 function wrapQuotes(text) {
     return '\'' + text + '\'';
@@ -121,86 +111,21 @@ class CartoDBService {
         return data.rows;
     }
 
-    * executePython(thresh, geojson, period) {
-        logger.debug('Executing gee (python code)');
-        let threshold = thresh || 30;
-        period = period || '2001-01-01,2013-01-01';
-        let periods = period.split(',');
-        let options = {
-            mode: 'json',
-            scriptPath: path.resolve(__dirname, 'python'),
-            args: [threshold, geojson, periods[0], periods[1]]
-        };
-        return yield pythonRun('umd.py', options);
-    }
-
-    * getGeostore(hashGeoStore) {
-        let result = yield require('microservice-client').requestToMicroservice({
-            uri: '/geostore/' + hashGeoStore,
-            method: 'GET',
-            json: true
-        });
-        if (result.statusCode !== 200) {
-            console.error('Error obtaining geostore:');
-            console.error(result);
-            return null;
-        }
-        return yield deserializer(result.body);
-    }
-
-    * getWorld(hashGeoJson, period, thresh) {
-        logger.debug('Obtaining geojson');
-        let geostore = yield this.getGeostore(hashGeoJson);
-        logger.debug('Geostore obtained', JSON.stringify(geostore.geojson));
-        logger.debug('Writting geojson to file');
-        fs.writeFileSync(TMP_PATH + '/world-' + hashGeoJson, JSON.stringify(geostore.geojson));
-        try {
-
-            let result = yield this.executePython(thresh, TMP_PATH + '/world-' + hashGeoJson, period);
-            if (result && result.length >= 1) {
-                return result[0];
-            }
-        } catch (e) {
-            logger.error(e);
-            throw e;
-        } finally {
-            logger.debug('Deleting file');
-            // fs.unlinkSync(TMP_PATH + '/world-' + hashGeoJson);
-        }
-
-    }
-
-    * getUse(useTable, id, period, thresh) {
+    * getUseGeoJSON(useTable, id){
+        logger.debug('Obtaining geojson of use');
         let data = yield executeThunk(this.client, USE, {
             useTable: useTable,
             id: id
         });
         if (!data || !data.rows || data.rows.length === 0 || !data.rows[0].geojson) {
-            logger.info('Geojson not found');
+            logger.error('Geojson not found');
             throw new NotFound('Geojson not found');
         }
-        let geojson = data.rows[0].geojson;
-        logger.debug('Writting geojson to file');
-        fs.writeFileSync(TMP_PATH + '/use-' + id, geojson);
-
-        try {
-
-            let result = yield this.executePython(thresh, TMP_PATH + '/use-' + id, period);
-            if (result && result.length >= 1) {
-                return result[0];
-            }
-        } catch (e) {
-            logger.error(e);
-            throw e;
-        } finally {
-            logger.debug('Deleting file');
-            fs.unlinkSync(TMP_PATH + '/use-' + id);
-        }
+        return data.rows[0].geojson;
     }
 
-    * getWdpa(wdpaid, period, thresh) {
-
-        logger.debug('Obtaining geojson');
+    * getWDPAGeoJSON(wdpaid){
+        logger.debug('Obtaining wpda geojson of id %s', wdpaid);
         let data = yield executeThunk(this.client, WDPA, {
             wdpaid: wdpaid
         });
@@ -208,25 +133,8 @@ class CartoDBService {
             logger.info('Geojson not found');
             throw new NotFound('Geojson not found');
         }
-        let geojson = data.rows[0].geojson;
-        logger.debug('Writting geojson to file');
-        fs.writeFileSync(TMP_PATH + '/wdpa-' + wdpaid, geojson);
-
-        try {
-            let result = yield this.executePython(thresh, TMP_PATH + '/wdpa-' + wdpaid, period);
-            if (result && result.length >= 1) {
-                return result[0];
-            }
-        } catch (e) {
-            logger.error(e);
-            throw e;
-        } finally {
-            logger.debug('Deleting file');
-            fs.unlinkSync(TMP_PATH + '/wdpa-' + wdpaid);
-        }
-
+        return data.rows[0].geojson;
     }
-
 
 }
 

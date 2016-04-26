@@ -8,7 +8,7 @@ case "$1" in
         ;;
     startDev)
         echo "Running Start Dev"
-        exec node app/index
+        exec npm start
         ;;
     test)
         echo "Running Test"

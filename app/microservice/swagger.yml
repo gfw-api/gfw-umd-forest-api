@@ -1,7 +1,7 @@
 swagger: '2.0'
 info:
-  title: GFW Story API
-  description: Global Forest Watch - Story API
+  title: GFW UMD Forest API
+  description: Global Forest Watch - UMD Forest API
   version: "1.0.0"
 host: example.vizzuality.com
 
@@ -14,27 +14,37 @@ produces:
   - application/vnd.api+json
 
 paths:
-  /story/{id}:
+  /umd-loss-gain:
     get:
-      description: Returns story based on a single ID, if the story not exist return 404
-      operationId: getStoryById
+      description: a
+      operationId: world
       produces:
         - application/vnd.api+json
       tags:
-        - Story
+        - UMD
       parameters:
-        - name: id
-          in: path
-          description: ID of story to fetch
+        - name: geostore
+          in: query
+          description: Hash of the geostore
           required: true
           type: string
+        - name: period
+          in: query
+          description: Period of time (default '2001-01-01,2013-01-01')
+          required: true
+          type: string
+        - name: thresh
+          in: query
+          description: Threshold (default 30)
+          required: false
+          type: integer
       responses:
         200:
-          description: Story obtained
+          description: Results obtained
           schema:
-            $ref: '#/definitions/StoryAPI'
+            $ref: '#/definitions/USEAPI'
         404:
-          description: Story not found
+          description: Geostore not found
           schema:
             $ref: '#/definitions/Errors'
         500:
@@ -46,55 +56,42 @@ paths:
           schema:
             $ref: '#/definitions/Errors'
 
-  /story:
-    post:
-      summary: Create story. If user is logged, save the id user in the story
-      description: Create story. If user is logged, save the id user in the story
-      produces:
-        - application/vnd.api+json
-      tags:
-        - Story
-      operationId: createStory
-      parameters:
-        - name: story
-          in: body
-          description: Story to save
-          required: true
-          schema:
-            $ref: '#/definitions/StoryCreate'
-      responses:
-        200:
-          description: Story created correctly
-          schema:
-            $ref: '#/definitions/StoryAPI'
-        400:
-          description: Validate error
-          schema:
-            $ref: '#/definitions/Errors'
-        500:
-          description: Unexpected error
-          schema:
-            $ref: '#/definitions/Errors'
-        default:
-          description: Unexpected error
-          schema:
-            $ref: '#/definitions/Errors'
-
+  /umd-loss-gain/use/{name}/{id}:
     get:
-      summary: Obtain all stories
-      description: Obtain all stories
+      description: a
+      operationId: use
       produces:
         - application/vnd.api+json
       tags:
-        - Story
-      operationId: getStories
+        - UMD
+      parameters:
+        - name: name
+          in: path
+          description: Analisys name (['mining', 'oilpalm', 'fiber', 'logging'])
+          required: true
+          type: string
+        - name: id
+          in: path
+          description: cartodbid
+          required: true
+          type: integer
+        - name: period
+          in: query
+          description: Period of time (default '2001-01-01,2013-01-01')
+          required: true
+          type: string
+        - name: thresh
+          in: query
+          description: Threshold (default 30)
+          required: false
+          type: integer
       responses:
         200:
-          description: The all stories
+          description: Results obtained
           schema:
-            $ref: '#/definitions/StoryAPI'
-        400:
-          description: Validate error
+            $ref: '#/definitions/USEAPI'
+        404:
+          description: Geostore not found
           schema:
             $ref: '#/definitions/Errors'
         500:
@@ -102,10 +99,209 @@ paths:
           schema:
             $ref: '#/definitions/Errors'
         default:
-          description: Unexpected error
+          description: unexpected error
           schema:
             $ref: '#/definitions/Errors'
 
+  /umd-loss-gain/wdpa/{id}:
+    get:
+      description: a
+      operationId: wdpa
+      produces:
+        - application/vnd.api+json
+      tags:
+        - UMD
+      parameters:
+        - name: id
+          in: path
+          description: wdpa id
+          required: true
+          type: integer
+        - name: period
+          in: query
+          description: Period of time (default '2001-01-01,2013-01-01')
+          required: true
+          type: string
+        - name: thresh
+          in: query
+          description: Threshold (default 30)
+          required: false
+          type: integer
+      responses:
+        200:
+          description: Results obtained
+          schema:
+            $ref: '#/definitions/USEAPI'
+        404:
+          description: Geostore not found
+          schema:
+            $ref: '#/definitions/Errors'
+        500:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Errors'
+        default:
+          description: unexpected error
+          schema:
+            $ref: '#/definitions/Errors'
+
+  /umd-loss-gain/admin/{iso}:
+    get:
+      description: a
+      operationId: getNational
+      produces:
+        - application/vnd.api+json
+      tags:
+        - UMD
+      parameters:
+        - name: iso
+          in: path
+          description: ISO code
+          required: true
+          type: string
+        - name: thresh
+          in: query
+          description: Threshold (default 30)
+          required: false
+          type: integer
+      responses:
+        200:
+          description: Results obtained
+          schema:
+            $ref: '#/definitions/UMDAPI'
+        404:
+          description: Geostore not found
+          schema:
+            $ref: '#/definitions/Errors'
+        500:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Errors'
+        default:
+          description: unexpected error
+          schema:
+            $ref: '#/definitions/Errors'
+
+  /umd-loss-gain/admin/{iso}/{id1}:
+    get:
+      description: a
+      operationId: getSubnational
+      produces:
+        - application/vnd.api+json
+      tags:
+        - UMD
+      parameters:
+        - name: iso
+          in: path
+          description: ISO code
+          required: true
+          type: string
+        - name: id1
+          in: path
+          description: Region code
+          required: true
+          type: integer
+        - name: thresh
+          in: query
+          description: Threshold (default 30)
+          required: false
+          type: integer
+      responses:
+        200:
+          description: Results obtained
+          schema:
+            $ref: '#/definitions/UMDAPI'
+        404:
+          description: Geostore not found
+          schema:
+            $ref: '#/definitions/Errors'
+        500:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Errors'
+        default:
+          description: unexpected error
+          schema:
+            $ref: '#/definitions/Errors'
+
+  /umd-loss-gain/admin/ifl/{iso}:
+    get:
+      description: a
+      operationId: getIFLNational
+      produces:
+        - application/vnd.api+json
+      tags:
+        - UMD
+      parameters:
+        - name: iso
+          in: path
+          description: ISO code
+          required: true
+          type: string
+        - name: thresh
+          in: query
+          description: Threshold (default 30)
+          required: false
+          type: integer
+      responses:
+        200:
+          description: Results obtained
+          schema:
+            $ref: '#/definitions/UMDIFLAPI'
+        404:
+          description: Geostore not found
+          schema:
+            $ref: '#/definitions/Errors'
+        500:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Errors'
+        default:
+          description: unexpected error
+          schema:
+            $ref: '#/definitions/Errors'
+
+  /umd-loss-gain/admin/ifl/{iso}/{id1}:
+    get:
+      description: a
+      operationId: getIFLSubnational
+      produces:
+        - application/vnd.api+json
+      tags:
+        - UMD
+      parameters:
+        - name: iso
+          in: path
+          description: ISO code
+          required: true
+          type: string
+        - name: id1
+          in: path
+          description: Region code
+          required: true
+          type: integer
+        - name: thresh
+          in: query
+          description: Threshold (default 30)
+          required: false
+          type: integer
+      responses:
+        200:
+          description: Results obtained
+          schema:
+            $ref: '#/definitions/UMDIFLAPI'
+        404:
+          description: Geostore not found
+          schema:
+            $ref: '#/definitions/Errors'
+        500:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Errors'
+        default:
+          description: unexpected error
+          schema:
+            $ref: '#/definitions/Errors'
 definitions:
   Errors:
     type: object
@@ -156,16 +352,15 @@ definitions:
         type: object
         description: A meta object containing non-standard meta-information about the error.
 
-
-  StoryAPI:
+  USEAPI:
     type: object
     properties:
       data:
         type: array
         items:
-          $ref: '#/definitions/Story'
+          $ref: '#/definitions/UMDBodyAPI'
 
-  Story:
+  USEBodyAPI:
     type: object
     properties:
       type:
@@ -177,110 +372,30 @@ definitions:
       attributes:
         properties:
           schema:
-            $ref: '#/definitions/StoryData'
-  StoryData:
+            $ref: '#/definitions/USEAPIModel'
+
+  USEAPIModel:
     type: object
     properties:
-      name:
-        type: string
-      title:
-        type: string
-      createdAt:
-        type: string
-      updatedAt:
-        type: string
-      visible:
-        type: boolean
-      details:
-        type: string
-      date:
-        type: string
-      email:
-        type: string
-      location:
-        type: string
-      userId:
-        type: string
-      lat:
+      loss:
         type: number
         format: float
-      lng:
+      gain:
         type: number
         format: float
-      media:
-        type: array
-        items:
-          properties:
-            url:
-              type: string
-            embedUrl:
-              type: string
-            previewUrl:
-              type: string
-            mimeType:
-              type: string
-            order:
-              type: number
-              format: integer
-  StoryCreate:
+      treeExtent:
+        type: number
+        format: float
+
+  UMDAPI:
     type: object
     properties:
-      loggedUser:
-        type: object
-        description: Attribute seted by api-gateway when the user is logged
-        properties:
-          schema:
-            $ref: '#/definitions/LoggedUser'
-      name:
-        type: string
-      title:
-        type: string
-      createdAt:
-        type: string
-      updatedAt:
-        type: string
-      visible:
-        type: boolean
-      details:
-        type: string
-      date:
-        type: string
-      email:
-        type: string
-      location:
-        type: string
-      lat:
-        type: number
-        format: float
-      lng:
-        type: number
-        format: float
-      media:
+      data:
         type: array
         items:
-          properties:
-            url:
-              type: string
-            embedUrl:
-              type: string
-            previewUrl:
-              type: string
-            mimeType:
-              type: string
-            order:
-              type: number
-              format: integer
-      geojson:
-        type: object
-        properties:
-          type:
-            type: string
-          coordinates:
-            type: array
-            items:
-              type: number
-              format: float
-  LoggedUser:
+          $ref: '#/definitions/UMDBodyAPI'
+
+  UMDBodyAPI:
     type: object
     properties:
       type:
@@ -292,31 +407,84 @@ definitions:
       attributes:
         properties:
           schema:
-            $ref: '#/definitions/UserData'
-  UserData:
+            $ref: '#/definitions/UMDAPIModel'
+
+  UMDAPIModel:
     type: object
     properties:
-      fullName:
-        type: string
-      provider:
-        type: string
-        description: Provider of oauth
-      providerId:
-        type: string
-        description: Id of provider obtained in the authentication
-      email:
-        type: string
-      createdAt:
-        type: string
-      sector:
-        type: string
-      primaryResponsabilities:
+      iso:
         type: string
       country:
         type: string
-      state:
+      thresh:
+        type: integer
+      year:
+        type: integer
+      id1:
+        type: integer
+      extent:
+        type: number
+        format: float
+      extent_perc:
+        type: number
+        format: float
+      loss:
+        type: number
+        format: float
+      loss_perc:
+        type: number
+        format: float
+      gain:
+        type: number
+        format: float
+      total_gain:
+        type: number
+        format: float
+      gain_perc:
+        type: number
+        format: float
+
+  UMDIFLAPI:
+    type: object
+    properties:
+      data:
+        type: array
+        items:
+          $ref: '#/definitions/UMDIFLBodyAPI'
+
+  UMDIFLBodyAPI:
+    type: object
+    properties:
+      type:
         type: string
-      city:
+        description: Resource type
+      id:
         type: string
-      howDoYouUse:
+        description: Resource id
+      attributes:
+        properties:
+          schema:
+            $ref: '#/definitions/UMDIFLAPIModel'
+
+  UMDIFLAPIModel:
+    type: object
+    properties:
+      iso:
         type: string
+      country:
+        type: string
+      threshold:
+        type: integer
+      year:
+        type: integer
+      id1:
+        type: integer
+      ifl_loss:
+        type: number
+        format: float
+      ifl_loss_perc:
+        type: number
+        format: float
+      ifl_treecover_2000:
+        type: number
+        format: float

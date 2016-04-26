@@ -1,11 +1,11 @@
 # GFW Story API
 
-Master: [![Build Status](https://travis-ci.org/gfw-api/gfw-story-api.svg?branch=master)](https://travis-ci.org/gfw-api/gfw-story-api) Develop: [![Build Status](https://travis-ci.org/gfw-api/gfw-story-api.svg?branch=develop)](https://travis-ci.org/gfw-api/gfw-story-api)
+Master: [![Build Status](https://travis-ci.org/gfw-api/gfw-umd-forest-api.svg?branch=master)](https://travis-ci.org/gfw-api/gfw-umd-forest-api) Develop: [![Build Status](https://travis-ci.org/gfw-api/gfw-umd-forest-api.svg?branch=develop)](https://travis-ci.org/gfw-api/gfw-umd-forest-api)
 
-This repository is the microservice that it implement the story funcionality and exposed the /story endpoint in the api-gateway
+This repository is the microservice that it implement the umd funcionality and exposed the /umd-loss-gain endpoint in the api-gateway
 
 [View the documentation for this
-API](http://gfw-api.github.io/swagger-ui/?url=https://raw.githubusercontent.com/gfw-api/gfw-story-api/master/app/microservice/swagger.yml#/Story)
+API](http://gfw-api.github.io/swagger-ui/?url=https://raw.githubusercontent.com/gfw-api/gfw-umd-forest-api/master/app/microservice/swagger.yml#/UMD)
 
 ## First time user
 Perform the following steps:

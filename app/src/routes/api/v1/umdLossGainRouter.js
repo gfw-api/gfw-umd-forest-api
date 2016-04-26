@@ -3,6 +3,7 @@
 var Router = require('koa-router');
 var logger = require('logger');
 var CartoDBService = require('services/cartoDBService');
+var GEEService = require('services/geeService');
 var NotFound = require('errors/notFound');
 var UMDIFLSerializer = require('serializers/umdIflSerializer');
 var UMDSerializer = require('serializers/umdSerializer');
@@ -69,7 +70,7 @@ class UMDLossGainRouter {
             this.throw(404, 'Name not found');
         }
         try{
-            let data = yield CartoDBService.getUse(useTable, this.params.id, this.query.period, this.query.thresh);
+            let data = yield GEEService.getUse(useTable, this.params.id, this.query.period, this.query.thresh);
             this.body = UseSerializer.serialize(data);
         } catch (err){
             logger.error(err);
@@ -84,7 +85,7 @@ class UMDLossGainRouter {
     static * wdpa(){
         logger.info('Obtaining wpda data with id %s', this.params.id);
         try{
-            let data = yield CartoDBService.getWdpa(this.params.id, this.query.period, this.query.thresh);
+            let data = yield GEEService.getWdpa(this.params.id, this.query.period, this.query.thresh);
             this.body = UseSerializer.serialize(data);
         } catch(err){
             logger.error(err);
@@ -99,7 +100,7 @@ class UMDLossGainRouter {
     static * world(){
         logger.info('Obtaining world data');
         this.assert(this.query.geojson, 400, 'GeoJSON param required');
-        let data = yield CartoDBService.getWorld(this.query.geojson, this.query.period, this.query.thresh);
+        let data = yield GEEService.getWorld(this.query.geojson, this.query.period, this.query.thresh);
         this.body = UseSerializer.serialize(data);
     }
 

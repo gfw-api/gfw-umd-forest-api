@@ -24,6 +24,6 @@ ADD ./app /opt/$NAME/app
 
 # Tell Docker we are going to use this ports
 EXPOSE 3600 35729
-USER $USER
+# USER $USER
 
 ENTRYPOINT ["./entrypoint.sh"]
