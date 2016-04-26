@@ -1,6 +1,7 @@
 FROM node:latest
 MAINTAINER raul.requero@vizzuality.com
 
+RUN apt-get update && apt-get install -y python-dev python-pip && pip install pyCrypto
 
 RUN npm install -g grunt-cli bunyan
 ENV NAME gfw-umd-forest-api
@@ -15,6 +16,7 @@ RUN cd /opt/$NAME && npm install
 
 COPY entrypoint.sh /opt/$NAME/entrypoint.sh
 COPY config /opt/$NAME/config
+COPY privatekey.pem /opt/$NAME/privatekey.pem
 
 WORKDIR /opt/$NAME
 

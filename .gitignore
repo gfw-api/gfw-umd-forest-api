@@ -1,4 +1,4 @@
 node_modules/
 .DS_STORE
 npm-debug.log
-app/src/services/python/privatekey.pem
+privatekey.pem

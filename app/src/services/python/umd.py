@@ -58,8 +58,12 @@ def _ee(geom, thresh, asset_id):
 
 
 def _get_coords(geojson):
-    return geojson.get('coordinates')
-
+    if geojson.get('features') is not None:
+        return geojson.get('features')[0].get('geometry').get('coordinates')
+    elif geojson.get('geometry') is not None:
+        return geojson.get('geometry').get('coordinates')
+    else:
+        return geojson.get('coordinates')
 
 def _sum_range(data, begin, end):
     return sum(
@@ -106,8 +110,11 @@ def _execute_geojson(thresh, geojson, begin, end):
 
 
 thresh = sys.argv[1]
-geojson = sys.argv[2]
+geojsonPath = sys.argv[2]
 begin = sys.argv[3]
 end = sys.argv[4]
 
-print _execute_geojson(thresh, geojson, begin, end)
+
+txt_file = open(geojsonPath)
+
+print (json.dumps(_execute_geojson(thresh, txt_file.read(), begin, end)))
