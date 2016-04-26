@@ -42,6 +42,8 @@ Is necessary define the next environment variables:
 * CARTODB_APIKEY => API key to connect to CartoDB
 * CARTODB_USER => User to connect to CartoDB
 
+Is necessary the pem file of Google Earth Engine authentication in the root of the project
+
 
 
 # Config
