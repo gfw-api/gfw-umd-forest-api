@@ -1,0 +1,14 @@
+language: node_js
+node_js:
+- 5.7.0
+sudo: required
+services:
+- docker
+script:
+- docker-compose -f docker-compose-test.yml build
+- docker-compose -f docker-compose-test.yml run test
+deploy:
+  provider: heroku
+  app: gfw-umd-forest-api-staging
+  api_key:
+    secure: Fq3gm2Cl2JUfkixZirvh9heuCUrkjNhsDpkJCQVqNW4TtAONtk/5kwYNX1Nq+3sgUExohdPAUoZCVDWLuVM1+yt7ZgmO0aZ1A6SUzFkJO8mhc+Dm+xavkxXu5FtdRhO4e+qL2Zc5K35HYEtO54nTiuM2BAx9TBIbl7KYc/leORsbl/whlHrdYftwMcOgKkoay2RPy4klALXeknMSh9UFPpWCCgDCFAiBy/iwhQy5YkFMR4FbCdeC6dCRanfCDEcPkxqejMqwJl2t8alVgp7u1HDGS6I4IghNdKWEfwbigirgitTlMud5Ub9JkLNiwwnCCfLKh9mnnAbKSIpBfYtAQVofd5X7A5kWooYlnGXjgYpZ4lcJt6TD/8rVUlWwP2yUpidwDH9ImVxF4QJDNscNpXTTg5azrFW5BeQajvCNzHxElUpbxyxp2LuogKbjNo309PlznjQ5kRMrfzldCPa612I1CzhO57IBnVIs+HcYUn+IRLOW0O3kWTE5Z3lPRZN69oHtFPGvLNJ2a4KuJHsTCVLOWOpsO0NXUbvpFChdiaPM/Mwtca5yee1JdV6jPtkadKCvu98tcYzUPCFCcLlVLnsEZ44vf/pueGsHahYwxPXiqgKz7j2HEwKU+aXdubPs9gzbzkwg0WoM0WkBcvB4FOsxRzw2SCilwfcYMioLfiY=

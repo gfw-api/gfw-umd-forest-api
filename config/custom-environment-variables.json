@@ -1,0 +1,9 @@
+{
+    "apiGateway": {
+        "uri": "API_GATEWAY_URI"
+    },
+    "cartoDB":{
+        "apiKey": "CARTODB_APIKEY",
+        "user": "CARTODB_USER"
+    }
+}
