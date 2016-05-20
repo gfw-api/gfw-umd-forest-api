@@ -4,6 +4,7 @@ set -e
 case "$1" in
     develop)
         echo "Running Development Server"
+        echo -e "$EE_PRIVATE_KEY" | base64 -d > privatekey.pem
         exec grunt --gruntfile app/Gruntfile.js | bunyan
         ;;
     startDev)
@@ -16,6 +17,7 @@ case "$1" in
         ;;
     start)
         echo "Running Start"
+        echo -e "$EE_PRIVATE_KEY" | base64 -d > privatekey.pem
         exec npm start
         ;;
     *)
