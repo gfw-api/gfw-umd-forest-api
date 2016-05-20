@@ -6,8 +6,7 @@
         "dirLogFile": null
     },
     "service": {
-        "uri": "http://gfw-umd-forest-api.herokuapp.com",
-        "port": null
+        "uri": "http://104.236.91.189:3600"
     },
     "cartoDB":{
     }
