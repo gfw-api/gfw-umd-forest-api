@@ -54,7 +54,8 @@ class GeeService {
 
     static * getWorld(hashGeoJson, period, thresh) {
         logger.debug('Obtaining geojson');
-        let geostore = yield GeeService.getGeostore(hashGeoJson);
+        // let geostore = yield GeeService.getGeostore(hashGeoJson);
+        let geostore = {geojson:{type:'Polygon',coordinates:[[[-6.7456,42.6178],[-6.6577,41.8041],[-5.3174,41.8368],[-5.603,42.876],[-6.7456,42.6178]]]}};
         logger.debug('Geostore obtained', JSON.stringify(geostore.geojson));
         logger.debug('Writting geojson to file');
         fs.writeFileSync(TMP_PATH + '/world-' + hashGeoJson, JSON.stringify(geostore.geojson));
@@ -75,7 +76,7 @@ class GeeService {
     }
 
     static * getUse(useTable, id, period, thresh) {
-        let geojson = yield CartoDBService.getUseGeoJSON(useTable, id);
+        let geojson = yield cartoDBService.getUseGeoJSON(useTable, id);
         logger.debug('Writting geojson to file');
         fs.writeFileSync(TMP_PATH + '/use-' + id, geojson);
         try {
@@ -95,7 +96,7 @@ class GeeService {
 
     static * getWdpa(wdpaid, period, thresh) {
 
-        let geojson = yield CartoDBService.getWDPAGeoJSON(wdpaid);
+        let geojson = yield cartoDBService.getWDPAGeoJSON(wdpaid);
         logger.debug('Writting geojson to file');
         fs.writeFileSync(TMP_PATH + '/wdpa-' + wdpaid, geojson);
 

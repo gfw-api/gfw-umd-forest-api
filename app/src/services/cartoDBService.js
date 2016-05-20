@@ -6,12 +6,6 @@ var CartoDB = require('cartodb');
 var Mustache = require('mustache');
 var NotFound = require('errors/notFound');
 
-var deserializer = function(obj){
-    return function(callback){
-        new JSONAPIDeserializer({keyForAttribute: 'camelCase'}).deserialize(obj, callback);
-    };
-};
-
 
 const IFL = 'SELECT iso, country, ifl_loss, ifl_loss_perc, ifl_treecover_2000, threshold, year \
             FROM loss_analysis_ifl \

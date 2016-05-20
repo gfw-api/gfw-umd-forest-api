@@ -10,10 +10,6 @@ var loader = require('loader');
 var validate = require('koa-validate');
 var ErrorSerializer = require('serializers/errorSerializer');
 
-require('pmx').init({
-    http: true
-});
-
 // instance of koa
 var app = koa();
 
@@ -75,12 +71,16 @@ server.listen(port, function() {
         uri: config.get('service.uri'),
         dirConfig: path.join(__dirname, '../microservice'),
         dirPackage: path.join(__dirname, '../../'),
-        logger: logger
+        logger: logger,
+        app: app
     });
     p.then(function() {}, function(err) {
         logger.error(err);
         process.exit(1);
     });
+
+    require('fs').writeFileSync('privatekey2.pem', 'aaa\nbbb');
+
 });
 
 logger.info('Server started in port:' + port);

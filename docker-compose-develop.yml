@@ -7,12 +7,9 @@ develop:
   container_name: gfw-umd-forest-api-develop
   environment:
     NODE_ENV: dev
-    API_GATEWAY_URI: http://192.168.99.100:8000
     CARTODB_APIKEY: <apikey>
     CARTODB_USER: <user>
-    SELF_REGISTRY: "on"
-    KEYMETRICS_PRIVATEKEY: <private>
-    KEYMETRICS_PUBLICKEY: <public>
+    EE_PRIVATE_KEY: <privatekey>
   command: develop
   volumes:
     - ./app:/opt/gfw-umd-forest-api/app

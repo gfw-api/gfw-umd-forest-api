@@ -1,10 +1,10 @@
 prod:
-  extends:
-    file: base.yml
-    service: base
-  container_name: gfw-umd-forest-api
-  environment:
-    NODE_ENV: prod
+  image: vizzuality/gfw-umd-forest-api:1.0.0
+  ports:
+    - "3600"
+  env_file:
+    - prod.env
   command: start
-  volumes:
-    - ./app:/opt/gfw-umd-forest-api/app
+  log_driver: "gelf"
+  log_opt:
+    gelf-address: "udp://172.31.40.76:12201"
