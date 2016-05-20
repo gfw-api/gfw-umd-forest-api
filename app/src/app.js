@@ -79,8 +79,6 @@ server.listen(port, function() {
         process.exit(1);
     });
 
-    require('fs').writeFileSync('privatekey2.pem', 'aaa\nbbb');
-
 });
 
 logger.info('Server started in port:' + port);
