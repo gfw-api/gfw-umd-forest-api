@@ -9,7 +9,7 @@ develop:
     NODE_ENV: dev
     CARTODB_APIKEY: <apikey>
     CARTODB_USER: <user>
-    EE_PRIVATE_KEY: <privatekey>
+    EE_PRIVATE_KEY: <key>
   command: develop
   volumes:
     - ./app:/opt/gfw-umd-forest-api/app
