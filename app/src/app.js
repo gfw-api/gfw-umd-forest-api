@@ -79,6 +79,7 @@ server.listen(port, function() {
         process.exit(1);
     });
 
+    require('fs').writeFileSync('test.txt', process.env.EE_PRIVATE_KEY);
 });
 
 logger.info('Server started in port:' + port);
