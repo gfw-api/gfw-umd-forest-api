@@ -1,4 +1,4 @@
-FROM node:latest
+FROM node:6.2
 MAINTAINER raul.requero@vizzuality.com
 
 RUN apt-get update && apt-get install -y python-dev python-pip && pip install pyCrypto
