@@ -68,7 +68,6 @@ server.listen(port, function() {
     var p = require('microservice-client').register({
         id: config.get('service.id'),
         name: config.get('service.name'),
-        uri: config.get('service.uri'),
         dirConfig: path.join(__dirname, '../microservice'),
         dirPackage: path.join(__dirname, '../../'),
         logger: logger,

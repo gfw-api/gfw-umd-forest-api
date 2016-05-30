@@ -5,9 +5,6 @@
         "toFile": false,
         "dirLogFile": null
     },
-    "service": {
-        "uri": "http://104.236.91.189:3600"
-    },
     "cartoDB":{
     }
 }
