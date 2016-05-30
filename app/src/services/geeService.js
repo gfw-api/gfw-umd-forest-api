@@ -12,7 +12,7 @@ var TMP_PATH = '/tmp';
 
 var deserializer = function(obj){
     return function(callback){
-        new JSONAPIDeserializer({keyForAttribute: 'camelCase'}).deserialize(obj, callback);
+        new JSONAPIDeserializer().deserialize(obj, callback);
     };
 };
 
