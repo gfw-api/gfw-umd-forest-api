@@ -7,7 +7,6 @@ develop:
   container_name: gfw-umd-forest-api-develop
   environment:
     NODE_ENV: dev
-    CARTODB_APIKEY: <apikey>
     CARTODB_USER: <user>
     EE_PRIVATE_KEY: <key>
   command: develop

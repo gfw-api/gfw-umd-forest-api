@@ -11,11 +11,7 @@
         "uri": "http://192.168.99.100:3600",
         "port": 3600
     },
-    "apiGateway":{
-        "uri": "http://192.168.99.100:8000/gateway/service"
-    },
     "cartoDB":{
-        "apiKey": null,
         "user": null
     }
 }

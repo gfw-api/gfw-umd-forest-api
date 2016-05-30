@@ -66,8 +66,7 @@ class CartoDBService {
 
     constructor() {
         this.client = new CartoDB.SQL({
-            user: config.get('cartoDB.user'),
-            api_key: config.get('cartoDB.apiKey')
+            user: config.get('cartoDB.user')
         });
     }
 
