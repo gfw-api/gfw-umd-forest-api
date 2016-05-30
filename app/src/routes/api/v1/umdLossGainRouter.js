@@ -1,6 +1,5 @@
 'use strict';
 
-
 var Router = require('koa-router');
 var logger = require('logger');
 var CartoDBService = require('services/cartoDBService');
