@@ -1,7 +1,5 @@
 # GFW UMD Forest API
 
-Master: [![Build Status](https://travis-ci.org/gfw-api/gfw-umd-forest-api.svg?branch=master)](https://travis-ci.org/gfw-api/gfw-umd-forest-api) Develop: [![Build Status](https://travis-ci.org/gfw-api/gfw-umd-forest-api.svg?branch=develop)](https://travis-ci.org/gfw-api/gfw-umd-forest-api)
-
 This repository is the microservice that it implement the umd funcionality and exposed the /umd-loss-gain endpoint in the api-gateway
 
 [View the documentation for this
