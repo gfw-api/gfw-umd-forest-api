@@ -101,8 +101,8 @@ class UMDLossGainRouter {
 
     static * world(){
         logger.info('Obtaining world data');
-        this.assert(this.query.geojson, 400, 'GeoJSON param required');
-        let data = yield GEEService.getWorld(this.query.geojson, this.query.period, this.query.thresh);
+        this.assert(this.query.geostore, 400, 'geostore param required');
+        let data = yield GEEService.getWorld(this.query.geostore, this.query.period, this.query.thresh);
         this.body = UseSerializer.serialize(data);
     }
 
