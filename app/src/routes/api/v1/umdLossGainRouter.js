@@ -34,18 +34,16 @@ class UMDLossGainRouter {
 
     static * getNational(){
         logger.info('Obtaining national data');
-        if (yield this.cashed()) {
-            return;
-        }
         this.assert(this.query.thresh, 400, 'thresh param required');
-        let data = yield CartoDBService.getNational(this.params.iso, this.query.thresh);
+        let data = yield CartoDBService.getNational(this.params.iso, this.query.thresh, this.query.period);
+        logger.debug('Data final', data);
         this.body = UMDSerializer.serialize(data);
     }
 
     static * getSubnational(){
         logger.info('Obtaining subnational data');
         this.assert(this.query.thresh, 400, 'thresh param required');
-        let data = yield CartoDBService.getSubnational(this.params.iso, this.params.id1, this.query.thresh);
+        let data = yield CartoDBService.getSubnational(this.params.iso, this.params.id1, this.query.thresh, this.query.period);
         this.body = UMDSerializer.serialize(data);
     }
 

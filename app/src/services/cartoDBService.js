@@ -87,21 +87,64 @@ class CartoDBService {
         return data.rows;
     }
 
-    * getNational(iso, thresh) {
+    * getNational(iso, thresh, period ='2001-01-01,2013-01-01') {
         let data = yield executeThunk(this.client, ISO, {
             iso: iso,
             thresh: thresh
         });
-        return data.rows;
+        if(data.rows && data.rows.length > 0){
+            let periods = period.split(',');
+            let initYear = new Date(period[0]).getFullYear();
+            let lastYear = new Date(period[0]).getFullYear();
+            let single = {
+                loss: 0,
+                total_gain: 0,
+                extent: 0
+            };
+            for(let i=0, length = data.rows.length; i < length; i++){
+                if(data.rows[i].year >= initYear && data.rows[i].year <= lastYear){
+                    single.loss += data.rows[i].loss;
+                    single.total_gain = data.rows[i].total_gain;
+                    single.extent = data.rows[i].extent;
+                }
+            }
+            return {
+                total: single,
+                years:data.rows
+            };
+        }
+        return {years: data.rows};
+
     }
 
-    * getSubnational(iso, id1, thresh) {
+    * getSubnational(iso, id1, thresh, period='2001-01-01,2013-01-01') {
         let data = yield executeThunk(this.client, ID1, {
             iso: iso,
             id1: id1,
             thresh: thresh
         });
-        return data.rows;
+        if(data.rows && data.rows.length > 0){
+            let periods = period.split(',');
+            let initYear = new Date(period[0]).getFullYear();
+            let lastYear = new Date(period[0]).getFullYear();
+            let single = {
+                loss: 0,
+                total_gain: 0,
+                extent: 0
+            };
+            for(let i=0, length = data.rows.length; i < length; i++){
+                if(data.rows[i].year >= initYear && data.rows[i].year <= lastYear){
+                    single.loss += data.rows[i].loss;
+                    single.total_gain = data.rows[i].total_gain;
+                    single.extent = data.rows[i].extent;
+                }
+            }
+            return {
+                total: single,
+                years:data.rows
+            };
+        }
+        return {years: data.rows};
     }
 
     * getUseGeoJSON(useTable, id){

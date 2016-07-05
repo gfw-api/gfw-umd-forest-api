@@ -3,7 +3,7 @@ MAINTAINER raul.requero@vizzuality.com
 
 RUN apt-get update && apt-get install -y python-dev python-pip && pip install pyCrypto
 
-RUN npm install -g grunt-cli bunyan
+RUN npm install -g grunt-cli bunyan pm2
 ENV NAME gfw-umd-forest-api
 ENV USER microservice
 
