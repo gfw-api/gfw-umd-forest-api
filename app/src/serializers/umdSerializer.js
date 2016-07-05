@@ -6,10 +6,10 @@ var umdSerializer = new JSONAPISerializer('umd', {
 
     attributes: ['total', 'years'],
     total:{
-        attributes: ['loss', 'total_gain', 'extent']
+        attributes: ['loss', 'total_gain', 'extent', 'area_ha']
     },
     years: {
-        attributes: ['iso', 'country', 'thresh', 'year', 'id1', 'extent', 'extent_perc', 'loss', 'loss_perc', 'gain', 'total_gain', 'gain_perc']
+        attributes: ['iso', 'country', 'thresh', 'year', 'id1', 'extent', 'extent_perc', 'loss', 'loss_perc', 'gain', 'total_gain', 'gain_perc', 'area_ha']
     },
     typeForAttribute: function (attribute, record) {
         return attribute;

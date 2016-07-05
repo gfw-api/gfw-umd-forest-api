@@ -19,14 +19,14 @@ const IFL_ID1 = 'SELECT iso, country, ifl_loss, ifl_loss_perc, ifl_treecover_200
                 AND id1 = {{id1}} \
                 AND threshold = {{thresh}}';
 const ISO = 'SELECT iso, country, year, thresh, extent_2000 as extent, extent_perc, \
-            loss, loss_perc, gain, gain*12 as total_gain, gain_perc \
+            loss, loss_perc, gain, gain*12 as total_gain, gain_perc, , land as area_ha \
             FROM umd_nat_final_1 \
             WHERE iso = UPPER(\'{{iso}}\') \
               AND thresh = {{thresh}} \
               ORDER BY year';
 const ID1 = 'SELECT     iso, country, region, year, thresh, extent_2000 as extent, \
              extent_perc, loss, loss_perc, gain, gain*12 as total_gain, \
-             gain_perc, id1 \
+             gain_perc, id1, land as area_ha \
              FROM umd_subnat_final_1 \
              WHERE iso = UPPER(\'{{iso}}\') \
                 AND thresh = {{thresh}} \
@@ -99,13 +99,15 @@ class CartoDBService {
             let single = {
                 loss: 0,
                 total_gain: 0,
-                extent: 0
+                extent: 0,
+                area_ha: 0
             };
             for(let i=0, length = data.rows.length; i < length; i++){
                 if(data.rows[i].year >= initYear && data.rows[i].year <= lastYear){
                     single.loss += data.rows[i].loss;
                     single.total_gain = data.rows[i].total_gain;
                     single.extent = data.rows[i].extent;
+                    single.area_ha = data.rows[i].area_ha;
                 }
             }
             return {
@@ -130,13 +132,15 @@ class CartoDBService {
             let single = {
                 loss: 0,
                 total_gain: 0,
-                extent: 0
+                extent: 0,
+                area_ha: 0
             };
             for(let i=0, length = data.rows.length; i < length; i++){
                 if(data.rows[i].year >= initYear && data.rows[i].year <= lastYear){
                     single.loss += data.rows[i].loss;
                     single.total_gain = data.rows[i].total_gain;
                     single.extent = data.rows[i].extent;
+                    single.area_ha = data.rows[i].area_ha;
                 }
             }
             return {
