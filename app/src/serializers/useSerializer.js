@@ -3,7 +3,7 @@
 var logger = require('logger');
 var JSONAPISerializer = require('jsonapi-serializer').Serializer;
 var useSerializer = new JSONAPISerializer('use', {
-    attributes: ['loss', 'gain', 'tree-extent'],
+    attributes: ['loss', 'gain', 'tree-extent', 'area_ha'],
     typeForAttribute: function (attribute, record) {
         return attribute;
     },

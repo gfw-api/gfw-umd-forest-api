@@ -35,7 +35,7 @@ const ID1 = 'SELECT     iso, country, region, year, thresh, extent_2000 as exten
 const USE = 'SELECT CASE when ST_NPoints(the_geom)<=8000 THEN ST_AsGeoJson(the_geom) \
             WHEN ST_NPoints(the_geom) BETWEEN 8000 AND 20000 THEN ST_AsGeoJson(ST_RemoveRepeatedPoints(the_geom, 0.001)) \
             ELSE ST_AsGeoJson(ST_RemoveRepeatedPoints(the_geom, 0.01)) \
-            END as geojson \
+            END as geojson,  (ST_Area(geography(the_geom))/10000) as area_ha  \
             FROM {{useTable}} \
             WHERE cartodb_id = {{id}}';
 
@@ -43,7 +43,7 @@ const WDPA = 'SELECT CASE when marine::numeric = 2 then null \
             when ST_NPoints(the_geom)<=18000 THEN ST_AsGeoJson(the_geom) \
             WHEN ST_NPoints(the_geom) BETWEEN 18000 AND 50000 THEN ST_AsGeoJson(ST_RemoveRepeatedPoints(the_geom, 0.001)) \
             ELSE ST_AsGeoJson(ST_RemoveRepeatedPoints(the_geom, 0.005)) \
-            END as geojson FROM wdpa_protected_areas where wdpaid={{wdpaid}}';
+            END as geojson, (ST_Area(geography(the_geom))/10000) as area_ha FROM wdpa_protected_areas where wdpaid={{wdpaid}}';
 
 
 var executeThunk = function(client, sql, params) {
@@ -161,7 +161,7 @@ class CartoDBService {
             logger.error('Geojson not found');
             throw new NotFound('Geojson not found');
         }
-        return data.rows[0].geojson;
+        return data.rows[0];
     }
 
     * getWDPAGeoJSON(wdpaid){
@@ -173,7 +173,7 @@ class CartoDBService {
             logger.info('Geojson not found');
             throw new NotFound('Geojson not found');
         }
-        return data.rows[0].geojson;
+        return data.rows[0];
     }
 
 }
