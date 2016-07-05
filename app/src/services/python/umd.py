@@ -22,11 +22,18 @@ def _get_thresh_image(thresh, asset_id):
     image = image.select(before, after)
     return image
 
+def _get_type(geojson):
+    if geojson.get('features') is not None:
+        return geojson.get('features')[0].get('geometry').get('type')
+    elif geojson.get('geometry') is not None:
+        return geojson.get('geometry').get('type')
+    else:
+        return geojson.get('type')
 
 def _get_region(geom):
     """Return ee.Geometry from supplied GeoJSON object."""
     poly = _get_coords(geom)
-    ptype = geom.get('type')
+    ptype = _get_type(geom)
     if ptype.lower() == 'multipolygon':
         region = ee.Geometry.MultiPolygon(poly)
     else:

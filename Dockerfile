@@ -21,7 +21,7 @@ COPY config /opt/$NAME/config
 
 WORKDIR /opt/$NAME
 
-COPY ./app /opt/$NAME/app
+ADD ./app /opt/$NAME/app
 RUN chown $USER:$USER /opt/$NAME
 
 # Tell Docker we are going to use this ports
