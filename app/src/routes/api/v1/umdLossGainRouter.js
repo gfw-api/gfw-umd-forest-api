@@ -36,7 +36,6 @@ class UMDLossGainRouter {
         logger.info('Obtaining national data');
         this.assert(this.query.thresh, 400, 'thresh param required');
         let data = yield CartoDBService.getNational(this.params.iso, this.query.thresh, this.query.period);
-        logger.debug('Data final', data),
         this.body = UMDSerializer.serialize(data);
     }
 
