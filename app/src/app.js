@@ -32,6 +32,9 @@ app.use(function*(next) {
         if (process.env.NODE_ENV === 'prod' && this.status === 500) {
             this.body = 'Unexpected error';
         }
+        if(process.env.NODE_ENV !== 'prod'){
+            logger.error(err);
+        }
     }
     this.response.type = 'application/vnd.api+json';
 });
