@@ -99,8 +99,8 @@ class CartoDBService {
             let lastYear = new Date(periods[1]).getFullYear();
             let single = {
                 loss: 0,
-                total_gain: 0,
-                extent: 0,
+                gain: 0,
+                tree_extent: 0,
                 area_ha: 0
             };
             for(let i=0, length = data.rows.length; i < length; i++){
@@ -109,10 +109,10 @@ class CartoDBService {
                         single.loss += data.rows[i].loss;
                     }
                     if(data.rows[i].total_gain){
-                        single.total_gain = data.rows[i].total_gain;
+                        single.gain = data.rows[i].total_gain;
                     }
                     if(data.rows[i].extent){
-                        single.extent = data.rows[i].extent;
+                        single.tree_extent = data.rows[i].extent;
                     }
                     if(data.rows[i].area_ha){
                         single.area_ha = data.rows[i].area_ha;
@@ -129,19 +129,22 @@ class CartoDBService {
     }
 
     * getSubnational(iso, id1, thresh, period='2001-01-01,2013-01-01') {
+
         let data = yield executeThunk(this.client, ID1, {
             iso: iso,
             id1: id1,
             thresh: thresh
         });
         if(data.rows && data.rows.length > 0){
+            logger.debug('Exist rows');
             let periods = period.split(',');
-            let initYear = new Date(period[0]).getFullYear();
-            let lastYear = new Date(period[1]).getFullYear();
+
+            let initYear = new Date(periods[0]).getFullYear();
+            let lastYear = new Date(periods[1]).getFullYear();
             let single = {
                 loss: 0,
-                total_gain: 0,
-                extent: 0,
+                gain: 0,
+                tree_extent: 0,
                 area_ha: 0
             };
             for(let i=0, length = data.rows.length; i < length; i++){
@@ -150,10 +153,10 @@ class CartoDBService {
                         single.loss += data.rows[i].loss;
                     }
                     if(data.rows[i].total_gain){
-                        single.total_gain = data.rows[i].total_gain;
+                        single.gain = data.rows[i].total_gain;
                     }
                     if(data.rows[i].extent){
-                        single.extent = data.rows[i].extent;
+                        single.tree_extent = data.rows[i].extent;
                     }
                     if(data.rows[i].area_ha){
                         single.area_ha = data.rows[i].area_ha;
