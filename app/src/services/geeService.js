@@ -71,7 +71,11 @@ class GeeService {
             throw e;
         } finally {
             logger.debug('Deleting file');
-            fs.unlinkSync(TMP_PATH + '/world-' + hashGeoJson);
+            try{
+                fs.unlinkSync(TMP_PATH + '/world-' + hashGeoJson);
+            }catch(err){
+                logger.error(err);
+            }
         }
 
     }
@@ -93,7 +97,11 @@ class GeeService {
             throw e;
         } finally {
             logger.debug('Deleting file');
-            fs.unlinkSync(TMP_PATH + '/use-' + id);
+            try{
+                fs.unlinkSync(TMP_PATH + '/use-' + hashGeoJson);
+            }catch(err){
+                logger.error(err);
+            }
         }
     }
 
@@ -115,7 +123,11 @@ class GeeService {
             throw e;
         } finally {
             logger.debug('Deleting file');
-            fs.unlinkSync(TMP_PATH + '/wdpa-' + wdpaid);
+            try{
+                fs.unlinkSync(TMP_PATH + '/wdpa-' + hashGeoJson);
+            }catch(err){
+                logger.error(err);
+            }
         }
 
     }
