@@ -98,7 +98,7 @@ class GeeService {
         } finally {
             logger.debug('Deleting file');
             try{
-                fs.unlinkSync(TMP_PATH + '/use-' + hashGeoJson);
+                fs.unlinkSync(TMP_PATH + '/use-' + id);
             }catch(err){
                 logger.error(err);
             }
@@ -124,7 +124,7 @@ class GeeService {
         } finally {
             logger.debug('Deleting file');
             try{
-                fs.unlinkSync(TMP_PATH + '/wdpa-' + hashGeoJson);
+                fs.unlinkSync(TMP_PATH + '/wdpa-' + wdpaid);
             }catch(err){
                 logger.error(err);
             }
