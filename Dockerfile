@@ -1,16 +1,20 @@
-FROM node:6.2
+FROM mhart/alpine-node:6.2.2
 MAINTAINER raul.requero@vizzuality.com
 
-RUN apt-get update && apt-get install -y python-dev python-pip && pip install pyCrypto
-
-RUN npm install -g grunt-cli bunyan
 ENV NAME gfw-umd-forest-api
 ENV USER microservice
 
-RUN groupadd -r $USER && useradd -r -g $USER $USER
+RUN addgroup $USER && adduser -s /bin/bash -D -G $USER $USER
+
+RUN apk update && apk upgrade && \
+    apk add --no-cache --update bash git openssh python python-dev  py-pip build-base && pip install pyCrypto
+
+
+
+RUN npm install -g grunt-cli bunyan pm2
 
 RUN mkdir -p /opt/$NAME
-ADD package.json /opt/$NAME/package.json
+COPY package.json /opt/$NAME/package.json
 RUN cd /opt/$NAME && npm install
 
 

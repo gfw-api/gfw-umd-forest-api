@@ -12,7 +12,7 @@ var TMP_PATH = '/tmp';
 
 var deserializer = function(obj){
     return function(callback){
-        new JSONAPIDeserializer().deserialize(obj, callback);
+        new JSONAPIDeserializer({keyForAttribute: 'camelCase'}).deserialize(obj, callback);
     };
 };
 
@@ -62,54 +62,72 @@ class GeeService {
 
             let result = yield GeeService.executePython(thresh, TMP_PATH + '/world-' + hashGeoJson, period);
             if (result && result.length >= 1) {
-                return result[0];
+                let data = result[0];
+                data.area_ha = geostore.areaHa;
+                return data;
             }
         } catch (e) {
             logger.error(e);
             throw e;
         } finally {
             logger.debug('Deleting file');
-            fs.unlinkSync(TMP_PATH + '/world-' + hashGeoJson);
+            try{
+                fs.unlinkSync(TMP_PATH + '/world-' + hashGeoJson);
+            }catch(err){
+                logger.error(err);
+            }
         }
 
     }
 
     static * getUse(useTable, id, period, thresh) {
-        let geojson = yield cartoDBService.getUseGeoJSON(useTable, id);
+        let useGeo = yield cartoDBService.getUseGeoJSON(useTable, id);
         logger.debug('Writting geojson to file');
-        fs.writeFileSync(TMP_PATH + '/use-' + id, geojson);
+        fs.writeFileSync(TMP_PATH + '/use-' + id, useGeo.geojson);
         try {
 
             let result = yield GeeService.executePython(thresh, TMP_PATH + '/use-' + id, period);
             if (result && result.length >= 1) {
-                return result[0];
+                let data = result[0];
+                data.area_ha = useGeo.area_ha;
+                return data;
             }
         } catch (e) {
             logger.error(e);
             throw e;
         } finally {
             logger.debug('Deleting file');
-            fs.unlinkSync(TMP_PATH + '/use-' + id);
+            try{
+                fs.unlinkSync(TMP_PATH + '/use-' + hashGeoJson);
+            }catch(err){
+                logger.error(err);
+            }
         }
     }
 
     static * getWdpa(wdpaid, period, thresh) {
 
-        let geojson = yield cartoDBService.getWDPAGeoJSON(wdpaid);
+        let useWdpa = yield cartoDBService.getWDPAGeoJSON(wdpaid);
         logger.debug('Writting geojson to file');
-        fs.writeFileSync(TMP_PATH + '/wdpa-' + wdpaid, geojson);
+        fs.writeFileSync(TMP_PATH + '/wdpa-' + wdpaid, useWdpa.geojson);
 
         try {
             let result = yield GeeService.executePython(thresh, TMP_PATH + '/wdpa-' + wdpaid, period);
             if (result && result.length >= 1) {
-                return result[0];
+                let data = result[0];
+                data.area_ha = useWdpa.area_ha;
+                return data;
             }
         } catch (e) {
             logger.error(e);
             throw e;
         } finally {
             logger.debug('Deleting file');
-            fs.unlinkSync(TMP_PATH + '/wdpa-' + wdpaid);
+            try{
+                fs.unlinkSync(TMP_PATH + '/wdpa-' + hashGeoJson);
+            }catch(err){
+                logger.error(err);
+            }
         }
 
     }

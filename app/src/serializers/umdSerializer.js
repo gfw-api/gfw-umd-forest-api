@@ -3,7 +3,14 @@
 var logger = require('logger');
 var JSONAPISerializer = require('jsonapi-serializer').Serializer;
 var umdSerializer = new JSONAPISerializer('umd', {
-    attributes: ['iso', 'country', 'thresh', 'year', 'id1', 'extent', 'extent_perc', 'loss', 'loss_perc', 'gain', 'total_gain', 'gain_perc'],
+
+    attributes: ['total', 'years'],
+    total:{
+        attributes: ['loss', 'gain', 'tree_extent', 'area_ha']
+    },
+    years: {
+        attributes: ['iso', 'country', 'thresh', 'year', 'id1', 'extent', 'extent_perc', 'loss', 'loss_perc', 'gain', 'total_gain', 'gain_perc', 'area_ha']
+    },
     typeForAttribute: function (attribute, record) {
         return attribute;
     },
