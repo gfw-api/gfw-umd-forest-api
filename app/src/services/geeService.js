@@ -39,7 +39,7 @@ class GeeService {
     }
 
     static * getGeostore(hashGeoStore) {
-        let result = yield require('microservice-client').requestToMicroservice({
+        let result = yield require('vizz.microservice-client').requestToMicroservice({
             uri: '/geostore/' + hashGeoStore,
             method: 'GET',
             json: true
