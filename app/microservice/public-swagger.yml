@@ -1,7 +1,19 @@
 swagger: '2.0'
 info:
   title: GFW UMD Forest API
-  description: Global Forest Watch - UMD Forest API
+  description: |
+    ## Global Forest Watch - UMD Forest API
+
+    Identifies areas of tree cover loss
+
+    | Property | Value |
+    | --- | --- | --- |
+    | Coverage | Global land area (excluding Antarctica and other Arctic islands) |
+    | Resolution | 30 x 30 meters |
+    | Source | Hansen/UMD/Google/USGS/NASA |
+    | Timescale | 2000–2014 |
+    | Units | Percents and hectares |
+    | Updates | Annual |
   version: "1.0.0"
 host: example.vizzuality.com
 
