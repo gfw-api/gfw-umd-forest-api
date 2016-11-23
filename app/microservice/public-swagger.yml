@@ -1,57 +1,133 @@
 swagger: '2.0'
+###############################################################################
+#                              API Information                                 
+###############################################################################
 info:
-  title: GFW UMD Forest API
+  title: GLobal Forest Watch API
   description: |
-    ## Global Forest Watch - UMD Forest API
-
-    Identifies areas of tree cover loss
-
+    The Global Forest Watch API is currently in beta. Based on feedback from trusted testers, this document specifies new API changes that are currently under development. Interested in being a trusted tester? Contact the [Data Lab](mailTo:support@wri.com) at World Resources Institute.
+    
+    All endpoints are accessible via http & https and are located at
+    `https://production-api.globalforestwatch.org`.
+    
+    Forest change measures tree cover loss, tree cover gain, or forest disturbance. The following forest change data are available through the API: 
+    * University of Maryland tree cover loss & gain 
+    * FORMA alerts
+    * IMAZON SAD alerts
+    * Terrai alerts
+    * Prodes
+    * Guira Loss
+    * Biomass loss
+    * GLAD tree cover loss alerts 
+    * NASA VIIRs active fires.
+    
+    Other services provided by the Api complements the ecosystem that surrounds the platform:
+    
+    * Metadata
+    * Urthecast 
+    * Geostore
+    * OGR 
+    * Story 
+    * User 
+    * subscription
+    
+  
+    ### Forest Change - UMD Loss API
+    Identifies annual deforestation in the Brazilian Amazon.
+    
     | Property | Value |
     | --- | --- | --- |
     | Coverage | Global land area (excluding Antarctica and other Arctic islands) |
     | Resolution | 30 x 30 meters |
-    | Source | Hansen/UMD/Google/USGS/NASA |
+    | Source | [Hansen/UMD/Google/USGS/NASA](https://earthenginepartners.appspot.com/science-2013-global-forest) |
     | Timescale | 2000–2014 |
     | Units | Percents and hectares |
     | Updates | Annual |
+  termsOfService: http://www.globalforestwatch.org/terms
+  contact:
+    name: API Support
+    url: http://www.globalforestwatch.org
+    email: support@wri.com
+  license:
+    name: MIT License (MIT)
+    url: https://opensource.org/licenses/MIT
   version: "1.0.0"
-host: example.vizzuality.com
+  
+host: staging-api.globalforestwatch.org
 
 schemes:
   - https
   - http
 
-produces:
+consumes:
   - application/vnd.api+json
 
+produces:
+  - application/vnd.api+json
+###############################################################################
+#                                  Security                                    
+###############################################################################
+#securityDefinitions:
+#  UserSecurity:
+#    type: apiKey
+#   in: header
+#    name: Authorization
+#    description: For write operations we need to provide a token like  ```Bearer {{TOKEN}}```
+#security:
+#        - UserSecurity: []
+###############################################################################
+#                                  Paths                                   
+###############################################################################
 paths:
   /umd-loss-gain:
     get:
-      description: a
+      description: |
+        Retrives total number of alerts for your custom geometry on the period selected
       operationId: world
+      consumes:
+        - application/vnd.api+json
       produces:
         - application/vnd.api+json
+        - application/json
       tags:
-        - UMD
+       - UMD
       parameters:
         - name: geostore
           in: query
-          description: Hash of the geostore
+          description: |
+            Geostore hash 
+            ```34cecd4c4809dbbec20ce40be3d1c877```
           required: true
           type: string
         - name: period
           in: query
-          description: Period of time (default '2001-01-01,2013-01-01')
+          description: |
+            Period of time 
+            ```2015-01-01,2016-12-01```
           required: true
           type: string
         - name: thresh
           in: query
-          description: Threshold (default 30)
+          description: |
+            Threshold (default ```30```)
           required: false
           type: integer
+          default: 30
+          maximum: 75
+          minimum: 10
+
       responses:
         200:
-          description: Results obtained
+          description: Results obteined
+          examples:
+              data: 
+                type: use
+                id: f123fswse13
+                attributes:
+                  loss: 988
+                  gain: 988
+                  treeExtent: 988
+                  areaHa: 10472.639768453402
           schema:
             $ref: '#/definitions/USEAPI'
         404:
@@ -69,36 +145,56 @@ paths:
 
   /umd-loss-gain/use/{name}/{id}:
     get:
-      description: a
       operationId: use
+      description: |
+        Retrives total number of alerts for your selected concession geometry on the period selected
       produces:
         - application/vnd.api+json
       tags:
-        - UMD
+       - UMD
       parameters:
         - name: name
           in: path
-          description: Analisys name (['mining', 'oilpalm', 'fiber', 'logging'])
+          description: |
+            Concession type, one of  
+            ```mining, oilpalm, fiber, logging```
           required: true
           type: string
         - name: id
           in: path
-          description: cartodbid
+          description: |
+            Concession geometry id
+            ``` 100 ```
           required: true
           type: integer
         - name: period
           in: query
-          description: Period of time (default '2001-01-01,2013-01-01')
+          description: |
+            Period of time 
+            ```2015-01-01,2016-12-01```
           required: true
           type: string
         - name: thresh
           in: query
-          description: Threshold (default 30)
+          description: |
+            Threshold (default ```30```)
           required: false
           type: integer
+          default: 30
+          maximum: 75
+          minimum: 10
       responses:
         200:
           description: Results obtained
+          examples:
+              data: 
+                type: use
+                id: f123fswse13
+                attributes:
+                  loss: 988
+                  gain: 988
+                  treeExtent: 988
+                  areaHa: 10472.639768453402
           schema:
             $ref: '#/definitions/USEAPI'
         404:
@@ -116,31 +212,50 @@ paths:
 
   /umd-loss-gain/wdpa/{id}:
     get:
-      description: a
       operationId: wdpa
+      description: |
+        Retrives total number of alerts for your selected protected area on the period selected
       produces:
         - application/vnd.api+json
       tags:
-        - UMD
+       - UMD
       parameters:
         - name: id
           in: path
-          description: wdpa id
+          description: |
+            wdpa id
+            ``` 56670 ```
           required: true
           type: integer
         - name: period
           in: query
-          description: Period of time (default '2001-01-01,2013-01-01')
+          description: |
+            Period of time 
+            ```2015-01-01,2016-12-01```
           required: true
           type: string
         - name: thresh
           in: query
-          description: Threshold (default 30)
+          description: |
+            Threshold (default ```30```)
           required: false
           type: integer
+          default: 30
+          maximum: 75
+          minimum: 10
+
       responses:
         200:
           description: Results obtained
+          examples:
+              data: 
+                type: use
+                id: f123fswse13
+                attributes:
+                  loss: 988
+                  gain: 988
+                  treeExtent: 988
+                  areaHa: 10472.639768453402
           schema:
             $ref: '#/definitions/USEAPI'
         404:
@@ -158,28 +273,55 @@ paths:
 
   /umd-loss-gain/admin/{iso}:
     get:
-      description: a
       operationId: getNational
+      description: |
+        Retrives total number of alerts for your selected country on the period selected
       produces:
         - application/vnd.api+json
       tags:
-        - UMD
+       - UMD
       parameters:
         - name: iso
           in: path
-          description: ISO code
+          description: |
+            ISO-3 country code 
+            ``` BRA ```
+          required: true
+          type: string
+          maxLength: 3
+          pattern: \w*
+        - name: period
+          in: query
+          description: |
+            Period of time 
+            ```2015-01-01,2016-12-01```
           required: true
           type: string
         - name: thresh
           in: query
-          description: Threshold (default 30)
+          description: |
+            Threshold (default ```30```)
           required: false
           type: integer
+          default: 30
+          maximum: 75
+          minimum: 10
+
       responses:
         200:
           description: Results obtained
+          examples:
+              data: 
+                type: use
+                id: f123fswse13
+                attributes:
+                  loss: 988
+                  gain: 988
+                  treeExtent: 988
+                  areaHa: 10472.639768453402
+                  
           schema:
-            $ref: '#/definitions/UMDAPI'
+           $ref: '#/definitions/USEAPI'
         404:
           description: Geostore not found
           schema:
@@ -195,33 +337,52 @@ paths:
 
   /umd-loss-gain/admin/{iso}/{id1}:
     get:
-      description: a
       operationId: getSubnational
+      description: |
+        Retrives total number of alerts for your selected admin 1 area based on GADM 2 on the period selected
       produces:
         - application/vnd.api+json
       tags:
-        - UMD
+       - UMD
       parameters:
         - name: iso
           in: path
-          description: ISO code
+          description: |
+            ISO-3 country code 
+            ``` BRA ```
           required: true
           type: string
+          maxLength: 3
+          pattern: \w*
         - name: id1
           in: path
-          description: Region code
+          description: |
+            numeric code for admin 1 region code based on GADM 2 
+            ``` 2 ```
           required: true
           type: integer
+        - name: period
+          in: query
+          description: |
+            Period of time 
+            ```2015-01-01,2016-12-01```
+          required: true
+          type: string
         - name: thresh
           in: query
-          description: Threshold (default 30)
+          description: |
+            Threshold (default ```30```)
           required: false
           type: integer
+          default: 30
+          maximum: 75
+          minimum: 10
+
       responses:
         200:
           description: Results obtained
           schema:
-            $ref: '#/definitions/UMDAPI'
+            $ref: '#/definitions/USEAPI'
         404:
           description: Geostore not found
           schema:
@@ -234,10 +395,11 @@ paths:
           description: unexpected error
           schema:
             $ref: '#/definitions/Errors'
-
+            
   /umd-loss-gain/admin/ifl/{iso}:
     get:
-      description: a
+      description: |
+        Describes deforestation within intact forest landscapes on a contry and on a certain period of time
       operationId: getIFLNational
       produces:
         - application/vnd.api+json
@@ -246,17 +408,177 @@ paths:
       parameters:
         - name: iso
           in: path
-          description: ISO code
+          description: |
+            ISO-3 country code 
+            ``` BRA ```
           required: true
           type: string
+          maxLength: 3
+          pattern: \w*
         - name: thresh
           in: query
-          description: Threshold (default 30)
+          description: |
+            Threshold (default ```30```)
           required: false
           type: integer
+          default: 30
+          maximum: 75
+          minimum: 10
       responses:
         200:
           description: Results obtained
+          examples:
+              data:
+              - type: umdIfl
+                id: undefined
+                attributes:
+                  iso: BRA
+                  country: Brazil
+                  threshold: 30
+                  year: 2012
+                  iflLoss: 33200.1235171
+                  iflLossPerc: 0.01447
+                  iflTreecover2000: 229520313.021
+              - type: umdIfl
+                id: undefined
+                attributes:
+                  iso: BRA
+                  country: Brazil
+                  threshold: 30
+                  year: 2011
+                  iflLoss: 19380.1255544
+                  iflLossPerc: 0.00844
+                  iflTreecover2000: 229520313.021
+              - type: umdIfl
+                id: undefined
+                attributes:
+                  iso: BRA
+                  country: Brazil
+                  threshold: 30
+                  year: 2008
+                  iflLoss: 11102.6710426
+                  iflLossPerc: 0.00483
+                  iflTreecover2000: 229520313.021
+              - type: umdIfl
+                id: undefined
+                attributes:
+                  iso: BRA
+                  country: Brazil
+                  threshold: 30
+                  year: 2013
+                  iflLoss: 15547.2633019
+                  iflLossPerc: 0.00677
+                  iflTreecover2000: 229520313.021
+              - type: umdIfl
+                id: undefined
+                attributes:
+                  iso: BRA
+                  country: Brazil
+                  threshold: 30
+                  year: 2009
+                  iflLoss: 10569.9346582
+                  iflLossPerc: 0.00461
+                  iflTreecover2000: 229520313.021
+              - type: umdIfl
+                id: undefined
+                attributes:
+                  iso: BRA
+                  country: Brazil
+                  threshold: 30
+                  year: 2007
+                  iflLoss: 9617.60174204
+                  iflLossPerc: 0.00419
+                  iflTreecover2000: 229520313.021
+              - type: umdIfl
+                id: undefined
+                attributes:
+                  iso: BRA
+                  country: Brazil
+                  threshold: 30
+                  year: 2005
+                  iflLoss: 8562.23789609
+                  iflLossPerc: 0.00373
+                  iflTreecover2000: 229520313.021
+              - type: umdIfl
+                id: undefined
+                attributes:
+                  iso: BRA
+                  country: Brazil
+                  threshold: 30
+                  year: 2004
+                  iflLoss: 7757.57160889
+                  iflLossPerc: 0.00337
+                  iflTreecover2000: 229520313.021
+              - type: umdIfl
+                id: undefined
+                attributes:
+                  iso: BRA
+                  country: Brazil
+                  threshold: 30
+                  year: 2003
+                  iflLoss: 8167.40994856
+                  iflLossPerc: 0.00355
+                  iflTreecover2000: 229520313.021
+              - type: umdIfl
+                id: undefined
+                attributes:
+                  iso: BRA
+                  country: Brazil
+                  threshold: 30
+                  year: 2002
+                  iflLoss: 6501.40969983
+                  iflLossPerc: 0.00283
+                  iflTreecover2000: 229520313.021
+              - type: umdIfl
+                id: undefined
+                attributes:
+                  iso: BRA
+                  country: Brazil
+                  threshold: 30
+                  year: 2014
+                  iflLoss: 42268.5932149
+                  iflLossPerc: 0.01842
+                  iflTreecover2000: 229520313.021
+              - type: umdIfl
+                id: undefined
+                attributes:
+                  iso: BRA
+                  country: Brazil
+                  threshold: 30
+                  year: 2001
+                  iflLoss: 7589.41441982
+                  iflLossPerc: 0.00331
+                  iflTreecover2000: 229520313.021
+              - type: umdIfl
+                id: undefined
+                attributes:
+                  iso: BRA
+                  country: Brazil
+                  threshold: 30
+                  year: 2010
+                  iflLoss: 20572.4654042
+                  iflLossPerc: 0.00897
+                  iflTreecover2000: 229520313.021
+              - type: umdIfl
+                id: undefined
+                attributes:
+                  iso: BRA
+                  country: Brazil
+                  threshold: 30
+                  year: 0
+                  iflLoss: 229310920.823
+                  iflLossPerc: 99.90877
+                  iflTreecover2000: 229520313.021
+              - type: umdIfl
+                id: undefined
+                attributes:
+                  iso: BRA
+                  country: Brazil
+                  threshold: 30
+                  year: 2006
+                  iflLoss: 8555.37534748
+                  iflLossPerc: 0.00373
+                  iflTreecover2000: 229520313.021
           schema:
             $ref: '#/definitions/UMDIFLAPI'
         404:
@@ -274,7 +596,8 @@ paths:
 
   /umd-loss-gain/admin/ifl/{iso}/{id1}:
     get:
-      description: a
+      description: |
+        Describes deforestation within intact forest landscapes on a admin level 1 that belongs a contry and on a certain period of time
       operationId: getIFLSubnational
       produces:
         - application/vnd.api+json
@@ -283,9 +606,13 @@ paths:
       parameters:
         - name: iso
           in: path
-          description: ISO code
+          description: |
+            ISO-3 country code 
+            ``` BRA ```
           required: true
           type: string
+          maxLength: 3
+          pattern: \w*
         - name: id1
           in: path
           description: Region code
@@ -293,12 +620,183 @@ paths:
           type: integer
         - name: thresh
           in: query
-          description: Threshold (default 30)
+          description: |
+            Threshold (default ```30```)
           required: false
           type: integer
+          default: 30
+          maximum: 75
+          minimum: 10
       responses:
         200:
           description: Results obtained
+          examples:
+            data:
+              - type: umdIfl
+                id: undefined
+                attributes:
+                  iso: BRA
+                  country: Brazil
+                  threshold: 30
+                  year: 0
+                  id1: 1
+                  iflLoss: 7888219.25488
+                  iflLossPerc: 99.93689
+                  iflTreecover2000: 7893200.70087
+              - type: umdIfl
+                id: undefined
+                attributes:
+                  iso: BRA
+                  country: Brazil
+                  threshold: 30
+                  year: 2014
+                  id1: 1
+                  iflLoss: 1334.26668192
+                  iflLossPerc: 0.0169
+                  iflTreecover2000: 7893200.70087
+              - type: umdIfl
+                id: undefined
+                attributes:
+                  iso: BRA
+                  country: Brazil
+                  threshold: 30
+                  year: 2013
+                  id1: 1
+                  iflLoss: 357.06594021
+                  iflLossPerc: 0.00452
+                  iflTreecover2000: 7893200.70087
+              - type: umdIfl
+                id: undefined
+                attributes:
+                  iso: BRA
+                  country: Brazil
+                  threshold: 30
+                  year: 2012
+                  id1: 1
+                  iflLoss: 1175.39457845
+                  iflLossPerc: 0.01489
+                  iflTreecover2000: 7893200.70087
+              - type: umdIfl
+                id: undefined
+                attributes:
+                  iso: BRA
+                  country: Brazil
+                  threshold: 30
+                  year: 2011
+                  id1: 1
+                  iflLoss: 344.636191004
+                  iflLossPerc: 0.00437
+                  iflTreecover2000: 7893200.70087
+              - type: umdIfl
+                id: undefined
+                attributes:
+                  iso: BRA
+                  country: Brazil
+                  threshold: 30
+                  year: 2010
+                  id1: 1
+                  iflLoss: 360.919838123
+                  iflLossPerc: 0.00458
+                  iflTreecover2000: 7893200.70087
+              - type: umdIfl
+                id: undefined
+                attributes:
+                  iso: BRA
+                  country: Brazil
+                  threshold: 30
+                  year: 2009
+                  id1: 1
+                  iflLoss: 110.573319141
+                  iflLossPerc: 0.0014
+                  iflTreecover2000: 7893200.70087
+              - type: umdIfl
+                id: undefined
+                attributes:
+                  iso: BRA
+                  country: Brazil
+                  threshold: 30
+                  year: 2008
+                  id1: 1
+                  iflLoss: 142.635141205
+                  iflLossPerc: 0.0018
+                  iflTreecover2000: 7893200.70087
+              - type: umdIfl
+                id: undefined
+                attributes:
+                  iso: BRA
+                  country: Brazil
+                  threshold: 30
+                  year: 2007
+                  id1: 1
+                  iflLoss: 150.816385113
+                  iflLossPerc: 0.00191
+                  iflTreecover2000: 7893200.70087
+              - type: umdIfl
+                id: undefined
+                attributes:
+                  iso: BRA
+                  country: Brazil
+                  threshold: 30
+                  year: 2006
+                  id1: 1
+                  iflLoss: 131.571663953
+                  iflLossPerc: 0.00167
+                  iflTreecover2000: 7893200.70087
+              - type: umdIfl
+                id: undefined
+                attributes:
+                  iso: BRA
+                  country: Brazil
+                  threshold: 30
+                  year: 2005
+                  id1: 1
+                  iflLoss: 232.140873712
+                  iflLossPerc: 0.00294
+                  iflTreecover2000: 7893200.70087
+              - type: umdIfl
+                id: undefined
+                attributes:
+                  iso: BRA
+                  country: Brazil
+                  threshold: 30
+                  year: 2004
+                  id1: 1
+                  iflLoss: 235.829059845
+                  iflLossPerc: 0.00299
+                  iflTreecover2000: 7893200.70087
+              - type: umdIfl
+                id: undefined
+                attributes:
+                  iso: BRA
+                  country: Brazil
+                  threshold: 30
+                  year: 2003
+                  id1: 1
+                  iflLoss: 85.094699408
+                  iflLossPerc: 0.00107
+                  iflTreecover2000: 7893200.70087
+              - type: umdIfl
+                id: undefined
+                attributes:
+                  iso: BRA
+                  country: Brazil
+                  threshold: 30
+                  year: 2002
+                  id1: 1
+                  iflLoss: 181.503516143
+                  iflLossPerc: 0.0023
+                  iflTreecover2000: 7893200.70087
+              - type: umdIfl
+                id: undefined
+                attributes:
+                  iso: BRA
+                  country: Brazil
+                  threshold: 30
+                  year: 2001
+                  id1: 1
+                  iflLoss: 138.998098096
+                  iflLossPerc: 0.00176
+                  iflTreecover2000: 7893200.70087
           schema:
             $ref: '#/definitions/UMDIFLAPI'
         404:
@@ -313,6 +811,7 @@ paths:
           description: unexpected error
           schema:
             $ref: '#/definitions/Errors'
+
 definitions:
   Errors:
     type: object
@@ -362,6 +861,9 @@ definitions:
       meta:
         type: object
         description: A meta object containing non-standard meta-information about the error.
+#############################################################################
+#                            Models                                
+#############################################################################
 
   USEAPI:
     type: object
