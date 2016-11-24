@@ -873,40 +873,6 @@ definitions:
         items:
           $ref: '#/definitions/UMDBodyAPI'
 
-  USEBodyAPI:
-    type: object
-    properties:
-      type:
-        type: string
-        description: Resource type
-      id:
-        type: string
-        description: Resource id
-      attributes:
-        properties:
-          schema:
-            $ref: '#/definitions/USEAPIModel'
-
-  USEAPIModel:
-    type: object
-    properties:
-      loss:
-        type: number
-        format: float
-      gain:
-        type: number
-        format: float
-      treeExtent:
-        type: number
-        format: float
-
-  UMDAPI:
-    type: object
-    properties:
-      data:
-        type: array
-        items:
-          $ref: '#/definitions/UMDBodyAPI'
 
   UMDBodyAPI:
     type: object
