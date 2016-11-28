@@ -1,7 +1,7 @@
 {
     "logger": {
         "name": "gfw-umd-forest-api-STAGING",
-        "level": "debug",
+        "level": "info",
         "toFile": false,
         "dirLogFile": null
     },

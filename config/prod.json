@@ -1,7 +1,7 @@
 {
     "logger": {
         "name": "gfw-umd-forest-api",
-        "level": "info",
+        "level": "warn",
         "toFile": false,
         "dirLogFile": null
     },
