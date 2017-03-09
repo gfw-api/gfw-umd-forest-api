@@ -3,7 +3,7 @@
     "name": "#(service.name)",
     "tags": ["gfw"],
     "urls": [{
-        "url": "/umd-loss-gain/admin/ifl/:iso",
+        "url": "/v1/umd-loss-gain/admin/ifl/:iso",
         "method": "GET",
         "endpoints": [{
             "method": "GET",
@@ -11,7 +11,7 @@
             "path": "/api/v1/umd-loss-gain/admin/ifl/:iso"
         }]
     },{
-        "url": "/umd-loss-gain/admin/ifl/:iso/:id1",
+        "url": "/v1/umd-loss-gain/admin/ifl/:iso/:id1",
         "method": "GET",
         "endpoints": [{
             "method": "GET",
@@ -19,7 +19,7 @@
             "path": "/api/v1/umd-loss-gain/admin/ifl/:iso/:id1"
         }]
     },{
-        "url": "/umd-loss-gain/admin/:iso",
+        "url": "/v1/umd-loss-gain/admin/:iso",
         "method": "GET",
         "endpoints": [{
             "method": "GET",
@@ -27,7 +27,7 @@
             "path": "/api/v1/umd-loss-gain/admin/:iso"
         }]
     }, {
-        "url": "/umd-loss-gain/admin/:iso/:id1",
+        "url": "/v1/umd-loss-gain/admin/:iso/:id1",
         "method": "GET",
         "endpoints": [{
             "method": "GET",
@@ -35,7 +35,7 @@
             "path": "/api/v1/umd-loss-gain/admin/:iso/:id1"
         }]
     }, {
-        "url": "/umd-loss-gain/use/:name/:id",
+        "url": "/v1/umd-loss-gain/use/:name/:id",
         "method": "GET",
         "endpoints": [{
             "method": "GET",
@@ -43,7 +43,7 @@
             "path": "/api/v1/umd-loss-gain/use/:name/:id"
         }]
     }, {
-        "url": "/umd-loss-gain/wdpa/:id",
+        "url": "/v1/umd-loss-gain/wdpa/:id",
         "method": "GET",
         "endpoints": [{
             "method": "GET",
@@ -51,7 +51,7 @@
             "path": "/api/v1/umd-loss-gain/wdpa/:id"
         }]
     }, {
-        "url": "/umd-loss-gain",
+        "url": "/v1/umd-loss-gain",
         "method": "GET",
         "endpoints": [{
             "method": "GET",
