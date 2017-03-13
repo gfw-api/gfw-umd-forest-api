@@ -5,3 +5,5 @@ privatekey.pem
 **/*.pyc
 
 *.pyc
+
+.env
