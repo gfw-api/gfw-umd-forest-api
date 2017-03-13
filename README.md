@@ -8,7 +8,7 @@ API](http://gfw-api.github.io/swagger-ui/?url=https://raw.githubusercontent.com/
 ## First time user
 Perform the following steps:
 * [Install docker](https://docs.docker.com/engine/installation/)
-* Clone this repository: ```git clone git@github.com:Vizzuality/gfw-story-api.git```
+* Clone this repository: ```git clone git@github.com:gfw-api/gfw-umd-forest-api```
 * Enter in the directory (cd gfw-story-api)
 * After, you open a terminal (if you have mac or windows, open a terminal with the 'Docker Quickstart Terminal') and execute the next command:
 
