@@ -5,7 +5,6 @@ import logging
 import config
 import sys
 
-
 def _get_region(geom):
     """Return ee.Geometry from supplied GeoJSON object."""
     poly = _get_coords(geom)
@@ -37,51 +36,6 @@ def squaremeters_to_ha(value):
     assert float(value),'Passed value {0} not a number'.format(value)
     tmp = value/10000.
     return float('{0:4.2f}'.format(tmp))
-
-
-# def _get_thresh_image(thresh, asset_id):
-#     """Renames image bands using supplied threshold and returns image."""
-#     image = ee.Image(asset_id)
-#
-#     # Select out the gain band if it exists
-#     if 'gain' in asset_id:
-#         before = image.select('.*_' + thresh, 'gain').bandNames()
-#     else:
-#         before = image.select('.*_' + thresh).bandNames()
-#
-#     after = before.map(
-#         lambda x: ee.String(x).replace('_.*', ''))
-#
-#     image = image.select(before, after)
-#     return image
-#
-#
-# def _ee(geom, thresh, asset_id):
-#     image = _get_thresh_image(thresh, asset_id)
-#     region = _get_region(geom)
-#
-#     # Reducer arguments
-#     reduce_args = {
-#         'reducer': ee.Reducer.sum(),
-#         'geometry': region,
-#         'bestEffort': True,
-#         'scale': 90
-#     }
-#
-#     # Calculate stats
-#     area_stats = image.divide(10000 * 255.0) \
-#         .multiply(ee.Image.pixelArea()) \
-#         .reduceRegion(**reduce_args)
-#     area_results = area_stats.getInfo()
-#
-#     return area_results
-#
-#
-# def _sum_range(data, begin, end):
-#     return sum(
-#         [value for key, value in data.iteritems()
-#             if (int(key) >= int(begin)) and (int(key) < int(end))])
-
 
 def ee_exec(threshold, geojson, asset_id):
     """For a given threshold and geometry return a dictionary of ha area.
@@ -133,7 +87,6 @@ def ee_exec(threshold, geojson, asset_id):
     d['loss'] = loss  # A summation of all year loss
     return d
 
-
 def _execute_geojson(thresh, geojson, begin, end):
     """Query GEE using supplied args with threshold and geojson."""
     # Authenticate to GEE and maximize the deadline
@@ -148,13 +101,10 @@ def _execute_geojson(thresh, geojson, begin, end):
     logging.info('LOSS_RESULTS: {0}ha'.format(hansen_all['loss']))
     return hansen_all
 
-
 thresh = sys.argv[1]
 geojsonPath = sys.argv[2]
 begin = sys.argv[3]
 end = sys.argv[4]
 
-
 txt_file = open(geojsonPath)
-
 print (json.dumps(_execute_geojson(thresh, txt_file.read(), begin, end)))
