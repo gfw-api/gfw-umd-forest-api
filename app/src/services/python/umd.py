@@ -33,7 +33,7 @@ def _get_type(geojson):
 
 def squaremeters_to_ha(value):
     """Converts square meters to hectares, and gives val to 2 decimal places"""
-    assert float(value),'Passed value {0} not a number'.format(value)
+    #assert float(value),'Passed value {0} not a number'.format(value)
     tmp = value/10000.
     return float('{0:4.2f}'.format(tmp))
 
@@ -56,7 +56,7 @@ def ee_exec(threshold, geojson, asset_id):
     Then, sum the values over a region. Finally, divide the result (meters
     squared) by 10,000 to convert to hectares
     """
-    assert threshold in [10,15,20,25,30,50,75],'Bad threshold passed'
+    #assert threshold in [10,15,20,25,30,50,75],'Bad threshold passed'
     d = {}
     region = _get_region(geojson)
     reduce_args = {'reducer': ee.Reducer.sum(),
@@ -97,7 +97,7 @@ def _execute_geojson(thresh, geojson, begin, end):
     hansen_all = ee_exec(threshold=thresh, geojson=geojson,
                          asset_id='HANSEN/gfw2015_loss_tree_gain_threshold')
     logging.info('GAIN: {0}ha'.format(hansen_all['gain']))
-    logging.info('TREE_EXTENT: {0}ha'.format(hansen_all['tree']))
+    logging.info('TREE_EXTENT: {0}ha'.format(hansen_all['tree-extent']))
     logging.info('LOSS_RESULTS: {0}ha'.format(hansen_all['loss']))
     return hansen_all
 
