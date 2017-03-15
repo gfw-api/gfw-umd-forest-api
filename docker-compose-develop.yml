@@ -15,6 +15,7 @@ develop:
     API_GATEWAY_URL: http://mymachine:9000
     EE_PRIVATE_KEY: ${EE_PRIVATE_KEY}
     CARTODB_USER: ${CARTODB_USER}
+    API_VERSION: v1
   command: develop
   volumes:
     - ./app:/opt/gfw-umd-forest-api/app
