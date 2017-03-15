@@ -108,7 +108,7 @@ def ee_exec(threshold, geojson, asset_id):
     reduce_args = {'reducer': ee.Reducer.sum(),
                    'geometry': region,
                    'bestEffort': True,
-                   'scale': 30}
+                   'scale': 90}
     gfw_data = ee.Image(asset_id)
     loss_band = 'loss_{0}'.format(threshold)
     cover_band = 'tree_{0}'.format(threshold)
@@ -143,9 +143,9 @@ def _execute_geojson(thresh, geojson, begin, end):
     geojson = json.loads(geojson)
     hansen_all = ee_exec(threshold=thresh, geojson=geojson,
                          asset_id='HANSEN/gfw2015_loss_tree_gain_threshold')
-    logging.info('GAIN: {}ha'.format(hansen_all['gain']))
-    logging.info('TREE_EXTENT: {}ha'.format(hansen_all['tree']))
-    logging.info('LOSS_RESULTS: {}ha'.format(hansen_all['loss']))
+    logging.info('GAIN: {0}ha'.format(hansen_all['gain']))
+    logging.info('TREE_EXTENT: {0}ha'.format(hansen_all['tree']))
+    logging.info('LOSS_RESULTS: {0}ha'.format(hansen_all['loss']))
     return hansen_all
 
 
