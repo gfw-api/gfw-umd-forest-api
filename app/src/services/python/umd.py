@@ -108,21 +108,29 @@ def ee_exec(threshold, geojson, asset_id):
     reduce_args = {'reducer': ee.Reducer.sum(),
                    'geometry': region,
                    'bestEffort': True,
-                   'scale': 30}  # <--- Set scale here
+                   'scale': 30}
     gfw_data = ee.Image(asset_id)
     loss_band = 'loss_{0}'.format(threshold)
     cover_band = 'tree_{0}'.format(threshold)
+    # Identify 2000 forest cover at given threshold
     tree_area = gfw_data.select(cover_band).gt(0).multiply(
                     ee.Image.pixelArea()).reduceRegion(**reduce_args).getInfo()
-    d['tree_extent'] = squaremeters_to_ha(tree_area[cover_band])
+    d['tree-extent'] = squaremeters_to_ha(tree_area[cover_band])
+    # Identify tree gain over data collection period
     gain = gfw_data.select('gain').divide(255.0).multiply(
-                ee.Image.pixelArea()).reduceRegion(**reduce_args).getInfo()
+                    ee.Image.pixelArea()).reduceRegion(**reduce_args).getInfo()
     d['gain'] = squaremeters_to_ha(gain['gain'])
-    tmp_img = gfw_data.select(loss_band) # Iscolate loss band of given threshold
+    # Identify area lost per year
+    tmp_img = gfw_data.select(loss_band) # Iscolate loss data of a threshold
     for year in range(1,16):
         year_loss = tmp_img.updateMask(tmp_img.eq(year)).divide(year).multiply(
                     ee.Image.pixelArea()).reduceRegion(**reduce_args).getInfo()
         d['loss_{}'.format(year + 2000)] = squaremeters_to_ha(year_loss[loss_band])
+    loss = 0
+    loss_keys = ['loss_{0}'.format(n+2000) for n in range(1,16)]
+    for loss_key in loss_keys:
+        loss += d[loss_key]
+    d['loss'] = loss  # A summation of all year loss
     return d
 
 
@@ -135,38 +143,10 @@ def _execute_geojson(thresh, geojson, begin, end):
     geojson = json.loads(geojson)
     hansen_all = ee_exec(threshold=thresh, geojson=geojson,
                          asset_id='HANSEN/gfw2015_loss_tree_gain_threshold')
-    # All the actual work has now been done. It is just a question of packaging
-    # the data in a desireable way from here...
-    # gain (UMD doesn't permit disaggregation of forest gain by threshold).
-    gain = hansen_all['gain']
-    logging.info('GAIN: %s' % gain)
-    # tree extent in 2000
-    tree_extent = hansen_all['tree']
-    logging.info('TREE_EXTENT: %s' % tree_extent)
-
-    # Loss by year
-    loss_keys = ['loss_{0}'.format(n+2000) for n in range(1,16)]
-    loss_by_year = {}
-    for loss_key in loss_keys:
-        loss_by_year[loss_key] = d[loss_key]
-    #loss_by_year = _ee(geojson, thresh, 'HANSEN/gfw_loss_by_year_threshold_2015')
-    logging.info('LOSS_RESULTS: %s' % loss_by_year)
-
-    # Reduce loss by year for supplied begin and end year
-    #begin = begin.split('-')[0]
-    #end = end.split('-')[0]
-    #loss = _sum_range(loss_by_year, begin, end)
-
-    # Prepare result object
-    result = {}
-    # result['params'] = args
-    # result['params']['geojson'] = json.loads(result['params']['geojson'])
-    result['gain'] = gain
-    result['loss'] = loss_by_year
-    result['tree-extent'] = tree_extent
-
-    return result
-
+    logging.info('GAIN: {}ha'.format(hansen_all['gain']))
+    logging.info('TREE_EXTENT: {}ha'.format(hansen_all['tree']))
+    logging.info('LOSS_RESULTS: {}ha'.format(hansen_all['loss']))
+    return hansen_all
 
 
 thresh = sys.argv[1]
