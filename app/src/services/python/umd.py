@@ -37,7 +37,7 @@ def squaremeters_to_ha(value):
     tmp = value/10000.
     return float('{0:4.2f}'.format(tmp))
 
-def ee_exec(threshold, geojson, asset_id):
+def ee_exec(threshold, geojson, asset_id, begin, end):
     """For a given threshold and geometry return a dictionary of ha area.
     The threshold is used to identify which band of loss and tree to select.
     asset_id should be 'projects/wri-datalab/HansenComposite_14-15'
@@ -58,6 +58,8 @@ def ee_exec(threshold, geojson, asset_id):
     """
     #assert threshold in [10,15,20,25,30,50,75],'Bad threshold passed'
     d = {}
+    begin = int(begin.split('-')[0][2:])
+    end = int(end.split('-')[0][2:])
     region = _get_region(geojson)
     reduce_args = {'reducer': ee.Reducer.sum(),
                    'geometry': region,
@@ -74,16 +76,18 @@ def ee_exec(threshold, geojson, asset_id):
     gain = gfw_data.select('gain').divide(255.0).multiply(
                     ee.Image.pixelArea()).reduceRegion(**reduce_args).getInfo()
     d['gain'] = squaremeters_to_ha(gain['gain'])
+    d['year_loss'] = {}
     # Identify area lost per year
     tmp_img = gfw_data.select(loss_band) # Iscolate loss data of a threshold
     for year in range(1,16):
         year_loss = tmp_img.updateMask(tmp_img.eq(year)).divide(year).multiply(
                     ee.Image.pixelArea()).reduceRegion(**reduce_args).getInfo()
-        d['loss_{}'.format(year + 2000)] = squaremeters_to_ha(year_loss[loss_band])
+        d['year_loss']['loss_{}'.format(year + 2000)] = squaremeters_to_ha(year_loss[loss_band])
     loss = 0
-    loss_keys = ['loss_{0}'.format(n+2000) for n in range(1,16)]
+    loss_keys = ['loss_{0}'.format(n+2000) for n in range(begin, end)]
+    print(loss_keys)
     for loss_key in loss_keys:
-        loss += d[loss_key]
+        loss += d['year_loss'][loss_key]
     d['loss'] = loss  # A summation of all year loss
     return d
 
@@ -94,11 +98,7 @@ def _execute_geojson(thresh, geojson, begin, end):
     # ee.Initialize()
     ee.data.setDeadline(60000)
     geojson = json.loads(geojson)
-    hansen_all = ee_exec(threshold=thresh, geojson=geojson,
-                         asset_id='HANSEN/gfw2015_loss_tree_gain_threshold')
-    logging.info('GAIN: {0}ha'.format(hansen_all['gain']))
-    logging.info('TREE_EXTENT: {0}ha'.format(hansen_all['tree-extent']))
-    logging.info('LOSS_RESULTS: {0}ha'.format(hansen_all['loss']))
+    hansen_all = ee_exec(thresh,geojson,'projects/wri-datalab/HansenComposite_14-15', begin, end)
     return hansen_all
 
 thresh = sys.argv[1]
