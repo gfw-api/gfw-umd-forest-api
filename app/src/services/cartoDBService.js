@@ -19,7 +19,7 @@ const IFL_ID1 = 'SELECT iso, country, ifl_loss, ifl_loss_perc, ifl_treecover_200
                 AND id1 = {{id1}} \
                 AND threshold = {{thresh}}';
 const ISO = 'SELECT iso, country, year, thresh, extent_2000 as extent, extent_perc, \
-            loss, loss_perc, gain, gain*12 as total_gain, gain_perc, land as area_ha \
+            loss, loss_perc, gain, gain/12 as total_gain, gain_perc, land as area_ha \
             FROM umd_nat_final_1 \
             WHERE iso = UPPER(\'{{iso}}\') \
               AND thresh = {{thresh}} \
