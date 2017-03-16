@@ -85,7 +85,6 @@ def ee_exec(threshold, geojson, asset_id, begin, end):
         d['year_loss']['loss_{}'.format(year + 2000)] = squaremeters_to_ha(year_loss[loss_band])
     loss = 0
     loss_keys = ['loss_{0}'.format(n+2000) for n in range(begin, end)]
-    print(loss_keys)
     for loss_key in loss_keys:
         loss += d['year_loss'][loss_key]
     d['loss'] = loss  # A summation of all year loss
