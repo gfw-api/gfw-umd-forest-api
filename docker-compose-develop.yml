@@ -7,9 +7,15 @@ develop:
   container_name: gfw-umd-forest-api-develop
   environment:
     NODE_ENV: dev
-    CARTODB_USER: <data>
-    EE_PRIVATE_KEY: <data>
-    API_GATEWAY_URL: http://192.168.99.100:8000
+    ENVIRONMENT: dev
+    DEBUG: "True"
+    CT_URL: http://mymachine:9000
+    CT_TOKEN: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Im1pY3Jvc2VydmljZSIsImNyZWF0ZWRBdCI6IjIwMTYtMDktMTQifQ.IRCIRm1nfIQTfda_Wb6Pg-341zhV8soAgzw7dd5HxxQ
+    LOCAL_URL: http://mymachine:3600
+    API_GATEWAY_URL: http://mymachine:9000
+    EE_PRIVATE_KEY: ${EE_PRIVATE_KEY}
+    CARTODB_USER: ${CARTODB_USER}
+    API_VERSION: v1
   command: develop
   volumes:
     - ./app:/opt/gfw-umd-forest-api/app

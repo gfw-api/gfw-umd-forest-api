@@ -1,6 +1,6 @@
 # GFW UMD Forest API
 
-This repository is the microservice that it implement the umd funcionality and exposed the /umd-loss-gain endpoint in the api-gateway
+This repository holds the microservice that it implement the umd funcionality and exposed the /umd-loss-gain endpoint in control tower
 
 [View the documentation for this
 API](http://gfw-api.github.io/swagger-ui/?url=https://raw.githubusercontent.com/gfw-api/gfw-umd-forest-api/master/app/microservice/swagger.yml#/UMD)
@@ -8,28 +8,16 @@ API](http://gfw-api.github.io/swagger-ui/?url=https://raw.githubusercontent.com/
 ## First time user
 Perform the following steps:
 * [Install docker](https://docs.docker.com/engine/installation/)
-* Clone this repository: ```git clone git@github.com:gfw-api/gfw-umd-forest-api```
-* Enter in the directory (cd gfw-story-api)
-* After, you open a terminal (if you have mac or windows, open a terminal with the 'Docker Quickstart Terminal') and execute the next command:
+* [Install control tower](https://github.com/control-tower/control-tower)
+* Clone this repository: ```git clone git@github.com:gfw-api/gfw-umd-forest-api.git```
+* Enter in the directory ```cd gfw-umd-forest-api```
+* Rename and update the .env.example --> .env and add the carto account and PEM code
+* Open a terminal and run:
+
 
 ```bash
-    docker-compose -f docker-compose-develop.yml build
+    sh ./umdForest.sh develop
 
-```
-
-## Run in develop mode (Watch mode)
-Remember: In windows and Mac, open the terminal with 'Docker Quickstart Terminal'
-
-```bash
-docker-compose -f docker-compose-develop.yml build
-//this command up the machine. If you want up in background mode, you add the -d option
-```
-
-
-## Execute test
-Remember: In windows and Mac, open the terminal with 'Docker Quickstart Terminal'
-```
-docker-compose -f docker-compose-test.yml run test
 ```
 
 ## Install in heroku
