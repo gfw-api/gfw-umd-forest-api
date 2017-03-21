@@ -4,7 +4,6 @@ npm-debug.log
 privatekey.pem
 **/*.pyc
 .env
-
-*.pyc
-
+.ipynb_checkpoints/
+*.ipynb
 .env
