@@ -25,7 +25,7 @@ const ISO = 'SELECT iso, country, year, thresh, extent_2000 as extent, extent_pe
               AND thresh = {{thresh}} \
               ORDER BY year';
 const ID1 = 'SELECT     iso, country, region, year, thresh, extent_2000 as extent, \
-             extent_perc, loss, loss_perc, gain, gain*12 as total_gain, \
+             extent_perc, loss, loss_perc, gain, gain as total_gain, \
              gain_perc, id1, land as area_ha \
              FROM umd_subnat_final_1 \
              WHERE iso = UPPER(\'{{iso}}\') \
