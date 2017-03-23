@@ -56,12 +56,11 @@ def ee_exec(threshold, geojson, asset_id, begin, end):
     Then, sum the values over a region. Finally, divide the result (meters
     squared) by 10,000 to convert to hectares
     """
-    #assert threshold in [10,15,20,25,30,50,75],'Bad threshold passed'
     d = {}
     begin = int(begin.split('-')[0][2:])
     end = int(end.split('-')[0][2:])
     region = _get_region(geojson)
-    reduce_args = {'reducer': ee.Reducer.sum(),
+    reduce_args = {'reducer': ee.Reducer.sum().unweighted(),
                    'geometry': region,
                    'bestEffort': True,
                    'scale': 90}
@@ -76,18 +75,11 @@ def ee_exec(threshold, geojson, asset_id, begin, end):
     gain = gfw_data.select('gain').divide(255.0).multiply(
                     ee.Image.pixelArea()).reduceRegion(**reduce_args).getInfo()
     d['gain'] = squaremeters_to_ha(gain['gain'])
-    d['year_loss'] = {}
-    # Identify area lost per year
-    tmp_img = gfw_data.select(loss_band) # Iscolate loss data of a threshold
-    for year in range(1,16):
-        year_loss = tmp_img.updateMask(tmp_img.eq(year)).divide(year).multiply(
-                    ee.Image.pixelArea()).reduceRegion(**reduce_args).getInfo()
-        d['year_loss']['loss_{}'.format(year + 2000)] = squaremeters_to_ha(year_loss[loss_band])
-    loss = 0
-    loss_keys = ['loss_{0}'.format(n+2000) for n in range(begin, end)]
-    for loss_key in loss_keys:
-        loss += d['year_loss'][loss_key]
-    d['loss'] = loss  # A summation of all year loss
+    # Identify area lost from begin year up untill end year
+    tmp_img = gfw_data.select(loss_band)
+    loss_area_img = tmp_img.gte(begin).And(tmp_img.lt(end)).multiply(ee.Image.pixelArea())
+    loss_total = loss_area_img.reduceRegion(**reduce_args).getInfo()
+    d['loss'] = squaremeters_to_ha(loss_total[loss_band])
     return d
 
 def _execute_geojson(thresh, geojson, begin, end):
