@@ -3,6 +3,12 @@
 These are notes for development and testing of the GFW app, particularly the
 gfw-umd-forest-api app.
 
+The production version of the microservice should be running at `https://production-api.globalforestwatch.org/umd-loss-gain`. E.g. the following should return country-level stats for Spain:
+
+```
+https://production-api.globalforestwatch.org/umd-loss-gain/admin/ESP?thresh=30
+```
+
 To run the gfw-umd app locally, you must download and run: 1) [control-tower](https://github.com/control-tower/control-tower), 2) [gfw-geostore-api](https://github.com/gfw-api/gfw-geostore-api),
 3) [gfw-umd-forest-api](https://github.com/gfw-api/gfw-umd-forest-api).
 
