@@ -46,7 +46,7 @@
     "mustache": "2.2.1",
     "newrelic": "1.27.1",
     "python-shell": "0.4.0",
-    "vizz.microservice-client": "1.5.4"
+    "vizz.microservice-client": "1.6.2"
   },
   "devDependencies": {
     "co-mocha": "1.1.2",

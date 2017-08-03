@@ -9,9 +9,7 @@ RUN addgroup $USER && adduser -s /bin/bash -D -G $USER $USER
 RUN apk update && apk upgrade && \
     apk add --no-cache --update bash git openssh python python-dev  py-pip build-base && pip install pyCrypto
 
-
-
-RUN npm install -g grunt-cli bunyan pm2
+RUN npm install -g grunt-cli bunyan
 
 RUN mkdir -p /opt/$NAME
 COPY package.json /opt/$NAME/package.json

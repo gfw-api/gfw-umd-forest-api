@@ -1,10 +1,10 @@
 'use strict';
-var logger = require('logger');
-var path = require('path');
-var config = require('config');
-var CartoDB = require('cartodb');
-var Mustache = require('mustache');
-var NotFound = require('errors/notFound');
+const logger = require('logger');
+const path = require('path');
+const config = require('config');
+const CartoDB = require('cartodb');
+const Mustache = require('mustache');
+const NotFound = require('errors/notFound');
 
 
 const IFL = 'SELECT iso, country, ifl_loss, ifl_loss_perc, ifl_treecover_2000, threshold, year \
@@ -18,12 +18,14 @@ const IFL_ID1 = 'SELECT iso, country, ifl_loss, ifl_loss_perc, ifl_treecover_200
                 WHERE iso = UPPER(\'{{iso}}\') \
                 AND id1 = {{id1}} \
                 AND threshold = {{thresh}}';
+
 const ISO = 'SELECT iso, country, year, thresh, extent_2000 as extent, extent_perc, \
             loss, loss_perc, gain, gain as total_gain, gain_perc, land as area_ha \
             FROM umd_nat_final_1 \
             WHERE iso = UPPER(\'{{iso}}\') \
               AND thresh = {{thresh}} \
               ORDER BY year';
+
 const ID1 = 'SELECT     iso, country, region, year, thresh, extent_2000 as extent, \
              extent_perc, loss, loss_perc, gain, gain as total_gain, \
              gain_perc, id1, land as area_ha \
@@ -32,19 +34,6 @@ const ID1 = 'SELECT     iso, country, region, year, thresh, extent_2000 as exten
                 AND thresh = {{thresh}} \
                 AND id1 = {{id1}} \
              ORDER BY year';
-const USE = 'SELECT CASE when ST_NPoints(the_geom)<=8000 THEN ST_AsGeoJson(the_geom) \
-            WHEN ST_NPoints(the_geom) BETWEEN 8000 AND 20000 THEN ST_AsGeoJson(ST_RemoveRepeatedPoints(the_geom, 0.001)) \
-            ELSE ST_AsGeoJson(ST_RemoveRepeatedPoints(the_geom, 0.01)) \
-            END as geojson,  (ST_Area(geography(the_geom))/10000) as area_ha  \
-            FROM {{useTable}} \
-            WHERE cartodb_id = {{id}}';
-
-const WDPA = 'SELECT CASE when marine::numeric = 2 then null \
-            when ST_NPoints(the_geom)<=18000 THEN ST_AsGeoJson(the_geom) \
-            WHEN ST_NPoints(the_geom) BETWEEN 18000 AND 50000 THEN ST_AsGeoJson(ST_RemoveRepeatedPoints(the_geom, 0.001)) \
-            ELSE ST_AsGeoJson(ST_RemoveRepeatedPoints(the_geom, 0.005)) \
-            END as geojson, (ST_Area(geography(the_geom))/10000) as area_ha FROM wdpa_protected_areas where wdpaid={{wdpaid}}';
-
 
 var executeThunk = function(client, sql, params) {
     return function(callback) {
@@ -169,31 +158,6 @@ class CartoDBService {
             };
         }
         return {years: data.rows};
-    }
-
-    * getUseGeoJSON(useTable, id){
-        logger.debug('Obtaining geojson of use');
-        let data = yield executeThunk(this.client, USE, {
-            useTable: useTable,
-            id: id
-        });
-        if (!data || !data.rows || data.rows.length === 0 || !data.rows[0].geojson) {
-            logger.error('Geojson not found');
-            throw new NotFound('Geojson not found');
-        }
-        return data.rows[0];
-    }
-
-    * getWDPAGeoJSON(wdpaid){
-        logger.debug('Obtaining wpda geojson of id %s', wdpaid);
-        let data = yield executeThunk(this.client, WDPA, {
-            wdpaid: wdpaid
-        });
-        if (!data || !data.rows || data.rows.length === 0 || !data.rows[0].geojson) {
-            logger.info('Geojson not found');
-            throw new NotFound('Geojson not found');
-        }
-        return data.rows[0];
     }
 
 }

@@ -16,6 +16,7 @@ develop:
     EE_PRIVATE_KEY: ${EE_PRIVATE_KEY}
     CARTODB_USER: ${CARTODB_USER}
     API_VERSION: v1
+    CT_REGISTER_MODE: auto
   command: develop
   volumes:
     - ./app:/opt/gfw-umd-forest-api/app

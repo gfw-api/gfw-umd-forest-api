@@ -1,17 +1,17 @@
 'use strict';
 //load modules
-var config = require('config');
-var logger = require('logger');
-var path = require('path');
-var koa = require('koa');
-var bodyParser = require('koa-bodyparser');
-var koaLogger = require('koa-logger');
-var loader = require('loader');
-var validate = require('koa-validate');
-var ErrorSerializer = require('serializers/errorSerializer');
+const config = require('config');
+const logger = require('logger');
+const path = require('path');
+const koa = require('koa');
+const bodyParser = require('koa-bodyparser');
+const koaLogger = require('koa-logger');
+const loader = require('loader');
+const validate = require('koa-validate');
+const ErrorSerializer = require('serializers/errorSerializer');
 
 // instance of koa
-var app = koa();
+const app = koa();
 
 //if environment is dev then load koa-logger
 if (process.env.NODE_ENV === 'dev') {
@@ -61,14 +61,16 @@ app.use(validate());
 loader.loadRoutes(app);
 
 //Instance of http module
-var server = require('http').Server(app.callback());
+const server = require('http').Server(app.callback());
 
 // get port of environment, if not exist obtain of the config.
 // In production environment, the port must be declared in environment variable
-var port = process.env.PORT || config.get('service.port');
+const port = process.env.PORT || config.get('service.port');
 
-server.listen(port, function() {
-    require('vizz.microservice-client').register({
+server.listen(port, function () {    
+    const microserviceClient = require('vizz.microservice-client');
+    
+    microserviceClient.register({
         id: config.get('service.id'),
         name: config.get('service.name'),
         dirConfig: path.join(__dirname, '../microservice'),
@@ -76,6 +78,9 @@ server.listen(port, function() {
         logger: logger,
         app: app
     });
+    if (process.env.CT_REGISTER_MODE && process.env.CT_REGISTER_MODE === 'auto') {
+        microserviceClient.autoDiscovery(config.get('service.name'));
+    }
 });
 
 logger.info('Server started in port:' + port);
