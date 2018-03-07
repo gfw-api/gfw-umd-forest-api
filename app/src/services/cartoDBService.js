@@ -26,7 +26,7 @@ const ISO = 'SELECT iso, country, year, thresh, extent_2000 as extent, extent_pe
               AND thresh = {{thresh}} \
               ORDER BY year';
 
-const ID1 = 'SELECT     iso, country, region, year, thresh, extent_2000 as extent, \
+const ID1 = 'SELECT iso, country, region, year, thresh, extent_2000 as extent, \
              extent_perc, loss, loss_perc, gain, gain as total_gain, \
              gain_perc, id1, land as area_ha \
              FROM umd_subnat_staging \
@@ -76,7 +76,7 @@ class CartoDBService {
         return data.rows;
     }
 
-    * getNational(iso, thresh, period ='2001-01-01,2013-01-01') {
+    * getNational(iso, thresh, period ='2001-01-01,2016-01-01') {
         let data = yield executeThunk(this.client, ISO, {
             iso: iso,
             thresh: thresh
@@ -117,7 +117,7 @@ class CartoDBService {
 
     }
 
-    * getSubnational(iso, id1, thresh, period='2001-01-01,2013-01-01') {
+    * getSubnational(iso, id1, thresh, period='2001-01-01,2016-01-01') {
 
         let data = yield executeThunk(this.client, ID1, {
             iso: iso,
