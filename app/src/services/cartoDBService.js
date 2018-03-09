@@ -20,15 +20,19 @@ const IFL_ID1 = 'SELECT iso, country, ifl_loss, ifl_loss_perc, ifl_treecover_200
                 AND threshold = {{thresh}}';
 
 const ISO = 'SELECT iso, country, year, thresh, extent_2000 as extent, extent_perc, \
-            loss, loss_perc, gain, gain as total_gain, gain_perc, land as area_ha \
+            loss, loss_perc, gain, gain as total_gain, gain_perc, land as area_ha, \
+            max(year) OVER () max_year, \
+            min(year) OVER () min_year \
             FROM umd_nat_staging \
             WHERE iso = UPPER(\'{{iso}}\') \
               AND thresh = {{thresh}} \
               ORDER BY year';
 
-const ID1 = 'SELECT     iso, country, region, year, thresh, extent_2000 as extent, \
+const ID1 = 'SELECT iso, country, region, year, thresh, extent_2000 as extent, \
              extent_perc, loss, loss_perc, gain, gain as total_gain, \
-             gain_perc, id1, land as area_ha \
+             gain_perc, id1, land as area_ha, \
+             max(year) OVER () max_year, \
+             min(year) OVER () min_year \
              FROM umd_subnat_staging \
              WHERE iso = UPPER(\'{{iso}}\') \
                 AND thresh = {{thresh}} \
@@ -76,14 +80,14 @@ class CartoDBService {
         return data.rows;
     }
 
-    * getNational(iso, thresh, period ='2001-01-01,2013-01-01') {
+    * getNational(iso, thresh, period) {
         let data = yield executeThunk(this.client, ISO, {
             iso: iso,
             thresh: thresh
         });
-
         if(data.rows && data.rows.length > 0){
-            let periods = period.split(',');
+            const periods = period ? period.split(',') : [String(data.rows[0].min_year), String(data.rows[0].max_year)];
+            
             let initYear = new Date(periods[0]).getFullYear();
             let lastYear = new Date(periods[1]).getFullYear();
             let single = {
@@ -117,7 +121,7 @@ class CartoDBService {
 
     }
 
-    * getSubnational(iso, id1, thresh, period='2001-01-01,2013-01-01') {
+    * getSubnational(iso, id1, thresh, period) {
 
         let data = yield executeThunk(this.client, ID1, {
             iso: iso,
@@ -125,8 +129,7 @@ class CartoDBService {
             thresh: thresh
         });
         if(data.rows && data.rows.length > 0){
-            logger.debug('Exist rows');
-            let periods = period.split(',');
+            const periods = period ? period.split(',') : [String(data.rows[0].min_year), String(data.rows[0].max_year)];
 
             let initYear = new Date(periods[0]).getFullYear();
             let lastYear = new Date(periods[1]).getFullYear();

@@ -14,6 +14,7 @@ Perform the following steps:
 * Rename and update the .env.example --> .env and add the carto account and PEM code
 * Open a terminal and run:
 
+
 ```bash
     sh ./umdForest.sh develop
 
