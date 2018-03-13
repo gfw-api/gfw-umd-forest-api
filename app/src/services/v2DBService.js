@@ -8,29 +8,18 @@ const NotFound = require('errors/notFound');
 const JSONAPIDeserializer = require('jsonapi-serializer').Deserializer;
 const MicroServiceClient = require('vizz.microservice-client');
 
-const DS = `499682b1-3174-493f-ba1a-368b4636708e`;
+const getLocationString = ({ iso, adm1, adm2 }) => {
+    return `iso = '${iso}' ${adm1 ? `AND adm1 = ${adm1}`: ''} ${adm2 ? `AND adm2 = ${adm2}`: ''}`;
+};
 
-const ADM2 = `  SELECT iso, adm1, adm2, area_extent as extent2010, area_extent_2000 as extent2000, \
-                area_gadm28 as area, year_data as loss_data,area_gain as gain \
-                FROM {ds} 
-                WHERE iso = '{iso}' \
-                AND adm1 = {adm1} \
-                AND adm1 = {adm2} \
-                AND thresh = {threshold} \
-                AND polyname = 'gadm28'`;
+const getLocationVars = ({ adm1, adm2 }) => {
+    return `iso${adm1 ? `, adm1`: ''}${adm2 ? `, adm2`: ''},`;
+};
 
-const ADM1 = `  SELECT iso, adm1, area_extent as extent2010, area_extent_2000 as extent2000, \
+const QUERY = `SELECT {vars} area_extent as extent2010, area_extent_2000 as extent2000, \
                 area_gadm28 as area, year_data as loss_data,area_gain as gain \
-                FROM {ds} \
-                WHERE iso = '{iso}' \
-                AND adm1 = {adm1} \
-                AND thresh = {threshold} \
-                AND polyname = 'gadm28'`;
-
-const ISO = `  SELECT iso, area_extent as extent2010, area_extent_2000 as extent2000, \
-                area_gadm28 as area, year_data as loss_data,area_gain as gain \
-                FROM {ds} 
-                WHERE iso = '{iso}' \
+                FROM data 
+                WHERE {location} \
                 AND thresh = {threshold} \
                 AND polyname = 'gadm28'`;
 
@@ -43,16 +32,14 @@ var deserializer = function(obj) {
 class V2DBService {
     //use this for testing locally
     static * getData(sql, params) {
-        sql = sql.replace('{iso}', params.iso)
-                 .replace('{adm1}', params.adm1)
-                 .replace('{adm2}', params.adm2)
-                 .replace('{threshold}', params.threshold)
-                 .replace('{ds}', DS);
+        sql = sql.replace('{location}', getLocationString(params))
+                 .replace('{vars}', getLocationVars(params))
+                 .replace('{threshold}', params.thresh);
                     
         logger.debug('Obtaining data with:', sql);
-        let result = yield request.get('https://production-api.globalforestwatch.org/v1/query/499682b1-3174-493f-ba1a-368b4636708e?sql='+sql);
+        let result = yield request.get('https://production-api.globalforestwatch.org/v1/query/499682b1-3174-493f-ba1a-368b4636708e?sql='+sql); // move to env
         if (result.statusCode !== 200) {
-            console.error('Error obtaining geostore:');
+            console.error('Error obtaining data:');
             console.error(result);
             return null;
         }
@@ -165,48 +152,18 @@ class V2DBService {
         return returnData;
     }
 
-    * getAdm2(iso, id1, id2, thresh) {
-        const data = yield V2DBService.getData(ADM2, {iso: iso, adm1: id1, adm2: id2, threshold: thresh});
+    * fetchData(params) {
+        const data = yield V2DBService.getData(QUERY, params);
         if (data && Object.keys(data).length > 0) {
-            let returnData = {};
-            returnData.iso = iso.toUpperCase();
-            returnData.adm1 = id1;
-            returnData.adm2 = id2;
-            returnData.thresh = thresh;
-            returnData.total = V2DBService.getTotals(data.data);
-            returnData.years = V2DBService.getLossByYear(data.data, returnData.total.areaHa);
+            const totals = V2DBService.getTotals(data.data);
+            const returnData = Object.assign({
+                totals,
+                years: V2DBService.getLossByYear(data.data, totals.areaHa)
+            }, params);
             return returnData;
         }
         else { return null; }
     }
-
-    * getAdm1(iso, id1, thresh) {
-        const data = yield V2DBService.getData(ADM1, {iso: iso, adm1: id1, threshold: thresh});
-        if (data && Object.keys(data).length > 0) {
-            let returnData = {};
-            returnData.iso = iso.toUpperCase();
-            returnData.adm1 = id1;
-            returnData.thresh = thresh;
-            returnData.total = V2DBService.getTotals(data.data);
-            returnData.years = V2DBService.getLossByYear(data.data, returnData.total.areaHa);
-            return returnData;
-        }
-        else { return null; }
-    }
-
-    * getIso(iso, thresh) {
-        const data = yield V2DBService.getData(ISO, {iso: iso, threshold: thresh});
-        if (data && Object.keys(data).length > 0) {
-            let returnData = {};
-            returnData.iso = iso.toUpperCase();
-            returnData.thresh = thresh;
-            returnData.total = V2DBService.getTotals(data.data);
-            returnData.years = V2DBService.getLossByYear(data.data, returnData.total.areaHa);
-            return returnData;
-        }
-        else { return null; }
-    }
-
 }
 
 module.exports = new V2DBService();

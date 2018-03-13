@@ -2,10 +2,10 @@
 
 var logger = require('logger');
 var JSONAPISerializer = require('jsonapi-serializer').Serializer;
-var v2UmdSerializer = new JSONAPISerializer('umd', {
+var v2UmdSerializer = new JSONAPISerializer('umd-v2', {
 
-    attributes: ['iso', 'adm1', 'adm2', 'thresh', 'total', 'years'],
-    total:{
+    attributes: ['iso', 'adm1', 'adm2', 'thresh', 'totals', 'years'],
+    totals:{
         attributes: ['areaHa', 'extent2000', 'extent2000Perc', 'extent2010', 'extent2010Perc', 'gain', 'gainPerc', 'loss', 'lossPerc']
     },
     years: {
