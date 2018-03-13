@@ -21,13 +21,13 @@ class UMDLossGainRouterV2 {
     }
 }
 
-// var isCached =  function *(next){
-//     if (yield this.cashed()) {
-//         return;
-//     }
-//     yield next;
-// };
+var isCached =  function *(next){
+    if (yield this.cashed()) {
+        return;
+    }
+    yield next;
+};
 
-router.get('/admin/:iso/:id1?/:id2?', /*isCached,*/ UMDLossGainRouterV2.fetchData);
+router.get('/admin/:iso/:id1?/:id2?', isCached, UMDLossGainRouterV2.fetchData);
 
 module.exports = router;
