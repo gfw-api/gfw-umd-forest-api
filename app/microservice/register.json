@@ -34,5 +34,26 @@
             "baseUrl": "#(service.uri)",
             "path": "/api/v1/umd-loss-gain/admin/:iso/:id1"
         }]
+    }, {
+        "url": "/v2/umd-loss-gain/admin/:iso",
+        "method": "GET",
+        "endpoints": [{
+            "method": "GET",
+            "path": "/api/v2/umd-loss-gain/admin/:iso"
+        }]
+    }, {
+        "url": "/v2/umd-loss-gain/admin/:iso/:id1",
+        "method": "GET",
+        "endpoints": [{
+            "method": "GET",
+            "path": "/api/v2/umd-loss-gain/admin/:iso/:id1"
+        }]
+    }, {
+        "url": "/v2/umd-loss-gain/admin/:iso/:id1/:id2",
+        "method": "GET",
+        "endpoints": [{
+            "method": "GET",
+            "path": "/api/v2/umd-loss-gain/admin/:iso/:id1/:id2"
+        }]
     }]
 }
