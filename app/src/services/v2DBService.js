@@ -22,7 +22,7 @@ const getAreaType = polyname => {
 
 const QUERY = `SELECT {vars} area_extent as extent2010, area_extent_2000 as extent2000, \
                 {area_type} as area, year_data as loss_data,area_gain as gain \
-                FROM data 
+                FROM data
                 WHERE {location} \
                 AND thresh = {threshold} \
                 AND polyname = '{polyname}'`;
@@ -35,47 +35,45 @@ var deserializer = function(obj) {
 
 class V2DBService {
     //use this for testing locally
+    // static * getData(sql, params) {
+    //     sql = sql.replace('{location}', getLocationString(params))
+    //              .replace('{vars}', getLocationVars(params))
+    //              .replace('{threshold}', params.thresh)
+    //              .replace('{area_type}', getAreaType(params.polyname))
+    //              .replace('{polyname}', params.polyname);
+    //
+    //     logger.debug('Obtaining data with:', sql);
+    //     let result = yield request.get('https://production-api.globalforestwatch.org/v1/query/499682b1-3174-493f-ba1a-368b4636708e?sql='+sql); // move to env
+    //     if (result.statusCode !== 200) {
+    //         console.error('Error obtaining data:');
+    //         console.error(result);
+    //         return null;
+    //     }
+    //     return JSON.parse(result.body);
+    // }
+
+    //Use this one for prod/staging
     static * getData(sql, params) {
         sql = sql.replace('{location}', getLocationString(params))
                  .replace('{vars}', getLocationVars(params))
                  .replace('{threshold}', params.thresh)
                  .replace('{area_type}', getAreaType(params.polyname))
                  .replace('{polyname}', params.polyname);
-                    
+
         logger.debug('Obtaining data with:', sql);
-        let result = yield request.get('https://production-api.globalforestwatch.org/v1/query/499682b1-3174-493f-ba1a-368b4636708e?sql='+sql); // move to env
+        let result = yield MicroServiceClient.requestToMicroservice({
+            uri: `/query/499682b1-3174-493f-ba1a-368b4636708e?sql=${sql}`,
+            method: 'GET',
+            json: true
+        });
         if (result.statusCode !== 200) {
             console.error('Error obtaining data:');
             console.error(result);
             return null;
         }
+        logger.debug('Data:', result);
         return JSON.parse(result.body);
     }
-
-    // //Use this one for prod/staging
-    // static * getData(sql, params) {
-    //     sql = sql.replace('{iso}', params.iso)
-    //              .replace('{adm1}', params.adm1)
-    //              .replace('{threshold}', params.threshold)
-    //              .replace('{ds}', DS);
-                    
-
-    //     logger.debug('Obtaining data with:', sql);
-    //     let result = yield MicroServiceClient.requestToMicroservice({
-    //         uri: '/query/499682b1-3174-493f-ba1a-368b4636708e',
-    //         params: {sql: sql},
-    //         method: 'GET',
-    //         json: true
-    //     });
-    //     if (result.statusCode !== 200) {
-    //         console.error('Error obtaining data:');
-    //         console.error(result);
-    //         return null;
-    //     }
-    //     logger.debug('Data:', result);
-    //     return true;
-    //     //return yield deserializer(result.body);
-    // }
 
     static sum (a, b) {
         return a + b;
@@ -125,7 +123,7 @@ class V2DBService {
                     year: el[0],
                     loss: el[1],
                     lossPerc: 100 * el[1] / area
-                };           
+                };
             });
         return returnData;
         }
@@ -160,6 +158,9 @@ class V2DBService {
 
     * fetchData(params) {
         const data = yield V2DBService.getData(QUERY, params);
+        if (data.data.length === 0) {
+            return [];
+        }
         if (data && Object.keys(data).length > 0) {
             const totals = V2DBService.getTotals(data.data);
             const returnData = Object.assign({
