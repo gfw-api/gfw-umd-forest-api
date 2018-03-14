@@ -67,9 +67,9 @@ const server = require('http').Server(app.callback());
 // In production environment, the port must be declared in environment variable
 const port = process.env.PORT || config.get('service.port');
 
-server.listen(port, function () {    
+server.listen(port, function () {
     const microserviceClient = require('vizz.microservice-client');
-    
+
     microserviceClient.register({
         id: config.get('service.id'),
         name: config.get('service.name'),
