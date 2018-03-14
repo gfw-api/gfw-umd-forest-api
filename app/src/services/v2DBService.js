@@ -61,18 +61,18 @@ class V2DBService {
                  .replace('{polyname}', params.polyname);
 
         logger.debug('Obtaining data with:', sql);
-        let result = yield MicroServiceClient.requestToMicroservice({
-            uri: `/query/499682b1-3174-493f-ba1a-368b4636708e?sql=${sql}`,
-            method: 'GET',
-            json: true
-        });
-        if (result.statusCode !== 200) {
-            console.error('Error obtaining data:');
-            console.error(result);
-            return null;
+        try {
+            let result = yield MicroServiceClient.requestToMicroservice({
+                uri: `/query/499682b1-3174-493f-ba1a-368b4636708e?sql=${sql}`,
+                method: 'GET',
+                json: true
+            });
+            logger.debug(result);
+        } catch (err) {
+            logger.error(err);
+            throw err;
         }
-        logger.debug('Data:', result);
-        return JSON.parse(result.body);
+        return result.body;
     }
 
     static sum (a, b) {
