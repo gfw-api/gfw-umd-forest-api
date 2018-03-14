@@ -68,11 +68,11 @@ class V2DBService {
                 json: true
             });
             logger.debug(result);
+            return result.body;
         } catch (err) {
             logger.error(err);
             throw err;
         }
-        return result.body;
     }
 
     static sum (a, b) {
