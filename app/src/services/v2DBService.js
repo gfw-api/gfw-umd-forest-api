@@ -16,12 +16,16 @@ const getLocationVars = ({ adm1, adm2 }) => {
     return `iso${adm1 ? `, adm1`: ''}${adm2 ? `, adm2`: ''},`;
 };
 
+const getAreaType = polyname => {
+    return `${polyname !== 'gadm28' ? 'area_poly_aoi' : 'area_gadm28'}`;
+};
+
 const QUERY = `SELECT {vars} area_extent as extent2010, area_extent_2000 as extent2000, \
-                area_gadm28 as area, year_data as loss_data,area_gain as gain \
+                {area_type} as area, year_data as loss_data,area_gain as gain \
                 FROM data 
                 WHERE {location} \
                 AND thresh = {threshold} \
-                AND polyname = 'gadm28'`;
+                AND polyname = '{polyname}'`;
 
 var deserializer = function(obj) {
     return function(callback) {
@@ -34,7 +38,9 @@ class V2DBService {
     static * getData(sql, params) {
         sql = sql.replace('{location}', getLocationString(params))
                  .replace('{vars}', getLocationVars(params))
-                 .replace('{threshold}', params.thresh);
+                 .replace('{threshold}', params.thresh)
+                 .replace('{area_type}', getAreaType(params.polyname))
+                 .replace('{polyname}', params.polyname);
                     
         logger.debug('Obtaining data with:', sql);
         let result = yield request.get('https://production-api.globalforestwatch.org/v1/query/499682b1-3174-493f-ba1a-368b4636708e?sql='+sql); // move to env
@@ -162,7 +168,7 @@ class V2DBService {
             }, params);
             return returnData;
         }
-        else { return null; }
+        else { return null; } //error message for cases where data.data =[]
     }
 }
 

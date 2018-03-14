@@ -13,10 +13,11 @@ const router = new Router({
 class UMDLossGainRouterV2 {
 
     static * fetchData(){
-        const { iso, id1, id2, thesh} = this.params;
+        const { iso, id1, id2} = this.params;
         logger.info('Obtaining adm2 data');
         const thresh = this.query.thresh || '30';
-        let data = yield V2DBService.fetchData({ iso: iso.toUpperCase(), adm1: id1, adm2: id2, thresh });
+        const polyname = this.query.polyname || 'gadm28';
+        let data = yield V2DBService.fetchData({ iso: iso.toUpperCase(), adm1: id1, adm2: id2, thresh, polyname });
         this.body = V2UMDSerializer.serialize(data);
     }
 }
