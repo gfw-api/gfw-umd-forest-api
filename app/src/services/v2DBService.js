@@ -176,7 +176,7 @@ class V2DBService {
         let periods = null;
         if (params.period) {
             const date_format = 'YYYY-MM-DD';
-            const dates = params.period.split(',').map(el => el.trim()).join(',');
+            const dates = params.period.split(',').map(el => el.trim()).join(',').split(',');
             if (!moment(dates[0], date_format, true).isValid() || !moment(dates[1], date_format, true).isValid()) {
                 logger.error('Period must be in the format: YYYY-MM-DD,YYYY-MM-DD');
                 throw new InvalidPeriod('Period must be in the format: YYYY-MM-DD,YYYY-MM-DD');
