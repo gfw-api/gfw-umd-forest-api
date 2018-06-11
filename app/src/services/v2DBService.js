@@ -43,7 +43,7 @@ class V2DBService {
     //              .replace('{threshold}', params.thresh)
     //              .replace('{area_type}', getAreaType(params.polyname))
     //              .replace('{polyname}', params.polyname);
-    //
+    
     //     logger.debug('Obtaining data with:', sql);
     //     let result = yield request.get('https://production-api.globalforestwatch.org/v1/query/499682b1-3174-493f-ba1a-368b4636708e?sql='+sql); // move to env
     //     if (result.statusCode !== 200) {
@@ -176,7 +176,7 @@ class V2DBService {
         let periods = null;
         if (params.period) {
             const date_format = 'YYYY-MM-DD';
-            const dates = params.period.split(',');
+            const dates = params.period.split(',').map(el => el.trim()).join(',');
             if (!moment(dates[0], date_format, true).isValid() || !moment(dates[1], date_format, true).isValid()) {
                 logger.error('Period must be in the format: YYYY-MM-DD,YYYY-MM-DD');
                 throw new InvalidPeriod('Period must be in the format: YYYY-MM-DD,YYYY-MM-DD');
