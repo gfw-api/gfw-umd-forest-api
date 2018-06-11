@@ -3,6 +3,7 @@
 let co = require('co');
 let request = require('co-request');
 const logger = require('logger');
+const moment = require('moment');
 const config = require('config');
 const NotFound = require('errors/notFound');
 const JSONAPIDeserializer = require('jsonapi-serializer').Deserializer;
@@ -168,10 +169,26 @@ class V2DBService {
     * fetchData(params) {
         const data = yield V2DBService.getData(QUERY, params);
         if (data.data.length === 0) {
+            console.error('No data found.');
             return [];
         }
-        const dates = params.period && params.period.split(',');
-        const periods = params.period && [dates[0].slice(0,4), dates[1].slice(0,4)];    
+        let periods = null;
+        if (params.period) {
+            const date_format = 'YYYY-MM-DD';
+            const dates = params.period.split(',');
+            if (!moment(dates[0], date_format, true).isValid() || !moment(dates[1], date_format, true).isValid()) {
+                console.error('Period must be in the format: YYYY-MM-DD,YYYY-MM-DD');
+                return null;
+            }
+            else if (moment(dates[0]).isAfter(moment(dates[1]))) {
+                console.error('Start date must be before end date!');
+                return null;
+            }
+            else {
+                periods = [dates[0].slice(0,4), dates[1].slice(0,4)];    
+            }
+        }
+
         if (data && Object.keys(data).length > 0) {
             const totals = V2DBService.getTotals(data.data, periods);
             const returnData = Object.assign({
