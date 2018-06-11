@@ -17,7 +17,7 @@ class UMDLossGainRouterV2 {
         logger.info('Obtaining adm2 data');
         const thresh = this.query.thresh || '30';
         const polyname = this.query.polyname || 'gadm28';
-        const period = this.query.period || '2001,2017';
+        const period = this.query.period || '2001-01-01,2017-12-31';
         let data = yield V2DBService.fetchData({ iso: iso.toUpperCase(), adm1: id1, adm2: id2, thresh, polyname, period });
         this.body = V2UMDSerializer.serialize(data);
     }

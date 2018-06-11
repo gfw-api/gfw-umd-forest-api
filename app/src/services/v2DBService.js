@@ -166,7 +166,8 @@ class V2DBService {
         if (data.data.length === 0) {
             return [];
         }
-        const periods = params.period && params.period.split(',');        
+        const dates = params.period && params.period.split(',');
+        const periods = [dates[0].slice(0,4), dates[1].slice(0,4)];    
         if (data && Object.keys(data).length > 0) {
             const totals = V2DBService.getTotals(data.data, periods);
             const returnData = Object.assign({
