@@ -6,6 +6,7 @@ const logger = require('logger');
 const moment = require('moment');
 const config = require('config');
 const NotFound = require('errors/notFound');
+const InvalidPeriod = require('errors/invalidPeriod');
 const JSONAPIDeserializer = require('jsonapi-serializer').Deserializer;
 const MicroServiceClient = require('vizz.microservice-client');
 
@@ -42,7 +43,7 @@ class V2DBService {
     //              .replace('{threshold}', params.thresh)
     //              .replace('{area_type}', getAreaType(params.polyname))
     //              .replace('{polyname}', params.polyname);
-    
+    //
     //     logger.debug('Obtaining data with:', sql);
     //     let result = yield request.get('https://production-api.globalforestwatch.org/v1/query/499682b1-3174-493f-ba1a-368b4636708e?sql='+sql); // move to env
     //     if (result.statusCode !== 200) {
@@ -82,10 +83,10 @@ class V2DBService {
 
     static getLossTotal (data, periods) {
         let loss = data.map(obj => {
-            const filteredLoss = 
+            const filteredLoss =
                 periods ? obj.loss_data.filter(year => year.year >= periods[0] && year.year <= periods[1])
                         : obj.loss_data;
-            let lossTotal = filteredLoss    
+            let lossTotal = filteredLoss
                 .map(year => {
                     return year.area_loss;
                 });
@@ -96,7 +97,7 @@ class V2DBService {
 
     static getLossByYear (data, area, periods) {
         let loss = data.map(obj => {
-            const filteredLoss = 
+            const filteredLoss =
                 periods ? obj.loss_data.filter(year => year.year >= periods[0] && year.year <= periods[1])
                         : obj.loss_data;
             let lossTotal = filteredLoss
@@ -151,7 +152,7 @@ class V2DBService {
             lossPerc: 0,
             areaHa: 0
         };
-        
+
         data.forEach(d => {
             returnData.extent2000 += d.extent2000;
             returnData.extent2010 += d.extent2010;
@@ -169,7 +170,7 @@ class V2DBService {
     * fetchData(params) {
         const data = yield V2DBService.getData(QUERY, params);
         if (data.data.length === 0) {
-            console.error('No data found.');
+            logger.error('No data found.');
             return [];
         }
         let periods = null;
@@ -177,15 +178,15 @@ class V2DBService {
             const date_format = 'YYYY-MM-DD';
             const dates = params.period.split(',');
             if (!moment(dates[0], date_format, true).isValid() || !moment(dates[1], date_format, true).isValid()) {
-                console.error('Period must be in the format: YYYY-MM-DD,YYYY-MM-DD');
-                return null;
+                logger.error('Period must be in the format: YYYY-MM-DD,YYYY-MM-DD');
+                throw new InvalidPeriod('Period must be in the format: YYYY-MM-DD,YYYY-MM-DD');
             }
             else if (moment(dates[0]).isAfter(moment(dates[1]))) {
-                console.error('Start date must be before end date!');
-                return null;
+                logger.error('Start date must be before end date!');
+                throw new InvalidPeriod('Start date must be before end date!');
             }
             else {
-                periods = [dates[0].slice(0,4), dates[1].slice(0,4)];    
+                periods = [dates[0].slice(0,4), dates[1].slice(0,4)];
             }
         }
 
