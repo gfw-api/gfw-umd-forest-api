@@ -35,45 +35,45 @@ var deserializer = function(obj) {
 
 class V2DBService {
     // use this for testing locally
-    static * getData(sql, params) {
-        sql = sql.replace('{location}', getLocationString(params))
-                 .replace('{vars}', getLocationVars(params))
-                 .replace('{threshold}', params.thresh)
-                 .replace('{area_type}', getAreaType(params.polyname))
-                 .replace('{polyname}', params.polyname);
-    
-        logger.debug('Obtaining data with:', sql);
-        let result = yield request.get('https://production-api.globalforestwatch.org/v1/query/499682b1-3174-493f-ba1a-368b4636708e?sql='+sql); // move to env
-        if (result.statusCode !== 200) {
-            console.error('Error obtaining data:');
-            console.error(result);
-            return null;
-        }
-        return JSON.parse(result.body);
-    }
-
-    //Use this one for prod/staging
     // static * getData(sql, params) {
     //     sql = sql.replace('{location}', getLocationString(params))
     //              .replace('{vars}', getLocationVars(params))
     //              .replace('{threshold}', params.thresh)
     //              .replace('{area_type}', getAreaType(params.polyname))
     //              .replace('{polyname}', params.polyname);
-
+    
     //     logger.debug('Obtaining data with:', sql);
-    //     try {
-    //         let result = yield MicroServiceClient.requestToMicroservice({
-    //             uri: `/query/499682b1-3174-493f-ba1a-368b4636708e?sql=${sql}`,
-    //             method: 'GET',
-    //             json: true
-    //         });
-    //         logger.debug(result);
-    //         return result.body;
-    //     } catch (err) {
-    //         logger.error(err);
-    //         throw err;
+    //     let result = yield request.get('https://production-api.globalforestwatch.org/v1/query/499682b1-3174-493f-ba1a-368b4636708e?sql='+sql); // move to env
+    //     if (result.statusCode !== 200) {
+    //         console.error('Error obtaining data:');
+    //         console.error(result);
+    //         return null;
     //     }
+    //     return JSON.parse(result.body);
     // }
+
+    //Use this one for prod/staging
+    static * getData(sql, params) {
+        sql = sql.replace('{location}', getLocationString(params))
+                 .replace('{vars}', getLocationVars(params))
+                 .replace('{threshold}', params.thresh)
+                 .replace('{area_type}', getAreaType(params.polyname))
+                 .replace('{polyname}', params.polyname);
+
+        logger.debug('Obtaining data with:', sql);
+        try {
+            let result = yield MicroServiceClient.requestToMicroservice({
+                uri: `/query/499682b1-3174-493f-ba1a-368b4636708e?sql=${sql}`,
+                method: 'GET',
+                json: true
+            });
+            logger.debug(result);
+            return result.body;
+        } catch (err) {
+            logger.error(err);
+            throw err;
+        }
+    }
 
     static sum (a, b) {
         return a + b;
