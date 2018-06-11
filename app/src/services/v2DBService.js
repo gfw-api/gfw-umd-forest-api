@@ -3,8 +3,10 @@
 let co = require('co');
 let request = require('co-request');
 const logger = require('logger');
+const moment = require('moment');
 const config = require('config');
 const NotFound = require('errors/notFound');
+const InvalidPeriod = require('errors/invalidPeriod');
 const JSONAPIDeserializer = require('jsonapi-serializer').Deserializer;
 const MicroServiceClient = require('vizz.microservice-client');
 
@@ -34,7 +36,7 @@ var deserializer = function(obj) {
 };
 
 class V2DBService {
-    //use this for testing locally
+    // use this for testing locally
     // static * getData(sql, params) {
     //     sql = sql.replace('{location}', getLocationString(params))
     //              .replace('{vars}', getLocationVars(params))
@@ -79,25 +81,33 @@ class V2DBService {
         return a + b;
     }
 
-    static getLossTotal (data) {
+    static getLossTotal (data, periods) {
         let loss = data.map(obj => {
-            let lossTotal = obj.loss_data.map(year => {
-                return year.area_loss;
-            });
+            const filteredLoss =
+                periods ? obj.loss_data.filter(year => year.year >= periods[0] && year.year <= periods[1])
+                        : obj.loss_data;
+            let lossTotal = filteredLoss
+                .map(year => {
+                    return year.area_loss;
+                });
             return lossTotal.reduce(V2DBService.sum,0);
         });
         return loss.reduce(V2DBService.sum,0);
     }
 
-    static getLossByYear (data, area) {
+    static getLossByYear (data, area, periods) {
         let loss = data.map(obj => {
-            let lossTotal = obj.loss_data.map(year => {
-                let tmp = {
-                    year: year.year,
-                    value: year.area_loss
-                };
-                return tmp;
-            });
+            const filteredLoss =
+                periods ? obj.loss_data.filter(year => year.year >= periods[0] && year.year <= periods[1])
+                        : obj.loss_data;
+            let lossTotal = filteredLoss
+                .map(year => {
+                    let tmp = {
+                        year: year.year,
+                        value: year.area_loss
+                    };
+                    return tmp;
+                });
             let tmp = {};
             lossTotal.forEach(el => {
                 if (!tmp[el.year]) {
@@ -130,7 +140,7 @@ class V2DBService {
         else { return null; }
     }
 
-    static getTotals (data) {
+    static getTotals (data, periods) {
         const returnData = {
             extent2000: 0,
             extent2000Perc: 0,
@@ -142,13 +152,14 @@ class V2DBService {
             lossPerc: 0,
             areaHa: 0
         };
+
         data.forEach(d => {
             returnData.extent2000 += d.extent2000;
             returnData.extent2010 += d.extent2010;
             returnData.gain += d.gain;
             returnData.areaHa += d.area;
         });
-        returnData.loss = V2DBService.getLossTotal(data);
+        returnData.loss = V2DBService.getLossTotal(data, periods);
         returnData.extent2000Perc = 100 * returnData.extent2000 / returnData.areaHa;
         returnData.extent2010Perc = 100 * returnData.extent2010 / returnData.areaHa;
         returnData.gainPerc = 100 * returnData.gain / returnData.areaHa;
@@ -159,13 +170,31 @@ class V2DBService {
     * fetchData(params) {
         const data = yield V2DBService.getData(QUERY, params);
         if (data.data.length === 0) {
+            logger.error('No data found.');
             return [];
         }
+        let periods = null;
+        if (params.period) {
+            const date_format = 'YYYY-MM-DD';
+            const dates = params.period.split(',');
+            if (!moment(dates[0], date_format, true).isValid() || !moment(dates[1], date_format, true).isValid()) {
+                logger.error('Period must be in the format: YYYY-MM-DD,YYYY-MM-DD');
+                throw new InvalidPeriod('Period must be in the format: YYYY-MM-DD,YYYY-MM-DD');
+            }
+            else if (moment(dates[0]).isAfter(moment(dates[1]))) {
+                logger.error('Start date must be before end date!');
+                throw new InvalidPeriod('Start date must be before end date!');
+            }
+            else {
+                periods = [dates[0].slice(0,4), dates[1].slice(0,4)];
+            }
+        }
+
         if (data && Object.keys(data).length > 0) {
-            const totals = V2DBService.getTotals(data.data);
+            const totals = V2DBService.getTotals(data.data, periods);
             const returnData = Object.assign({
                 totals,
-                years: V2DBService.getLossByYear(data.data, totals.areaHa)
+                years: V2DBService.getLossByYear(data.data, totals.areaHa, periods)
             }, params);
             return returnData;
         }

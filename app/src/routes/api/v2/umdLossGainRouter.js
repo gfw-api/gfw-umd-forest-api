@@ -4,6 +4,7 @@ const Router = require('koa-router');
 const logger = require('logger');
 const V2DBService = require('services/v2DBService');
 const NotFound = require('errors/notFound');
+const InvalidPeriod = require('errors/invalidPeriod');
 const V2UMDSerializer = require('serializers/v2UmdSerializer');
 
 const router = new Router({
@@ -17,8 +18,16 @@ class UMDLossGainRouterV2 {
         logger.info('Obtaining adm2 data');
         const thresh = this.query.thresh || '30';
         const polyname = this.query.polyname || 'gadm28';
-        let data = yield V2DBService.fetchData({ iso: iso.toUpperCase(), adm1: id1, adm2: id2, thresh, polyname });
-        this.body = V2UMDSerializer.serialize(data);
+        const period = this.query.period.split(',').map(el => el.trim()).join(',') || null;
+        try {
+            let data = yield V2DBService.fetchData({ iso: iso.toUpperCase(), adm1: id1, adm2: id2, thresh, polyname, period });
+            this.body = V2UMDSerializer.serialize(data);
+        } catch (err) {
+            if (err instanceof InvalidPeriod) {
+                this.throw(400, err.message);
+                return;
+            }
+        }
     }
 }
 
