@@ -34,70 +34,74 @@ var deserializer = function(obj) {
 };
 
 class V2DBService {
-    //use this for testing locally
-    // static * getData(sql, params) {
-    //     sql = sql.replace('{location}', getLocationString(params))
-    //              .replace('{vars}', getLocationVars(params))
-    //              .replace('{threshold}', params.thresh)
-    //              .replace('{area_type}', getAreaType(params.polyname))
-    //              .replace('{polyname}', params.polyname);
-    //
-    //     logger.debug('Obtaining data with:', sql);
-    //     let result = yield request.get('https://production-api.globalforestwatch.org/v1/query/499682b1-3174-493f-ba1a-368b4636708e?sql='+sql); // move to env
-    //     if (result.statusCode !== 200) {
-    //         console.error('Error obtaining data:');
-    //         console.error(result);
-    //         return null;
-    //     }
-    //     return JSON.parse(result.body);
-    // }
-
-    //Use this one for prod/staging
+    // use this for testing locally
     static * getData(sql, params) {
         sql = sql.replace('{location}', getLocationString(params))
                  .replace('{vars}', getLocationVars(params))
                  .replace('{threshold}', params.thresh)
                  .replace('{area_type}', getAreaType(params.polyname))
                  .replace('{polyname}', params.polyname);
-
+    
         logger.debug('Obtaining data with:', sql);
-        try {
-            let result = yield MicroServiceClient.requestToMicroservice({
-                uri: `/query/499682b1-3174-493f-ba1a-368b4636708e?sql=${sql}`,
-                method: 'GET',
-                json: true
-            });
-            logger.debug(result);
-            return result.body;
-        } catch (err) {
-            logger.error(err);
-            throw err;
+        let result = yield request.get('https://production-api.globalforestwatch.org/v1/query/499682b1-3174-493f-ba1a-368b4636708e?sql='+sql); // move to env
+        if (result.statusCode !== 200) {
+            console.error('Error obtaining data:');
+            console.error(result);
+            return null;
         }
+        return JSON.parse(result.body);
     }
+
+    //Use this one for prod/staging
+    // static * getData(sql, params) {
+    //     sql = sql.replace('{location}', getLocationString(params))
+    //              .replace('{vars}', getLocationVars(params))
+    //              .replace('{threshold}', params.thresh)
+    //              .replace('{area_type}', getAreaType(params.polyname))
+    //              .replace('{polyname}', params.polyname);
+
+    //     logger.debug('Obtaining data with:', sql);
+    //     try {
+    //         let result = yield MicroServiceClient.requestToMicroservice({
+    //             uri: `/query/499682b1-3174-493f-ba1a-368b4636708e?sql=${sql}`,
+    //             method: 'GET',
+    //             json: true
+    //         });
+    //         logger.debug(result);
+    //         return result.body;
+    //     } catch (err) {
+    //         logger.error(err);
+    //         throw err;
+    //     }
+    // }
 
     static sum (a, b) {
         return a + b;
     }
 
-    static getLossTotal (data) {
+    static getLossTotal (data, start_year, end_year) {
         let loss = data.map(obj => {
-            let lossTotal = obj.loss_data.map(year => {
-                return year.area_loss;
-            });
+            let lossTotal = obj.loss_data
+                .filter(year => year.year >= start_year && year.year <= end_year)
+                .map(year => {
+                    return year.area_loss;
+                });
             return lossTotal.reduce(V2DBService.sum,0);
         });
         return loss.reduce(V2DBService.sum,0);
     }
 
-    static getLossByYear (data, area) {
+    static getLossByYear (data, area, periods) {
         let loss = data.map(obj => {
-            let lossTotal = obj.loss_data.map(year => {
-                let tmp = {
-                    year: year.year,
-                    value: year.area_loss
-                };
-                return tmp;
-            });
+            let lossTotal = obj.loss_data
+                .filter(year => year.year >= periods[0] && year.year <= periods[1])
+                .map(year => {
+                    let tmp = {
+                        year: year.year,
+                        value: year.area_loss
+                    };
+                    return tmp;
+                });
             let tmp = {};
             lossTotal.forEach(el => {
                 if (!tmp[el.year]) {
@@ -130,7 +134,7 @@ class V2DBService {
         else { return null; }
     }
 
-    static getTotals (data) {
+    static getTotals (data, periods) {
         const returnData = {
             extent2000: 0,
             extent2000Perc: 0,
@@ -142,13 +146,14 @@ class V2DBService {
             lossPerc: 0,
             areaHa: 0
         };
+        
         data.forEach(d => {
             returnData.extent2000 += d.extent2000;
             returnData.extent2010 += d.extent2010;
             returnData.gain += d.gain;
             returnData.areaHa += d.area;
         });
-        returnData.loss = V2DBService.getLossTotal(data);
+        returnData.loss = V2DBService.getLossTotal(data, periods[0], periods[1]);
         returnData.extent2000Perc = 100 * returnData.extent2000 / returnData.areaHa;
         returnData.extent2010Perc = 100 * returnData.extent2010 / returnData.areaHa;
         returnData.gainPerc = 100 * returnData.gain / returnData.areaHa;
@@ -161,11 +166,12 @@ class V2DBService {
         if (data.data.length === 0) {
             return [];
         }
+        const periods = params.period && params.period.split(',');        
         if (data && Object.keys(data).length > 0) {
-            const totals = V2DBService.getTotals(data.data);
+            const totals = V2DBService.getTotals(data.data, periods);
             const returnData = Object.assign({
                 totals,
-                years: V2DBService.getLossByYear(data.data, totals.areaHa)
+                years: V2DBService.getLossByYear(data.data, totals.areaHa, periods)
             }, params);
             return returnData;
         }
