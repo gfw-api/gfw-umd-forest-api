@@ -79,10 +79,12 @@ class V2DBService {
         return a + b;
     }
 
-    static getLossTotal (data, start_year, end_year) {
+    static getLossTotal (data, periods) {
         let loss = data.map(obj => {
-            let lossTotal = obj.loss_data
-                .filter(year => year.year >= start_year && year.year <= end_year)
+            const filteredLoss = 
+                periods ? obj.loss_data.filter(year => year.year >= periods[0] && year.year <= periods[1])
+                        : obj.loss_data;
+            let lossTotal = filteredLoss    
                 .map(year => {
                     return year.area_loss;
                 });
@@ -93,8 +95,10 @@ class V2DBService {
 
     static getLossByYear (data, area, periods) {
         let loss = data.map(obj => {
-            let lossTotal = obj.loss_data
-                .filter(year => year.year >= periods[0] && year.year <= periods[1])
+            const filteredLoss = 
+                periods ? obj.loss_data.filter(year => year.year >= periods[0] && year.year <= periods[1])
+                        : obj.loss_data;
+            let lossTotal = filteredLoss
                 .map(year => {
                     let tmp = {
                         year: year.year,
@@ -153,7 +157,7 @@ class V2DBService {
             returnData.gain += d.gain;
             returnData.areaHa += d.area;
         });
-        returnData.loss = V2DBService.getLossTotal(data, periods[0], periods[1]);
+        returnData.loss = V2DBService.getLossTotal(data, periods);
         returnData.extent2000Perc = 100 * returnData.extent2000 / returnData.areaHa;
         returnData.extent2010Perc = 100 * returnData.extent2010 / returnData.areaHa;
         returnData.gainPerc = 100 * returnData.gain / returnData.areaHa;
@@ -167,7 +171,7 @@ class V2DBService {
             return [];
         }
         const dates = params.period && params.period.split(',');
-        const periods = [dates[0].slice(0,4), dates[1].slice(0,4)];    
+        const periods = params.period && [dates[0].slice(0,4), dates[1].slice(0,4)];    
         if (data && Object.keys(data).length > 0) {
             const totals = V2DBService.getTotals(data.data, periods);
             const returnData = Object.assign({
