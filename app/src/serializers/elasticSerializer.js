@@ -2,9 +2,9 @@
 
 var logger = require('logger');
 var JSONAPISerializer = require('jsonapi-serializer').Serializer;
-var v2UmdSerializer = new JSONAPISerializer('umd-v2', {
+var elasticSerializer = new JSONAPISerializer('umd', {
 
-    attributes: ['iso', 'adm1', 'adm2', 'thresh', 'polyname', 'period', 'totals', 'years'],
+    attributes: ['gadm', 'iso', 'adm1', 'adm2', 'thresh', 'polyname', 'period', 'totals', 'years'],
     totals:{
         attributes: ['areaHa', 'extent2000', 'extent2000Perc', 'extent2010', 'extent2010Perc', 'gain', 'gainPerc', 'loss', 'lossPerc']
     },
@@ -17,11 +17,11 @@ var v2UmdSerializer = new JSONAPISerializer('umd-v2', {
     keyForAttribute: 'camelCase'
 });
 
-class V2UMDSerializer {
+class ElasticSerializer {
 
   static serialize(data) {
-    return v2UmdSerializer.serialize(data);
+    return elasticSerializer.serialize(data);
   }
 }
 
-module.exports = V2UMDSerializer;
+module.exports = ElasticSerializer;

@@ -11,21 +11,21 @@ const GeostoreService = require('services/geostoreService');
 const router = new Router({
     prefix: '/umd-loss-gain'
 });
-const GADM = '2.8';
+const GADM = '3.6';
 
-class UMDLossGainRouterV2 {
+class UMDLossGainRouterV3 {
 
     static * fetchData(){
         const { iso, id1, id2} = this.params;
         logger.info('Obtaining data for', this.params);
         const thresh = this.query.thresh || '30';
-        const polyname = this.query.polyname || 'gadm28';
+        const polyname = this.query.polyname || 'admin';
         const period = this.query.period || null;
         try {
             let data = yield ElasticService.fetchData({ iso: iso.toUpperCase(), adm1: id1, adm2: id2, thresh, polyname, period, gadm: GADM });
             this.body = ElasticSerializer.serialize(data);
         } catch (err) {
-            logger.error(err);
+            logger.error(err);            
             if (err instanceof InvalidPeriod) {
                 this.throw(400, err.message);
                 return;
@@ -41,6 +41,6 @@ var isCached =  function *(next){
     yield next;
 };
 
-router.get('/admin/:iso/:id1?/:id2?', isCached, UMDLossGainRouterV2.fetchData);
+router.get('/admin/:iso/:id1?/:id2?', isCached, UMDLossGainRouterV3.fetchData);
 
 module.exports = router;
