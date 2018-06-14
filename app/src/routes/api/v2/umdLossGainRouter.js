@@ -4,11 +4,11 @@ const Router = require('koa-router');
 const logger = require('logger');
 const moment = require('moment');
 const NotFound = require('errors/notFound');
-const ElasticService = require('services/elasticService');
-const AnalysisService = require('services/analysisService');
-const DateValidator = require('validators/dateValidator');
 const InvalidPeriod = require('errors/invalidPeriod');
+const DateValidator = require('validators/dateValidator');
+const ElasticService = require('services/elasticService');
 const ElasticSerializer = require('serializers/elasticSerializer');
+const AnalysisService = require('services/analysisService');
 const GeostoreService = require('services/geostoreService');
 const GladAlertsService = require('services/gladAlertsService');
 
@@ -64,7 +64,6 @@ class UMDLossGainRouterV2 {
             if (data && data.totals) {
                 data.totals.gladAlerts = glads;
             }
-            logger.debug('DATA------------->', data);
             this.body = ElasticSerializer.serialize(data);
 
         } catch (err) {

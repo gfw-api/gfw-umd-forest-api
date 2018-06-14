@@ -4,12 +4,13 @@ const Router = require('koa-router');
 const logger = require('logger');
 const moment = require('moment');
 const NotFound = require('errors/notFound');
-const ElasticService = require('services/elasticService');
-const DateValidator = require('validators/dateValidator');
 const InvalidPeriod = require('errors/invalidPeriod');
+const DateValidator = require('validators/dateValidator');
+const ElasticService = require('services/elasticService');
 const ElasticSerializer = require('serializers/elasticSerializer');
-const GladAlertsService = require('services/gladAlertsService');
+const AnalysisService = require('services/analysisService');
 const GeostoreService = require('services/geostoreService');
+const GladAlertsService = require('services/gladAlertsService');
 
 const router = new Router({
     prefix: '/umd-loss-gain'
@@ -48,6 +49,34 @@ class UMDLossGainRouterV3 {
             return;
         }
     }
+
+    static * fetchDataByGeostore(){
+        logger.info('Obtaining data for geostore: ', this.query.geostore);
+        const geostore = this.query.geostore || null;
+        const thresh = this.query.thresh || '30';
+        const period = this.query.period ? this.query.period.split(',').map(el => el.trim()) : []; // why the second split?
+
+        try {
+            let glads = null;
+            if (period.length && DateValidator.validatePeriod(period) && moment(period[1]).isAfter('2015-01-01')) {
+                glads = yield GladAlertsService.fetchData({ thresh, period, geostore });
+            }
+            let data = yield AnalysisService.fetchData({ thresh, period, geostore });
+            if (data && data.totals) {
+                data.totals.gladAlerts = glads;
+            }
+            this.body = ElasticSerializer.serialize(data);
+
+        } catch (err) {
+            logger.error(err);
+            if (err instanceof InvalidPeriod) {
+                this.throw(400, err.message);
+                return;
+            }
+            this.throw(500, 'Internal Server Error');
+            return;
+        }
+    }
 }
 
 var isCached =  function *(next){
@@ -58,5 +87,6 @@ var isCached =  function *(next){
 };
 
 router.get('/admin/:iso/:id1?/:id2?', isCached, UMDLossGainRouterV3.fetchData);
+router.get('/geostore', isCached, UMDLossGainRouterV3.fetchDataByGeostore);
 
 module.exports = router;
