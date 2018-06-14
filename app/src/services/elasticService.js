@@ -68,7 +68,7 @@ class ElasticService {
                  .replace('{area_type}', getAreaType(params.polyname, params.gadm))
                  .replace('{polyname}', params.polyname);
         logger.debug('Obtaining data with:', sql);
-        const table_id = params.gadm === 'v2' ? config.get('elasticTable.v2') : config.get('elasticTable.v3');
+        const table_id = params.gadm === '2.8' ? config.get('elasticTable.v2') : config.get('elasticTable.v3');
         try {
             let result = yield MicroServiceClient.requestToMicroservice({
                 uri: `/query/${table_id}?sql=${sql}`,
