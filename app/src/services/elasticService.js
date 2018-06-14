@@ -3,10 +3,8 @@
 let co = require('co');
 let request = require('co-request');
 const logger = require('logger');
-const moment = require('moment');
 const config = require('config');
 const NotFound = require('errors/notFound');
-const InvalidPeriod = require('errors/invalidPeriod');
 const JSONAPIDeserializer = require('jsonapi-serializer').Deserializer;
 const MicroServiceClient = require('vizz.microservice-client');
 
@@ -181,29 +179,14 @@ class ElasticService {
             logger.error('No data found.');
             return [];
         }
-        let periods = null;
-        if (params.period) {
-            const date_format = 'YYYY-MM-DD';
-            const dates = params.period.split(',').map(el => el.trim()).join(',').split(',');
-            if (!moment(dates[0], date_format, true).isValid() || !moment(dates[1], date_format, true).isValid()) {
-                logger.error('Period must be in the format: YYYY-MM-DD,YYYY-MM-DD');
-                throw new InvalidPeriod('Period must be in the format: YYYY-MM-DD,YYYY-MM-DD');
-            }
-            else if (moment(dates[0]).isAfter(moment(dates[1]))) {
-                logger.error('Start date must be before end date!');
-                throw new InvalidPeriod('Start date must be before end date!');
-            }
-            else {
-                periods = [dates[0].slice(0,4), dates[1].slice(0,4)];
-            }
-        }
-
+        const periodsYears = params.period.length ? [params.period[0].slice(0,4), params.period[1].slice(0,4)] : null;
         if (data && Object.keys(data).length > 0) {
-            const totals = ElasticService.getTotals(data.data, periods);
+            const totals = ElasticService.getTotals(data.data, periodsYears);
             const returnData = Object.assign({
                 totals,
-                years: ElasticService.getLossByYear(data.data, totals.areaHa, periods)
+                years: ElasticService.getLossByYear(data.data, totals.areaHa, periodsYears)
             }, params);
+            const tmp = [];
             return returnData;
         }
         else { return null; } //error message for cases where data.data =[]
