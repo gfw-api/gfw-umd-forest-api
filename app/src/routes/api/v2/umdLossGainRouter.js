@@ -5,6 +5,7 @@ const logger = require('logger');
 const moment = require('moment');
 const NotFound = require('errors/notFound');
 const ElasticService = require('services/elasticService');
+const AnalysisService = require('services/analysisService');
 const DateValidator = require('validators/dateValidator');
 const InvalidPeriod = require('errors/invalidPeriod');
 const ElasticSerializer = require('serializers/elasticSerializer');
@@ -52,15 +53,19 @@ class UMDLossGainRouterV2 {
         logger.info('Obtaining data for geostore: ', this.query.geostore);
         const geostore = this.query.geostore || null;
         const thresh = this.query.thresh || '30';
-        const polyname = this.query.polyname || 'gadm28';
         const period = this.query.period ? this.query.period.split(',').map(el => el.trim()) : []; // why the second split?
 
         try {
-            let data = null;
+            let glads = null;
             if (period.length && DateValidator.validatePeriod(period) && moment(period[1]).isAfter('2015-01-01')) {
-                data = yield GladAlertsService.fetchData({ thresh, polyname, period, geostore });
+                glads = yield GladAlertsService.fetchData({ thresh, period, geostore });
             }
-            this.body = {gladAlerts: data};
+            let data = yield AnalysisService.fetchData({ thresh, period, geostore });
+            if (data && data.totals) {
+                data.totals.gladAlerts = glads;
+            }
+            logger.debug('DATA------------->', data);
+            this.body = ElasticSerializer.serialize(data);
 
         } catch (err) {
             logger.error(err);
