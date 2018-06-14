@@ -46,7 +46,7 @@ class GladAlertsService {
                  .replace('{period}', `?period=${params.period}`)
                  .replace('{threshold}', `&thresh=${params.thresh}`);
 
-        logger.debug('Obtaining data';
+        logger.debug('Obtaining data');
         try {
             let result = yield MicroServiceClient.requestToMicroservice({
                 uri: url,
