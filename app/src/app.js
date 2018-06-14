@@ -74,17 +74,17 @@ const port = process.env.PORT || config.get('service.port');
 server.listen(port, function () {
     const microserviceClient = require('vizz.microservice-client');
 
-    microserviceClient.register({
-        id: config.get('service.id'),
-        name: config.get('service.name'),
-        dirConfig: path.join(__dirname, '../microservice'),
-        dirPackage: path.join(__dirname, '../../'),
-        logger: logger,
-        app: app
-    });
-    if (process.env.CT_REGISTER_MODE && process.env.CT_REGISTER_MODE === 'auto') {
-        microserviceClient.autoDiscovery(config.get('service.name'));
-    }
+    // microserviceClient.register({
+    //     id: config.get('service.id'),
+    //     name: config.get('service.name'),
+    //     dirConfig: path.join(__dirname, '../microservice'),
+    //     dirPackage: path.join(__dirname, '../../'),
+    //     logger: logger,
+    //     app: app
+    // });
+    // if (process.env.CT_REGISTER_MODE && process.env.CT_REGISTER_MODE === 'auto') {
+    //     microserviceClient.autoDiscovery(config.get('service.name'));
+    // }
 });
 
 logger.info('Server started in port:' + port);

@@ -35,6 +35,13 @@
             "path": "/api/v1/umd-loss-gain/admin/:iso/:id1"
         }]
     }, {
+        "url": "/v2/umd-loss-gain/geostore",
+        "method": "GET",
+        "endpoints": [{
+            "method": "GET",
+            "path": "/api/v2/umd-loss-gain/geostore"
+        }]
+    }, {
         "url": "/v2/umd-loss-gain/admin/:iso",
         "method": "GET",
         "endpoints": [{
