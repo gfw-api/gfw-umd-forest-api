@@ -8,6 +8,7 @@ const DateValidator = require('validators/dateValidator');
 const InvalidPeriod = require('errors/invalidPeriod');
 const ElasticSerializer = require('serializers/elasticSerializer');
 const GeostoreService = require('services/geostoreService');
+const GladAlertsService = require('services/gladAlertsService');
 
 const router = new Router({
     prefix: '/umd-loss-gain'
@@ -24,8 +25,12 @@ class UMDLossGainRouterV2 {
         const period = this.query.period ? this.query.period.split(',').map(el => el.trim()).join(',').split(',') : [];
 
         try {
-            DateValidator.validatePeriod(period);
+            let glads = null;
+            if (period.length && DateValidator.validatePeriod(period)) {
+                glads = yield GladAlertsService.fetchData({ iso: iso.toUpperCase(), adm1: id1, adm2: id2, thresh, polyname, period });
+            }
             let data = yield ElasticService.fetchData({ iso: iso.toUpperCase(), adm1: id1, adm2: id2, thresh, polyname, period, gadm: GADM });
+            data.totals.gladAlerts = glads;
             this.body = ElasticSerializer.serialize(data);
 
         } catch (err) {

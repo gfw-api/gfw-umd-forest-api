@@ -19,7 +19,7 @@ class DateValidator {
             throw new InvalidPeriod('Start date must be before end date!');
         }
         else {
-            return;
+            return true;
         }
     }
 

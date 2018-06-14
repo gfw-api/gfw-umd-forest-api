@@ -6,7 +6,7 @@ var elasticSerializer = new JSONAPISerializer('umd', {
 
     attributes: ['gadm', 'iso', 'adm1', 'adm2', 'thresh', 'polyname', 'period', 'totals', 'years'],
     totals:{
-        attributes: ['areaHa', 'extent2000', 'extent2000Perc', 'extent2010', 'extent2010Perc', 'gain', 'gainPerc', 'loss', 'lossPerc']
+        attributes: ['areaHa', 'extent2000', 'extent2000Perc', 'extent2010', 'extent2010Perc', 'gain', 'gainPerc', 'loss', 'lossPerc', 'gladAlerts']
     },
     years: {
         attributes: ['year', 'loss', 'lossPerc']
