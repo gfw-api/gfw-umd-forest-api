@@ -21,7 +21,7 @@ var deserializer = function(obj) {
     };
 };
 
-const GLAD_URL = 'https://production-api.globalforestwatch.org/v1/glad-alerts/admin/{location}{period}{threshold}';
+const GLAD_URL = '/glad-alerts/admin/{location}{period}{threshold}';
 
 class GladAlertsService {
     // use this for testing locally
