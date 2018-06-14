@@ -51,6 +51,10 @@ app.use(require('koa-cash')({
     set(key, value) {
         logger.debug('Setting in cache. key: %s, value: ', key, value);
         cache.set(key, value);
+    },
+    hash(_this) {
+        logger.debug('Hash by: ', _this.request.originalUrl);
+        return _this.request.originalUrl;
     }
 }));
 

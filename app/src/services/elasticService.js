@@ -3,10 +3,8 @@
 let co = require('co');
 let request = require('co-request');
 const logger = require('logger');
-const moment = require('moment');
 const config = require('config');
 const NotFound = require('errors/notFound');
-const InvalidPeriod = require('errors/invalidPeriod');
 const JSONAPIDeserializer = require('jsonapi-serializer').Deserializer;
 const MicroServiceClient = require('vizz.microservice-client');
 
@@ -18,12 +16,13 @@ const getLocationVars = ({ adm1, adm2 }) => {
     return `iso${adm1 ? `, adm1`: ''}${adm2 ? `, adm2`: ''},`;
 };
 
-const getAreaType = polyname => {
-    return `${polyname !== 'gadm28' ? 'area_poly_aoi' : 'area_gadm28'}`;
+const getAreaType = ( polyname, version ) => {
+    const poly_version = version === '2.8' ? 'gadm28' : 'admin';
+    return `${polyname !== `${poly_version}` ? 'area_poly_aoi' : `area_${poly_version}`}`;
 };
 
-const QUERY = `SELECT {vars} area_extent as extent2010, area_extent_2000 as extent2000, \
-                {area_type} as area, year_data as loss_data,area_gain as gain \
+const QUERY = `SELECT {vars} area_extent AS extent2010, area_extent_2000 AS extent2000, \
+                {area_type} AS area, year_data AS loss_data, area_gain AS gain \
                 FROM data
                 WHERE {location} \
                 AND thresh = {threshold} \
@@ -34,48 +33,55 @@ var deserializer = function(obj) {
         new JSONAPIDeserializer({keyForAttribute: 'camelCase'}).deserialize(obj, callback);
     };
 };
-
-class V2DBService {
+class ElasticService {
     // use this for testing locally
-    // static * getData(sql, params) {
-    //     sql = sql.replace('{location}', getLocationString(params))
-    //              .replace('{vars}', getLocationVars(params))
-    //              .replace('{threshold}', params.thresh)
-    //              .replace('{area_type}', getAreaType(params.polyname))
-    //              .replace('{polyname}', params.polyname);
-    
-    //     logger.debug('Obtaining data with:', sql);
-    //     let result = yield request.get('https://production-api.globalforestwatch.org/v1/query/499682b1-3174-493f-ba1a-368b4636708e?sql='+sql); // move to env
-    //     if (result.statusCode !== 200) {
-    //         console.error('Error obtaining data:');
-    //         console.error(result);
-    //         return null;
-    //     }
-    //     return JSON.parse(result.body);
-    // }
-
-    //Use this one for prod/staging
     static * getData(sql, params) {
         sql = sql.replace('{location}', getLocationString(params))
                  .replace('{vars}', getLocationVars(params))
                  .replace('{threshold}', params.thresh)
-                 .replace('{area_type}', getAreaType(params.polyname))
+                 .replace('{area_type}', getAreaType(params.polyname, params.gadm))
                  .replace('{polyname}', params.polyname);
-
-        logger.debug('Obtaining data with:', sql);
-        try {
-            let result = yield MicroServiceClient.requestToMicroservice({
-                uri: `/query/499682b1-3174-493f-ba1a-368b4636708e?sql=${sql}`,
-                method: 'GET',
-                json: true
-            });
-            logger.debug(result);
-            return result.body;
-        } catch (err) {
-            logger.error(err);
-            throw err;
+        let url = '';
+        let id = '';
+        if (params.gadm && params.gadm === '2.8') {
+            id = config.get('elasticTable.v2');
+            url = `https://production-api.globalforestwatch.org/v1/query/${id}?sql=`;
+        } else if (params.gadm && params.gadm === '3.6') {
+            id = config.get('elasticTable.v3');
+            url = `https://staging-api.globalforestwatch.org/v1/query/${id}?sql=`;
         }
+        logger.debug('Obtaining data with:', url+sql);
+        let result = yield request.get(url+sql);
+        if (result.statusCode !== 200) {
+            console.error('Error obtaining data:');
+            console.error(result);
+            return null;
+        }
+        return JSON.parse(result.body);
     }
+
+    //Use this one for prod/staging
+    // static * getData(sql, params) {
+    //     sql = sql.replace('{location}', getLocationString(params))
+    //              .replace('{vars}', getLocationVars(params))
+    //              .replace('{threshold}', params.thresh)
+    //              .replace('{area_type}', getAreaType(params.polyname, params.gadm))
+    //              .replace('{polyname}', params.polyname);
+    //     logger.debug('Obtaining data with:', sql);
+    //     const table_id = params.gadm === 'v2' ? config.get('elasticTable.v2') : config.get('elasticTable.v3');
+    //     try {
+    //         let result = yield MicroServiceClient.requestToMicroservice({
+    //             uri: `/query/${table_id}?sql=${sql}`,
+    //             method: 'GET',
+    //             json: true
+    //         });
+    //         logger.debug(result);
+    //         return result.body;
+    //     } catch (err) {
+    //         logger.error(err);
+    //         throw err;
+    //     }
+    // }
 
     static sum (a, b) {
         return a + b;
@@ -90,9 +96,9 @@ class V2DBService {
                 .map(year => {
                     return year.area_loss;
                 });
-            return lossTotal.reduce(V2DBService.sum,0);
+            return lossTotal.reduce(ElasticService.sum,0);
         });
-        return loss.reduce(V2DBService.sum,0);
+        return loss.reduce(ElasticService.sum,0);
     }
 
     static getLossByYear (data, area, periods) {
@@ -159,7 +165,7 @@ class V2DBService {
             returnData.gain += d.gain;
             returnData.areaHa += d.area;
         });
-        returnData.loss = V2DBService.getLossTotal(data, periods);
+        returnData.loss = ElasticService.getLossTotal(data, periods);
         returnData.extent2000Perc = 100 * returnData.extent2000 / returnData.areaHa;
         returnData.extent2010Perc = 100 * returnData.extent2010 / returnData.areaHa;
         returnData.gainPerc = 100 * returnData.gain / returnData.areaHa;
@@ -168,38 +174,23 @@ class V2DBService {
     }
 
     * fetchData(params) {
-        const data = yield V2DBService.getData(QUERY, params);
-        if (data.data.length === 0) {
+        const data = yield ElasticService.getData(QUERY, params);
+        if (!data || !data.data || data.data.length === 0) {
             logger.error('No data found.');
             return [];
         }
-        let periods = null;
-        if (params.period) {
-            const date_format = 'YYYY-MM-DD';
-            const dates = params.period.split(',').map(el => el.trim()).join(',').split(',');
-            if (!moment(dates[0], date_format, true).isValid() || !moment(dates[1], date_format, true).isValid()) {
-                logger.error('Period must be in the format: YYYY-MM-DD,YYYY-MM-DD');
-                throw new InvalidPeriod('Period must be in the format: YYYY-MM-DD,YYYY-MM-DD');
-            }
-            else if (moment(dates[0]).isAfter(moment(dates[1]))) {
-                logger.error('Start date must be before end date!');
-                throw new InvalidPeriod('Start date must be before end date!');
-            }
-            else {
-                periods = [dates[0].slice(0,4), dates[1].slice(0,4)];
-            }
-        }
-
+        const periodsYears = params.period.length ? [params.period[0].slice(0,4), params.period[1].slice(0,4)] : null;
         if (data && Object.keys(data).length > 0) {
-            const totals = V2DBService.getTotals(data.data, periods);
+            const totals = ElasticService.getTotals(data.data, periodsYears);
             const returnData = Object.assign({
                 totals,
-                years: V2DBService.getLossByYear(data.data, totals.areaHa, periods)
+                years: ElasticService.getLossByYear(data.data, totals.areaHa, periodsYears)
             }, params);
+            const tmp = [];
             return returnData;
         }
         else { return null; } //error message for cases where data.data =[]
     }
 }
 
-module.exports = new V2DBService();
+module.exports = new ElasticService();
