@@ -18,11 +18,11 @@ const GADM = '2.8';
 class UMDLossGainRouterV2 {
 
     static * fetchData(){
-        const { iso, id1, id2} = this.params;
+        const { iso, id1, id2 } = this.params;
         logger.info('Obtaining data for', this.params);
         const thresh = this.query.thresh || '30';
         const polyname = this.query.polyname || 'gadm28';
-        const period = this.query.period ? this.query.period.split(',').map(el => el.trim()).join(',').split(',') : [];
+        const period = this.query.period ? this.query.period.split(',').map(el => el.trim()) : []; // why the second split?
 
         try {
             let glads = null;
@@ -30,7 +30,9 @@ class UMDLossGainRouterV2 {
                 glads = yield GladAlertsService.fetchData({ iso: iso.toUpperCase(), adm1: id1, adm2: id2, thresh, polyname, period });
             }
             let data = yield ElasticService.fetchData({ iso: iso.toUpperCase(), adm1: id1, adm2: id2, thresh, polyname, period, gadm: GADM });
-            data.totals.gladAlerts = glads;
+            if (data && data.totals) {
+                data.totals.gladAlerts = glads;
+            }
             this.body = ElasticSerializer.serialize(data);
 
         } catch (err) {
@@ -39,6 +41,8 @@ class UMDLossGainRouterV2 {
                 this.throw(400, err.message);
                 return;
             }
+            this.throw(500, 'Internal Server Error');
+            return;
         }
     }
 }

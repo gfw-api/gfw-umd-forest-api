@@ -22,15 +22,17 @@ class UMDLossGainRouterV3 {
         logger.info('Obtaining data for', this.params);
         const thresh = this.query.thresh || '30';
         const polyname = this.query.polyname || 'admin';
-        const period = this.query.period ? this.query.period.split(',').map(el => el.trim()).join(',').split(',') : [];
+        const period = this.query.period ? this.query.period.split(',').map(el => el.trim()) : []; // why the second split?
 
         try {
-            let glads = null;            
+            let glads = null;
             if (period.length && DateValidator.validatePeriod(period)) {
                 glads = yield GladAlertsService.fetchData({ iso: iso.toUpperCase(), adm1: id1, adm2: id2, thresh, polyname, period });
             }
             let data = yield ElasticService.fetchData({ iso: iso.toUpperCase(), adm1: id1, adm2: id2, thresh, polyname, period, gadm: GADM });
-            data.totals.gladAlerts = glads;
+            if (data && data.totals) { // added validation
+                data.totals.gladAlerts = glads;
+            }
             this.body = ElasticSerializer.serialize(data);
 
         } catch (err) {
@@ -39,6 +41,9 @@ class UMDLossGainRouterV3 {
                 this.throw(400, err.message);
                 return;
             }
+            // just return a generic error if an error is caught but not identified
+            this.throw(500, 'Internal Server Error');
+            return;
         }
     }
 }
