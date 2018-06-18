@@ -3,13 +3,11 @@
 const Router = require('koa-router');
 const logger = require('logger');
 const moment = require('moment');
-const NotFound = require('errors/notFound');
 const InvalidPeriod = require('errors/invalidPeriod');
 const DateValidator = require('validators/dateValidator');
 const ElasticService = require('services/elasticService');
 const ElasticSerializer = require('serializers/elasticSerializer');
 const AnalysisService = require('services/analysisService');
-const GeostoreService = require('services/geostoreService');
 const GladAlertsService = require('services/gladAlertsService');
 
 const router = new Router({

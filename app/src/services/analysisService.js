@@ -25,43 +25,44 @@ const GEOSTORE_URL = '/v1/umd-loss-gain?geostore={geostore}&period={period}&thre
 
 class GladAlertsService {
     // use this for testing locally
-    static * getData(url, params) {
-        url = 'https://production-api.globalforestwatch.org' + url; 
-        url = url.replace('{location}', getLocationVars(params))
-                 .replace('{period}', `${params.period}`)
-                 .replace('{threshold}', `${params.thresh}`)
-                 .replace('{geostore}', `${params.geostore}`);
+    // static * getData(url, params) {
+    //     url = 'https://production-api.globalforestwatch.org' + url; 
+    //     url = url.replace('{location}', getLocationVars(params))
+    //              .replace('{period}', `${params.period}`)
+    //              .replace('{threshold}', `${params.thresh}`)
+    //              .replace('{geostore}', `${params.geostore}`);
     
-        logger.debug('Obtaining forest data with:', url);
-        let result = yield request.get(url); // move to env
-        if (result.statusCode !== 200) {
-            console.error('Error obtaining data:');
-            console.error(result);
-            return null;
-        }
-        return JSON.parse(result.body);
-    }
+    //     logger.debug('Obtaining forest data with:', url);
+    //     let result = yield request.get(url); // move to env
+    //     if (result.statusCode !== 200) {
+    //         console.error('Error obtaining data:');
+    //         console.error(result);
+    //         return null;
+    //     }
+    //     return JSON.parse(result.body);
+    // }
 
     //Use this one for prod/staging
-    // static * getData(url, params) {
-    //     url = url.replace('{location}', getLocationVars(params))
-    //              .replace('{period}', `?period=${params.period}`)
-    //              .replace('{threshold}', `&thresh=${params.thresh}`);
+    static * getData(url, params) {
+        url = url.replace('{location}', getLocationVars(params))
+                 .replace('{period}', `${params.period}`)
+                 .replace('{threshold}', `${params.thresh}`);
+                 .replace('{geostore}', `${params.geostore}`);
 
-    //     logger.debug('Obtaining data');
-    //     try {
-    //         let result = yield MicroServiceClient.requestToMicroservice({
-    //             uri: url,
-    //             method: 'GET',
-    //             json: true
-    //         });
-    //         logger.debug(result);
-    //         return result.body;
-    //     } catch (err) {
-    //         logger.error(err);
-    //         throw err;
-    //     }
-    // }
+        logger.debug('Obtaining data');
+        try {
+            let result = yield MicroServiceClient.requestToMicroservice({
+                uri: url,
+                method: 'GET',
+                json: true
+            });
+            logger.debug(result);
+            return result.body;
+        } catch (err) {
+            logger.error(err);
+            throw err;
+        }
+    }
 
     * fetchData(params) {
         const date_format = 'YYYY-MM-DD';
