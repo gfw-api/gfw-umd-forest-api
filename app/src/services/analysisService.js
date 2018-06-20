@@ -26,12 +26,12 @@ const GEOSTORE_URL = '/v1/umd-loss-gain?geostore={geostore}&period={period}&thre
 class GladAlertsService {
     // use this for testing locally
     // static * getData(url, params) {
-    //     url = 'https://production-api.globalforestwatch.org' + url; 
+    //     url = 'https://production-api.globalforestwatch.org' + url;
     //     url = url.replace('{location}', getLocationVars(params))
     //              .replace('{period}', `${params.period}`)
     //              .replace('{threshold}', `${params.thresh}`)
     //              .replace('{geostore}', `${params.geostore}`);
-    
+
     //     logger.debug('Obtaining forest data with:', url);
     //     let result = yield request.get(url); // move to env
     //     if (result.statusCode !== 200) {
@@ -46,7 +46,7 @@ class GladAlertsService {
     static * getData(url, params) {
         url = url.replace('{location}', getLocationVars(params))
                  .replace('{period}', `${params.period}`)
-                 .replace('{threshold}', `${params.thresh}`);
+                 .replace('{threshold}', `${params.thresh}`)
                  .replace('{geostore}', `${params.geostore}`);
 
         logger.debug('Obtaining data');
@@ -69,7 +69,7 @@ class GladAlertsService {
         const dates = params.period;
 
         const data = yield GladAlertsService.getData(GEOSTORE_URL, params);
-        
+
         if (data && data.data) {
             logger.error('Successfully returned custom forest data: ');
             const { areaHa, gain, loss } = data.data.attributes;
@@ -85,7 +85,7 @@ class GladAlertsService {
             };
             return returnData;
         }
-        else { 
+        else {
             logger.error('No custom forest data found.');
             return null;
         } //error message for cases where data.data =[]

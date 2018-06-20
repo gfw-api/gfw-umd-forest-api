@@ -27,12 +27,12 @@ const GEOSTORE_URL = '/glad-alerts?geostore={geostore}&period={period}&thresh={t
 class GladAlertsService {
     // use this for testing locally
     // static * getData(url, params) {
-    //     url = 'https://production-api.globalforestwatch.org' + url; 
+    //     url = 'https://production-api.globalforestwatch.org' + url;
     //     url = url.replace('{location}', getLocationVars(params))
     //              .replace('{period}', `${params.period}`)
     //              .replace('{threshold}', `${params.thresh}`)
     //              .replace('{geostore}', `${params.geostore}`);
-    
+
     //     logger.debug('Obtaining data with:', url);
     //     let result = yield request.get(url); // move to env
     //     if (result.statusCode !== 200) {
@@ -79,12 +79,12 @@ class GladAlertsService {
 
         const url = params.geostore ? GEOSTORE_URL : ADMIN_URL;
         const data = yield GladAlertsService.getData(url, params);
-        
+
         if (data && data.data) {
             logger.error('Successfully returned GLAD data.');
             return data.data.attributes.value || 0;
         }
-        else { 
+        else {
             logger.error('No GLAD data found.');
             return null;
         } //error message for cases where data.data =[]

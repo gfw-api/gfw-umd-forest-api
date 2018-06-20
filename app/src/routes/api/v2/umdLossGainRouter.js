@@ -58,6 +58,7 @@ class UMDLossGainRouterV2 {
             if (period.length && DateValidator.validatePeriod(period) && moment(period[1]).isAfter('2015-01-01')) {
                 glads = yield GladAlertsService.fetchData({ thresh, period, geostore });
             }
+            logger.debug('getting analysis data');
             let data = yield AnalysisService.fetchData({ thresh, period, geostore });
             if (data && data.totals) {
                 data.totals.gladAlerts = glads;
