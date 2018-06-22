@@ -14,13 +14,6 @@ const getLocationVars = ({ iso, adm1 }) => {
     return adm1 ? `${iso}/${adm1}` : `${iso}`;
 };
 
-
-var deserializer = function(obj) {
-    return function(callback) {
-        new JSONAPIDeserializer({keyForAttribute: 'camelCase'}).deserialize(obj, callback);
-    };
-};
-
 const GLAD_URL = '/glad-alerts/admin/{location}{period}{threshold}';
 
 class GladAlertsService {
@@ -29,9 +22,9 @@ class GladAlertsService {
     //     url = url.replace('{location}', getLocationVars(params))
     //              .replace('{period}', `?period=${params.period}`)
     //              .replace('{threshold}', `&thresh=${params.thresh}`);
-    
+    //     const service = params.gadm === '2.8' ? 'v2/' : 'v3/';    
     //     logger.debug('Obtaining data with:', url);
-    //     let result = yield request.get(url); // move to env
+    //     let result = yield request.get(service + url); // move to env
     //     if (result.statusCode !== 200) {
     //         console.error('Error obtaining data:');
     //         console.error(result);
@@ -45,11 +38,11 @@ class GladAlertsService {
         url = url.replace('{location}', getLocationVars(params))
                  .replace('{period}', `?period=${params.period}`)
                  .replace('{threshold}', `&thresh=${params.thresh}`);
-
+        const service = params.gadm === '2.8' ? 'v2/' : 'v3/';
         logger.debug('Obtaining data');
         try {
             let result = yield MicroServiceClient.requestToMicroservice({
-                uri: url,
+                uri: service + url,
                 method: 'GET',
                 json: true
             });
@@ -62,7 +55,6 @@ class GladAlertsService {
     }
 
     * fetchData(params) {
-        const date_format = 'YYYY-MM-DD';
         const dates = params.period;
 
         if (moment(dates[0]).isBefore('2015-01-01')) {
