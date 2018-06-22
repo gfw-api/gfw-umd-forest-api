@@ -8,5 +8,9 @@
     "service": {
         "uri": "http://gfw-umd-forest-api-staging.herokuapp.com",
         "port": null
+    },
+    "elasticTable": {
+        "v2": "",
+        "v3": "e5149c98-c31d-4f7e-95eb-654993031348"  
     }
 }

@@ -48,7 +48,7 @@ class ElasticService {
     //         url = `https://production-api.globalforestwatch.org/v1/query/${id}?sql=`;
     //     } else if (params.gadm && params.gadm === '3.6') {
     //         id = config.get('elasticTable.v3');
-    //         url = `https://staging-api.globalforestwatch.org/v1/query/${id}?sql=`;
+    //         url = `https://production-api.globalforestwatch.org/v1/query/${id}?sql=`;
     //     }
     //     logger.debug('Obtaining data with:', url+sql);
     //     let result = yield request.get(url+sql);
