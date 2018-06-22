@@ -14,13 +14,6 @@ const getLocationVars = ({ iso, adm1 }) => {
     return adm1 ? `${iso}/${adm1}` : `${iso}`;
 };
 
-
-var deserializer = function(obj) {
-    return function(callback) {
-        new JSONAPIDeserializer({keyForAttribute: 'camelCase'}).deserialize(obj, callback);
-    };
-};
-
 const GLAD_URL = '/glad-alerts/admin/{location}{period}{threshold}';
 
 class GladAlertsService {
@@ -28,10 +21,9 @@ class GladAlertsService {
     // static * getData(url, params) {
     //     url = url.replace('{location}', getLocationVars(params))
     //              .replace('{period}', `?period=${params.period}`)
-    //              .replace('{threshold}', `&thresh=${params.thresh}`);
-    
+    //              .replace('{threshold}', `&thresh=${params.thresh}`);     
     //     logger.debug('Obtaining data with:', url);
-    //     let result = yield request.get(url); // move to env
+    //     let result = yield request.get('https://production-api.globalforestwatch.org/v1' + url); // move to env
     //     if (result.statusCode !== 200) {
     //         console.error('Error obtaining data:');
     //         console.error(result);
@@ -45,7 +37,6 @@ class GladAlertsService {
         url = url.replace('{location}', getLocationVars(params))
                  .replace('{period}', `?period=${params.period}`)
                  .replace('{threshold}', `&thresh=${params.thresh}`);
-
         logger.debug('Obtaining data');
         try {
             let result = yield MicroServiceClient.requestToMicroservice({
@@ -62,7 +53,6 @@ class GladAlertsService {
     }
 
     * fetchData(params) {
-        const date_format = 'YYYY-MM-DD';
         const dates = params.period;
 
         if (moment(dates[0]).isBefore('2015-01-01')) {
