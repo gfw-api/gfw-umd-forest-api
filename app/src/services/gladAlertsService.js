@@ -21,8 +21,7 @@ class GladAlertsService {
     // static * getData(url, params) {
     //     url = url.replace('{location}', getLocationVars(params))
     //              .replace('{period}', `?period=${params.period}`)
-    //              .replace('{threshold}', `&thresh=${params.thresh}`)
-    //              .replace('{version}', params.gadm === '2.8' ? 'v1' : 'v2');     
+    //              .replace('{threshold}', `&thresh=${params.thresh}`);     
     //     logger.debug('Obtaining data with:', url);
     //     let result = yield request.get('https://production-api.globalforestwatch.org/v1' + url); // move to env
     //     if (result.statusCode !== 200) {
