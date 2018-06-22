@@ -21,10 +21,10 @@ class GladAlertsService {
     // static * getData(url, params) {
     //     url = url.replace('{location}', getLocationVars(params))
     //              .replace('{period}', `?period=${params.period}`)
-    //              .replace('{threshold}', `&thresh=${params.thresh}`);
-    //     const service = params.gadm === '2.8' ? 'v2/' : 'v3/';    
+    //              .replace('{threshold}', `&thresh=${params.thresh}`)
+    //              .replace('{version}', params.gadm === '2.8' ? 'v1' : 'v2');     
     //     logger.debug('Obtaining data with:', url);
-    //     let result = yield request.get(service + url); // move to env
+    //     let result = yield request.get('https://production-api.globalforestwatch.org/v1' + url); // move to env
     //     if (result.statusCode !== 200) {
     //         console.error('Error obtaining data:');
     //         console.error(result);
@@ -38,11 +38,10 @@ class GladAlertsService {
         url = url.replace('{location}', getLocationVars(params))
                  .replace('{period}', `?period=${params.period}`)
                  .replace('{threshold}', `&thresh=${params.thresh}`);
-        const service = params.gadm === '2.8' ? 'v2/' : 'v3/';
         logger.debug('Obtaining data');
         try {
             let result = yield MicroServiceClient.requestToMicroservice({
-                uri: service + url,
+                uri: url,
                 method: 'GET',
                 json: true
             });
