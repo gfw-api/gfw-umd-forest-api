@@ -3,11 +3,10 @@
 const Router = require('koa-router');
 const logger = require('logger');
 const ElasticService = require('services/elasticService');
-const NotFound = require('errors/notFound');
+const config = require('config');
 const DateValidator = require('validators/dateValidator');
 const InvalidPeriod = require('errors/invalidPeriod');
 const ElasticSerializer = require('serializers/elasticSerializer');
-const GeostoreService = require('services/geostoreService');
 const GladAlertsService = require('services/gladAlertsService');
 
 const router = new Router({
@@ -26,7 +25,7 @@ class UMDLossGainRouterV2 {
 
         try {
             let glads = null;
-            if (period.length && DateValidator.validatePeriod(period)) {
+            if (period.length && DateValidator.validatePeriod(period) && config.get('gladWhitelist.iso').includes(iso)) {
                 glads = yield GladAlertsService.fetchData({ iso: iso.toUpperCase(), adm1: id1, adm2: id2, thresh, polyname, period });
             }
             let data = yield ElasticService.fetchData({ iso: iso.toUpperCase(), adm1: id1, adm2: id2, thresh, polyname, period, gadm: GADM });

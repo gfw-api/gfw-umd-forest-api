@@ -5,10 +5,9 @@ const logger = require('logger');
 const ElasticService = require('services/elasticService');
 const DateValidator = require('validators/dateValidator');
 const InvalidPeriod = require('errors/invalidPeriod');
-const NotFound = require('errors/notFound');
+const config = require('config');
 const ElasticSerializer = require('serializers/elasticSerializer');
 const GladAlertsService = require('services/gladAlertsService');
-const GeostoreService = require('services/geostoreService');
 
 const router = new Router({
     prefix: '/umd-loss-gain'
@@ -26,7 +25,7 @@ class UMDLossGainRouterV3 {
 
         try {
             let glads = null;
-            if (period.length && DateValidator.validatePeriod(period)) {
+            if (period.length && DateValidator.validatePeriod(period) && config.get('gladWhitelist.iso').includes(iso)) {
                 glads = yield GladAlertsService.fetchData({ iso: iso.toUpperCase(), adm1: id1, adm2: id2, thresh, polyname, period });
             }
             let data = yield ElasticService.fetchData({ iso: iso.toUpperCase(), adm1: id1, adm2: id2, thresh, polyname, period, gadm: GADM });
