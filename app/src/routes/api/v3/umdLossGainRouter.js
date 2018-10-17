@@ -32,6 +32,8 @@ class UMDLossGainRouterV3 {
             if (data && data.totals) { // added validation
                 data.totals.gladAlerts = glads;
             }
+            data.downloadUrls = {url: 'https://earthenginepartners.appspot.com/science-2013-global-forest'};
+
             this.body = ElasticSerializer.serialize(data);
 
         } catch (err) {
