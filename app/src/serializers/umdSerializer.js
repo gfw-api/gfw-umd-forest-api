@@ -2,7 +2,7 @@
 
 var logger = require('logger');
 var JSONAPISerializer = require('jsonapi-serializer').Serializer;
-var umdSerializer = new JSONAPISerializer('umd', {
+var umdSerializer = new JSONAPISerializer('umd-loss-gain', {
 
     attributes: ['total', 'years'],
     total:{
