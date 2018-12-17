@@ -7,3 +7,5 @@ privatekey.pem
 .ipynb_checkpoints/
 *.ipynb
 .env
+coverage
+.nyc_output

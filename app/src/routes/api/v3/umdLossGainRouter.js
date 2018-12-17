@@ -9,6 +9,8 @@ const config = require('config');
 const ElasticSerializer = require('serializers/elasticSerializer');
 const GladAlertsService = require('services/gladAlertsService');
 
+const nock = require('nock');
+
 const router = new Router({
     prefix: '/umd-loss-gain'
 });
@@ -17,6 +19,7 @@ const GADM = '3.6';
 class UMDLossGainRouterV3 {
 
     static * fetchData(){
+        nock.recorder.rec();
         const { iso, id1, id2} = this.params;
         logger.info('Obtaining data for', this.params);
         const thresh = this.query.thresh || '30';

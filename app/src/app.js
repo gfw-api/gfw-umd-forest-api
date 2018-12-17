@@ -64,14 +64,11 @@ app.use(validate());
 //load routes
 loader.loadRoutes(app);
 
-//Instance of http module
-const server = require('http').Server(app.callback());
-
 // get port of environment, if not exist obtain of the config.
 // In production environment, the port must be declared in environment variable
 const port = process.env.PORT || config.get('service.port');
 
-server.listen(port, function () {
+const server = app.listen(port, function () {
     const microserviceClient = require('vizz.microservice-client');
 
     microserviceClient.register({
@@ -88,3 +85,5 @@ server.listen(port, function () {
 });
 
 logger.info('Server started in port:' + port);
+
+module.exports = server;
