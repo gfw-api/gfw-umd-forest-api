@@ -1,5 +1,8 @@
 # GFW UMD Forest API
 
+[![Build Status](https://travis-ci.org/gfw-api/gfw-umd-forest-api.svg?branch=master)](https://travis-ci.org/gfw-api/gfw-umd-forest-api)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/3b10b3f9b97cb5e275ac/test_coverage)](https://codeclimate.com/github/gfw-api/gfw-umd-forest-api/test_coverage)
+
 This repository holds the microservice that it implement the umd functionality and exposed the /umd-loss-gain endpoint in control tower
 
 [View the documentation for this
