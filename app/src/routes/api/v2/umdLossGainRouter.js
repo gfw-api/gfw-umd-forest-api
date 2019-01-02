@@ -16,7 +16,7 @@ const GADM = '2.8';
 
 class UMDLossGainRouterV2 {
 
-    static * fetchData(){
+    static* fetchData() {
         const { iso, id1, id2 } = this.params;
         logger.info('Obtaining data for', this.params);
         const thresh = this.query.thresh || '30';
@@ -26,9 +26,24 @@ class UMDLossGainRouterV2 {
         try {
             let glads = null;
             if (period.length && DateValidator.validatePeriod(period) && config.get('gladWhitelist.iso').includes(iso)) {
-                glads = yield GladAlertsService.fetchData({ iso: iso.toUpperCase(), adm1: id1, adm2: id2, thresh, polyname, period });
+                glads = yield GladAlertsService.fetchData({
+                    iso: iso.toUpperCase(),
+                    adm1: id1,
+                    adm2: id2,
+                    thresh,
+                    polyname,
+                    period
+                });
             }
-            let data = yield ElasticService.fetchData({ iso: iso.toUpperCase(), adm1: id1, adm2: id2, thresh, polyname, period, gadm: GADM });
+            let data = yield ElasticService.fetchData({
+                iso: iso.toUpperCase(),
+                adm1: id1,
+                adm2: id2,
+                thresh,
+                polyname,
+                period,
+                gadm: GADM
+            });
             if (data && data.totals) {
                 data.totals.gladAlerts = glads;
             }
@@ -46,7 +61,7 @@ class UMDLossGainRouterV2 {
     }
 }
 
-var isCached =  function *(next){
+var isCached = function* (next) {
     if (yield this.cashed()) {
         return;
     }

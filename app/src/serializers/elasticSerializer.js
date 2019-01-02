@@ -5,7 +5,7 @@ var JSONAPISerializer = require('jsonapi-serializer').Serializer;
 var elasticSerializer = new JSONAPISerializer('umd-loss-gain', {
 
     attributes: ['gadm', 'iso', 'adm1', 'adm2', 'thresh', 'polyname', 'period', 'totals', 'years', 'downloadUrls'],
-    totals:{
+    totals: {
         attributes: ['areaHa', 'extent2000', 'extent2000Perc', 'extent2010', 'extent2010Perc', 'gain', 'gainPerc', 'loss', 'lossPerc', 'gladAlerts']
     },
     years: {
@@ -22,9 +22,9 @@ var elasticSerializer = new JSONAPISerializer('umd-loss-gain', {
 
 class ElasticSerializer {
 
-  static serialize(data) {
-    return elasticSerializer.serialize(data);
-  }
+    static serialize(data) {
+        return elasticSerializer.serialize(data);
+    }
 }
 
 module.exports = ElasticSerializer;

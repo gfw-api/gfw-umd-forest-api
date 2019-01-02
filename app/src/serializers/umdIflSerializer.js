@@ -12,9 +12,9 @@ var umdIflSerializer = new JSONAPISerializer('umdIfl', {
 
 class UMDIFLSerializer {
 
-  static serialize(data) {
-    return umdIflSerializer.serialize(data);
-  }
+    static serialize(data) {
+        return umdIflSerializer.serialize(data);
+    }
 }
 
 module.exports = UMDIFLSerializer;

@@ -5,7 +5,7 @@ var JSONAPISerializer = require('jsonapi-serializer').Serializer;
 var umdSerializer = new JSONAPISerializer('umd-loss-gain', {
 
     attributes: ['total', 'years'],
-    total:{
+    total: {
         attributes: ['loss', 'gain', 'tree_extent', 'area_ha']
     },
     years: {
@@ -19,9 +19,9 @@ var umdSerializer = new JSONAPISerializer('umd-loss-gain', {
 
 class UMDSerializer {
 
-  static serialize(data) {
-    return umdSerializer.serialize(data);
-  }
+    static serialize(data) {
+        return umdSerializer.serialize(data);
+    }
 }
 
 module.exports = UMDSerializer;

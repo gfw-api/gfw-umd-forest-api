@@ -16,8 +16,8 @@ const GADM = '3.6';
 
 class UMDLossGainRouterV3 {
 
-    static * fetchData(){
-        const { iso, id1, id2} = this.params;
+    static* fetchData() {
+        const { iso, id1, id2 } = this.params;
         logger.info('Obtaining data for', this.params);
         const thresh = this.query.thresh || '30';
         const polyname = this.query.polyname || 'admin';
@@ -26,13 +26,28 @@ class UMDLossGainRouterV3 {
         try {
             let glads = null;
             if (period.length && DateValidator.validatePeriod(period) && config.get('gladWhitelist.iso').includes(iso)) {
-                glads = yield GladAlertsService.fetchData({ iso: iso.toUpperCase(), adm1: id1, adm2: id2, thresh, polyname, period });
+                glads = yield GladAlertsService.fetchData({
+                    iso: iso.toUpperCase(),
+                    adm1: id1,
+                    adm2: id2,
+                    thresh,
+                    polyname,
+                    period
+                });
             }
-            let data = yield ElasticService.fetchData({ iso: iso.toUpperCase(), adm1: id1, adm2: id2, thresh, polyname, period, gadm: GADM });
+            let data = yield ElasticService.fetchData({
+                iso: iso.toUpperCase(),
+                adm1: id1,
+                adm2: id2,
+                thresh,
+                polyname,
+                period,
+                gadm: GADM
+            });
             if (data && data.totals) { // added validation
                 data.totals.gladAlerts = glads;
             }
-            data.downloadUrls = {url: 'https://earthenginepartners.appspot.com/science-2013-global-forest'};
+            data.downloadUrls = { url: 'https://earthenginepartners.appspot.com/science-2013-global-forest' };
 
             this.body = ElasticSerializer.serialize(data);
 
@@ -49,7 +64,7 @@ class UMDLossGainRouterV3 {
     }
 }
 
-var isCached =  function *(next){
+var isCached = function* (next) {
     if (yield this.cashed()) {
         return;
     }

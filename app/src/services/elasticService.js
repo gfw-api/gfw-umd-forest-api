@@ -9,14 +9,14 @@ const JSONAPIDeserializer = require('jsonapi-serializer').Deserializer;
 const MicroServiceClient = require('vizz.microservice-client');
 
 const getLocationString = ({ iso, adm1, adm2 }) => {
-    return `iso = '${iso}' ${adm1 ? `AND adm1 = ${adm1}`: ''} ${adm2 ? `AND adm2 = ${adm2}`: ''}`;
+    return `iso = '${iso}' ${adm1 ? `AND adm1 = ${adm1}` : ''} ${adm2 ? `AND adm2 = ${adm2}` : ''}`;
 };
 
 const getLocationVars = ({ adm1, adm2 }) => {
-    return `iso${adm1 ? `, adm1`: ''}${adm2 ? `, adm2`: ''},`;
+    return `iso${adm1 ? `, adm1` : ''}${adm2 ? `, adm2` : ''},`;
 };
 
-const getAreaType = ( polyname, version ) => {
+const getAreaType = (polyname, version) => {
     const poly_version = version === '2.8' ? 'gadm28' : 'admin';
     return `${polyname !== `${poly_version}` ? 'area_poly_aoi' : `area_${poly_version}`}`;
 };
@@ -28,11 +28,12 @@ const QUERY = `SELECT {vars} area_extent AS extent2010, area_extent_2000 AS exte
                 AND thresh = {threshold} \
                 AND polyname = '{polyname}'`;
 
-var deserializer = function(obj) {
-    return function(callback) {
-        new JSONAPIDeserializer({keyForAttribute: 'camelCase'}).deserialize(obj, callback);
+var deserializer = function (obj) {
+    return function (callback) {
+        new JSONAPIDeserializer({ keyForAttribute: 'camelCase' }).deserialize(obj, callback);
     };
 };
+
 class ElasticService {
     // use this for testing locally
     // static * getData(sql, params) {
@@ -60,18 +61,18 @@ class ElasticService {
     //     return JSON.parse(result.body);
     // }
 
-    //Use this one for prod/staging
-    static * getData(sql, params) {
-        sql = sql.replace('{location}', getLocationString(params))
-                 .replace('{vars}', getLocationVars(params))
-                 .replace('{threshold}', params.thresh)
-                 .replace('{area_type}', getAreaType(params.polyname, params.gadm))
-                 .replace('{polyname}', params.polyname);
+    // Use this one for prod/staging
+    static* getData(sqlTemplate, params) {
+        const sql = sqlTemplate.replace('{location}', getLocationString(params))
+            .replace('{vars}', getLocationVars(params))
+            .replace('{threshold}', params.thresh)
+            .replace('{area_type}', getAreaType(params.polyname, params.gadm))
+            .replace('{polyname}', params.polyname);
         logger.debug('Obtaining data with:', sql);
-        const table_id = params.gadm === '2.8' ? config.get('elasticTable.v2') : config.get('elasticTable.v3');
+        const tableId = params.gadm === '2.8' ? config.get('elasticTable.v2') : config.get('elasticTable.v3');
         try {
-            let result = yield MicroServiceClient.requestToMicroservice({
-                uri: `/query/${table_id}?sql=${sql}`,
+            const result = yield MicroServiceClient.requestToMicroservice({
+                uri: `/query/${tableId}?sql=${sql}`,
                 method: 'GET',
                 json: true
             });
@@ -83,29 +84,29 @@ class ElasticService {
         }
     }
 
-    static sum (a, b) {
+    static sum(a, b) {
         return a + b;
     }
 
-    static getLossTotal (data, periods) {
+    static getLossTotal(data, periods) {
         let loss = data.map(obj => {
             const filteredLoss =
                 periods ? obj.loss_data.filter(year => year.year >= periods[0] && year.year <= periods[1])
-                        : obj.loss_data;
+                    : obj.loss_data;
             let lossTotal = filteredLoss
                 .map(year => {
                     return year.area_loss;
                 });
-            return lossTotal.reduce(ElasticService.sum,0);
+            return lossTotal.reduce(ElasticService.sum, 0);
         });
-        return loss.reduce(ElasticService.sum,0);
+        return loss.reduce(ElasticService.sum, 0);
     }
 
-    static getLossByYear (data, area, periods) {
+    static getLossByYear(data, area, periods) {
         let loss = data.map(obj => {
             const filteredLoss =
                 periods ? obj.loss_data.filter(year => year.year >= periods[0] && year.year <= periods[1])
-                        : obj.loss_data;
+                    : obj.loss_data;
             let lossTotal = filteredLoss
                 .map(year => {
                     let tmp = {
@@ -141,12 +142,13 @@ class ElasticService {
                     lossPerc: 100 * el[1] / area
                 };
             });
-        return returnData;
+            return returnData;
+        } else {
+            return null;
         }
-        else { return null; }
     }
 
-    static getTotals (data, periods) {
+    static getTotals(data, periods) {
         const returnData = {
             extent2000: 0,
             extent2000Perc: 0,
@@ -179,17 +181,17 @@ class ElasticService {
             logger.error('No data found.');
             return [];
         }
-        const periodsYears = params.period.length ? [params.period[0].slice(0,4), params.period[1].slice(0,4)] : null;
+        const periodsYears = params.period.length ? [params.period[0].slice(0, 4), params.period[1].slice(0, 4)] : null;
         if (data && Object.keys(data).length > 0) {
             const totals = ElasticService.getTotals(data.data, periodsYears);
             const returnData = Object.assign({
                 totals,
                 years: ElasticService.getLossByYear(data.data, totals.areaHa, periodsYears)
             }, params);
-            const tmp = [];
             return returnData;
         }
-        else { return null; } //error message for cases where data.data =[]
+
+        return null;
     }
 }
 

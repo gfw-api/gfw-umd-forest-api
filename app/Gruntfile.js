@@ -7,8 +7,6 @@ module.exports = function (grunt) {
 
     grunt.initConfig({
 
-
-        clean: {},
         jshint: {
             js: {
                 src: [
@@ -54,6 +52,7 @@ module.exports = function (grunt) {
                 options: {
                     reporter: 'spec',
                     quiet: false, // Optionally suppress output to standard out (defaults to false)
+                    timeout: 100000,
                     clearRequireCache: true, // Optionally clear the require cache before running tests (defaults to false)
 
                 },
@@ -92,15 +91,29 @@ module.exports = function (grunt) {
                 }
             },
 
+        },
+
+        nyc: {
+            cover: {
+                options: {
+                    include: ['app/src/**'],
+                    exclude: '*.test.*',
+                    reporter: ['lcov', 'text-summary'],
+                    reportDir: 'coverage',
+                    all: true
+                },
+                cmd: false,
+                args: ['grunt', '--gruntfile', 'app/Gruntfile.js', 'mochaTest:e2e']
+            }
         }
     });
 
 
     grunt.registerTask('unitTest', ['mochaTest:unit']);
 
-    grunt.registerTask('e2eTest', ['express:dev', 'mochaTest:e2e']);
+    grunt.registerTask('e2eTest', ['mochaTest:e2e']);
 
-    grunt.registerTask('test', ['jshint', 'unitTest']);
+    grunt.registerTask('test', ['e2eTest', 'unitTest']);
 
     grunt.registerTask('serve', ['express:dev', 'watch']);
 
