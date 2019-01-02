@@ -21,7 +21,7 @@ class GladAlertsService {
     // static * getData(url, params) {
     //     url = url.replace('{location}', getLocationVars(params))
     //              .replace('{period}', `?period=${params.period}`)
-    //              .replace('{threshold}', `&thresh=${params.thresh}`);     
+    //              .replace('{threshold}', `&thresh=${params.thresh}`);
     //     logger.debug('Obtaining data with:', url);
     //     let result = yield request.get('https://production-api.globalforestwatch.org/v1' + url); // move to env
     //     if (result.statusCode !== 200) {
@@ -33,10 +33,10 @@ class GladAlertsService {
     // }
 
     //Use this one for prod/staging
-    static * getData(url, params) {
+    static* getData(url, params) {
         url = url.replace('{location}', getLocationVars(params))
-                 .replace('{period}', `?period=${params.period}`)
-                 .replace('{threshold}', `&thresh=${params.thresh}`);
+            .replace('{period}', `?period=${params.period}`)
+            .replace('{threshold}', `&thresh=${params.thresh}`);
         logger.debug('Obtaining data');
         try {
             let result = yield MicroServiceClient.requestToMicroservice({
@@ -58,17 +58,15 @@ class GladAlertsService {
         if (moment(dates[0]).isBefore('2015-01-01')) {
             params.period = '2015-01-01,'.concat(dates[1]);
             logger.debug(params.period);
-        }
-        else {
+        } else {
             params.period = dates.join(',');
         }
 
         const data = yield GladAlertsService.getData(GLAD_URL, params);
-        
+
         if (data && data.data) {
             return data.data.attributes.value || 0;
-        }
-        else { 
+        } else {
             logger.error('No GLAD data found.');
             return null;
         } //error message for cases where data.data =[]

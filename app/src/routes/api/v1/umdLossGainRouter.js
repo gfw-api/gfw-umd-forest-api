@@ -14,21 +14,21 @@ const router = new Router({
 
 class UMDLossGainRouter {
 
-    static * getIFLNational(){
+    static* getIFLNational() {
         logger.info('Obtaining ifl national data');
         const thresh = this.query.thresh || '30';
         let data = yield CartoDBService.getIFLNational(this.params.iso, thresh);
         this.body = UMDIFLSerializer.serialize(data);
     }
 
-    static * getIFLSubnational(){
+    static* getIFLSubnational() {
         logger.info('Obtaining ifl subnational data');
         const thresh = this.query.thresh || '30';
         let data = yield CartoDBService.getIFLSubnational(this.params.iso, this.params.id1, thresh);
         this.body = UMDIFLSerializer.serialize(data);
     }
 
-    static * getNational(){
+    static* getNational() {
         logger.info('Obtaining national data');
         const thresh = this.query.thresh || '30';
         let data = yield CartoDBService.getNational(this.params.iso, thresh, this.query.period);
@@ -38,7 +38,7 @@ class UMDLossGainRouter {
         this.body = UMDSerializer.serialize(data);
     }
 
-    static * getSubnational(){
+    static* getSubnational() {
         logger.info('Obtaining subnational data');
         const thresh = this.query.thresh || '30';
         let data = yield CartoDBService.getSubnational(this.params.iso, this.params.id1, thresh, this.query.period);
@@ -50,14 +50,14 @@ class UMDLossGainRouter {
 
 }
 
-var isCached =  function *(next){
+var isCached = function* (next) {
     if (yield this.cashed()) {
         return;
     }
     yield next;
 };
 
-router.get('/admin/ifl/:iso', isCached,  UMDLossGainRouter.getIFLNational);
+router.get('/admin/ifl/:iso', isCached, UMDLossGainRouter.getIFLNational);
 router.get('/admin/ifl/:iso/:id1', isCached, UMDLossGainRouter.getIFLSubnational);
 router.get('/admin/:iso', isCached, UMDLossGainRouter.getNational);
 router.get('/admin/:iso/:id1', isCached, UMDLossGainRouter.getSubnational);

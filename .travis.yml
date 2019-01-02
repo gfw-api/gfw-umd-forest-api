@@ -1,14 +1,27 @@
 language: node_js
-node_js:
-- 5.7.0
-sudo: required
 services:
-- docker
+  - mongodb
+node_js:
+  - "7.6"
+cache:
+  directories:
+    - "node_modules"
+env:
+  global:
+    - CC_TEST_REPORTER_ID=dabdd92208e41ebbec13b01f5e943a0dcf7ec40f4a98d6d0a8f811e8cca9b443
+    - NODE_ENV=test
+    - PORT=5037
+    - API_VERSION=v1
+    - LOCAL_URL=http://127.0.0.1:3001
+    - CT_URL=http://127.0.0.1:9000
+    - CT_TOKEN=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Im1pY3Jvc2VydmljZSIsImNyZWF0ZWRBdCI6IjIwMTYtMDktMTQifQ.IRCIRm1nfIQTfda_Wb6Pg-341zhV8soAgzw7dd5HxxQ
+
+before_script:
+  - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+  - chmod +x ./cc-test-reporter
+  - ./cc-test-reporter before-build
 script:
-- docker-compose -f docker-compose-test.yml build
-- docker-compose -f docker-compose-test.yml run test
-deploy:
-  provider: heroku
-  app: gfw-umd-forest-api-staging
-  api_key:
-    secure: Fq3gm2Cl2JUfkixZirvh9heuCUrkjNhsDpkJCQVqNW4TtAONtk/5kwYNX1Nq+3sgUExohdPAUoZCVDWLuVM1+yt7ZgmO0aZ1A6SUzFkJO8mhc+Dm+xavkxXu5FtdRhO4e+qL2Zc5K35HYEtO54nTiuM2BAx9TBIbl7KYc/leORsbl/whlHrdYftwMcOgKkoay2RPy4klALXeknMSh9UFPpWCCgDCFAiBy/iwhQy5YkFMR4FbCdeC6dCRanfCDEcPkxqejMqwJl2t8alVgp7u1HDGS6I4IghNdKWEfwbigirgitTlMud5Ub9JkLNiwwnCCfLKh9mnnAbKSIpBfYtAQVofd5X7A5kWooYlnGXjgYpZ4lcJt6TD/8rVUlWwP2yUpidwDH9ImVxF4QJDNscNpXTTg5azrFW5BeQajvCNzHxElUpbxyxp2LuogKbjNo309PlznjQ5kRMrfzldCPa612I1CzhO57IBnVIs+HcYUn+IRLOW0O3kWTE5Z3lPRZN69oHtFPGvLNJ2a4KuJHsTCVLOWOpsO0NXUbvpFChdiaPM/Mwtca5yee1JdV6jPtkadKCvu98tcYzUPCFCcLlVLnsEZ44vf/pueGsHahYwxPXiqgKz7j2HEwKU+aXdubPs9gzbzkwg0WoM0WkBcvB4FOsxRzw2SCilwfcYMioLfiY=
+  - npm test
+  - npm run coverage
+after_script:
+  - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT

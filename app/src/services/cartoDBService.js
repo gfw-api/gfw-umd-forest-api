@@ -39,12 +39,12 @@ const ID1 = 'SELECT iso, country, region, year, thresh, extent_2000 as extent, \
                 AND id1 = {{id1}} \
              ORDER BY year';
 
-var executeThunk = function(client, sql, params) {
-    return function(callback) {
+var executeThunk = function (client, sql, params) {
+    return function (callback) {
         logger.debug(Mustache.render(sql, params));
-        client.execute(sql, params).done(function(data) {
+        client.execute(sql, params).done(function (data) {
             callback(null, data);
-        }).error(function(err) {
+        }).error(function (err) {
             callback(err, null);
         });
     };
@@ -85,9 +85,9 @@ class CartoDBService {
             iso: iso,
             thresh: thresh
         });
-        if(data.rows && data.rows.length > 0){
+        if (data.rows && data.rows.length > 0) {
             const periods = period ? period.split(',') : [String(data.rows[0].min_year), String(data.rows[0].max_year)];
-            
+
             let initYear = new Date(periods[0]).getFullYear();
             let lastYear = new Date(periods[1]).getFullYear();
             let single = {
@@ -96,28 +96,28 @@ class CartoDBService {
                 tree_extent: 0,
                 area_ha: 0
             };
-            for(let i=0, length = data.rows.length; i < length; i++){
-                if(data.rows[i].year >= initYear && data.rows[i].year <= lastYear){
-                    if(data.rows[i].loss){
+            for (let i = 0, length = data.rows.length; i < length; i++) {
+                if (data.rows[i].year >= initYear && data.rows[i].year <= lastYear) {
+                    if (data.rows[i].loss) {
                         single.loss += data.rows[i].loss;
                     }
-                    if(data.rows[i].total_gain){
+                    if (data.rows[i].total_gain) {
                         single.gain = data.rows[i].total_gain;
                     }
-                    if(data.rows[i].extent){
+                    if (data.rows[i].extent) {
                         single.tree_extent = data.rows[i].extent;
                     }
-                    if(data.rows[i].area_ha){
+                    if (data.rows[i].area_ha) {
                         single.area_ha = data.rows[i].area_ha;
                     }
                 }
             }
             return {
                 total: single,
-                years:data.rows
+                years: data.rows
             };
         }
-        return {years: data.rows};
+        return { years: data.rows };
 
     }
 
@@ -128,7 +128,7 @@ class CartoDBService {
             id1: id1,
             thresh: thresh
         });
-        if(data.rows && data.rows.length > 0){
+        if (data.rows && data.rows.length > 0) {
             const periods = period ? period.split(',') : [String(data.rows[0].min_year), String(data.rows[0].max_year)];
 
             let initYear = new Date(periods[0]).getFullYear();
@@ -139,28 +139,28 @@ class CartoDBService {
                 tree_extent: 0,
                 area_ha: 0
             };
-            for(let i=0, length = data.rows.length; i < length; i++){
-                if(data.rows[i].year >= initYear && data.rows[i].year <= lastYear){
-                    if(data.rows[i].loss){
+            for (let i = 0, length = data.rows.length; i < length; i++) {
+                if (data.rows[i].year >= initYear && data.rows[i].year <= lastYear) {
+                    if (data.rows[i].loss) {
                         single.loss += data.rows[i].loss;
                     }
-                    if(data.rows[i].total_gain){
+                    if (data.rows[i].total_gain) {
                         single.gain = data.rows[i].total_gain;
                     }
-                    if(data.rows[i].extent){
+                    if (data.rows[i].extent) {
                         single.tree_extent = data.rows[i].extent;
                     }
-                    if(data.rows[i].area_ha){
+                    if (data.rows[i].area_ha) {
                         single.area_ha = data.rows[i].area_ha;
                     }
                 }
             }
             return {
                 total: single,
-                years:data.rows
+                years: data.rows
             };
         }
-        return {years: data.rows};
+        return { years: data.rows };
     }
 
 }
