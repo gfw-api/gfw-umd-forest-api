@@ -8,7 +8,7 @@ cache:
     - "node_modules"
 env:
   global:
-    - CC_TEST_REPORTER_ID=dabdd92208e41ebbec13b01f5e943a0dcf7ec40f4a98d6d0a8f811e8cca9b443
+    - CC_TEST_REPORTER_ID=227acb47d8400252e062f54be1fbf708d1c80364549f9b22b102ff98ca0e0990
     - NODE_ENV=test
     - PORT=5037
     - API_VERSION=v1
