@@ -1,8 +1,12 @@
-test:
-  extends:
-    file: base.yml
-    service: base
-  container_name: gfw-umd-forest-api-test
-  environment:
-    NODE_ENV: test
-  command: test
+version: "3"
+services:
+  test:
+    build: .
+    container_name: gfw-umd-forest-api-test
+    environment:
+      NODE_ENV: test
+      CT_URL: http://mymachine:9000
+      API_VERSION: v1
+      STAMPERY_TOKEN: token
+      MONGO_PORT_27017_TCP_ADDR: mongo
+    command: test
