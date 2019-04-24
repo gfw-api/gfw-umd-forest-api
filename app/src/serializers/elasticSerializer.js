@@ -12,7 +12,7 @@ var elasticSerializer = new JSONAPISerializer('umd-loss-gain', {
         attributes: ['year', 'loss', 'lossPerc']
     },
     'downloadUrls': {
-        attributes: ['url']
+        attributes: ['url', 'xlsx']
     },
     typeForAttribute: function (attribute, record) {
         return attribute;

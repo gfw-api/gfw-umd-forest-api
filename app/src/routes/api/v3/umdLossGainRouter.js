@@ -44,10 +44,13 @@ class UMDLossGainRouterV3 {
                 period,
                 gadm: GADM
             });
-            if (data && data.totals) { // added validation
+            if (data && data.totals) {
                 data.totals.gladAlerts = glads;
             }
-            data.downloadUrls = { url: 'https://earthenginepartners.appspot.com/science-2013-global-forest' };
+            data.downloadUrls = { 
+                url: 'https://earthenginepartners.appspot.com/science-2013-global-forest',
+                xlsx: `https://gfw2-data.s3.amazonaws.com/country-pages/country_stats/download/${iso}.xlsx`
+            };
 
             this.body = ElasticSerializer.serialize(data);
 
