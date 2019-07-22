@@ -16,7 +16,8 @@
     },
     "elasticTable": {
         "v2": "499682b1-3174-493f-ba1a-368b4636708e",
-        "v3": "a20e9c0e-8d7d-422f-90f5-3b9bca355aaf"
+        //"v3": "a20e9c0e-8d7d-422f-90f5-3b9bca355aaf",
+        "v3": "82a317da-1fec-4bd0-b9d6-ebe786b9f269"
     },
     "gladWhitelist": {
         "iso": [
