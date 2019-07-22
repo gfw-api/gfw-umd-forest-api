@@ -20,14 +20,14 @@ const YEAR_QUERY = `SELECT {vars} year_data.year as year, SUM(year_data.area_los
                 SUM(year_data.carbon_emissions) as emissions, \
                 FROM data
                 WHERE {location} \
-                AND thresh = {threshold}`;
+                AND threshold = {threshold}`;
 
 const BASE_QUERY = `SELECT {vars} SUM(total_area) AS area, SUM(total_gain) AS gain, \
                 SUM(extent_2000) AS extent2000, SUM(extent_2010) AS extent2010, \
                 SUM(weighted_biomass_per_ha) AS biomass_density \
                 FROM data
                 WHERE {location} \
-                AND thresh = {threshold}`;
+                AND threshold = {threshold}`;
 
 var deserializer = function (obj) {
     return function (callback) {
@@ -41,6 +41,8 @@ class ElasticService {
     //     sql = sql.replace('{location}', getLocationString(params))
     //              .replace('{vars}', getLocationVars(params))
     //              .replace('{threshold}', params.thresh)
+    //     console.log(`\n\n\n---SQL-----\n${sql}\n\n\n`);
+
     //     let url = '';
     //     let id = '';
     //     if (params.gadm && params.gadm === '2.8') {
@@ -138,8 +140,8 @@ class ElasticService {
                 return {
                     year: el[0],
                     loss: el[1],
-                    emissions: 0
-                    lossPerc: 100 * el[1] / area
+                    emissions: 0,
+                    lossPerc: 100 * el[1] / area,
                     emissionsPerc: 100 * 0 / area
                 };
             });
@@ -189,9 +191,14 @@ class ElasticService {
             logger.error('No data found.');
             data = []
         }
+        console.log(`\n\n\n---BASE-----\n${JSON.stringify(base_data.data)}\n\n\n`);
+        console.log(`\n\n\n---YEAR-----\n${JSON.stringify(year_data.data)}\n\n\n`);
+        console.log(`\n\n\n---HERE!!!!-----\n\n\n`);
+
+
 
         ///// data = parse(base_data + year_data)
-
+        const data = {};
         const periodsYears = params.period.length ? [params.period[0].slice(0, 4), params.period[1].slice(0, 4)] : null;
         if (data && Object.keys(data).length > 0) {
             const totals = ElasticService.getTotals(year_data.data, periodsYears);
