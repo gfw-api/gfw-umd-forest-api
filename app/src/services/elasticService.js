@@ -82,10 +82,6 @@ class ElasticService {
     //     }
     // }
 
-    static sum(a, b) {
-        return a + b;
-    }
-
     static getYearTotals(data, periods) {
         const filtered = periods ? data.filter(year => year.year >= periods[0] && year.year <= periods[1]) : data;
         let tmp = {
@@ -99,11 +95,10 @@ class ElasticService {
         return tmp;
     }
 
-    static getLossByYear(data, periods) {
-        console.log(`\n\n\n---func2 data-----\n${JSON.stringify(data)}\n\n\n`);
+    static getYearArray(data, periods) {
         const year_array = data.year_data;
         const filtered = periods ? year_array.filter(year => year.year >= periods[0] && year.year <= periods[1]) : year_array;   
-        const parsedData = year_array.map(el => {
+        const parsedData = filtered.map(el => {
             return {
                 year: el.year,
                 loss: el.area_loss,
@@ -112,7 +107,6 @@ class ElasticService {
                 emissionsPerc: 100 * el.emissions / data.area
             };
         });
-        console.log(`\n\n\n---parsedData-----\n${JSON.stringify(parsedData)}\n\n\n`);
         return parsedData
     }
 
@@ -122,7 +116,7 @@ class ElasticService {
             extent2000Perc: 100 * data.extent2000 / data.area,
             extent2010: data.extent2010,
             extent2010Perc: 100 * data.extent2010 / data.area,
-            biomass_density: data.biomass_density,
+            biomassDensity: data.biomass_density,
             gain: data.gain,
             gainPerc: 100 * data.gain / data.area,
             areaHa: data.area
@@ -131,9 +125,10 @@ class ElasticService {
         const year_totals = ElasticService.getYearTotals(data.year_data, periods);
         const total_loss = year_totals.loss;
         const total_emissions = year_totals.emissions;
+        returnData.loss = total_loss;
         returnData.lossPerc = 100 * total_loss / returnData.areaHa;
-        returnData.emissions = 100 * total_emissions / returnData.areaHa;
-        console.log(`\n\n\n---returnData-----\n${JSON.stringify(returnData)}\n\n\n`);
+        returnData.emissions = total_emissions;
+        returnData.emissionsPerc = 100 * total_emissions / returnData.areaHa;
         return returnData;
     }
 
@@ -162,7 +157,7 @@ class ElasticService {
             const totals = ElasticService.getTotals(data, periodsYears);
             const returnData = Object.assign({
                 totals,
-                years: ElasticService.getLossByYear(data, periodsYears)
+                years: ElasticService.getYearArray(data, periodsYears)
             }, params);
             return returnData;
         }
