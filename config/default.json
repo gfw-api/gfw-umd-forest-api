@@ -15,8 +15,10 @@
         "user": null
     },
     "elasticTable": {
-        "v2": "499682b1-3174-493f-ba1a-368b4636708e",
-        "v3": "82a317da-1fec-4bd0-b9d6-ebe786b9f269"
+        "v3_iso": "10e124f0-3703-41e3-8136-492b131d5326",
+        "v3_adm1": "857b515e-2b36-41b5-a58c-d4e7202e254a",
+        "v3_adm2": "82a317da-1fec-4bd0-b9d6-ebe786b9f269"
+
     },
     "gladWhitelist": {
         "iso": [

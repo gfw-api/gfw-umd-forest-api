@@ -21,7 +21,7 @@ class UMDLossGainRouterV3 {
         logger.info('Obtaining data for', this.params);
         const thresh = this.query.thresh || '30';
         const polyname = this.query.polyname || 'admin';
-        const period = this.query.period ? this.query.period.split(',').map(el => el.trim()) : []; // why the second split?
+        const period = this.query.period ? this.query.period.split(',').map(el => el.trim()) : [];
 
         try {
             let glads = null;

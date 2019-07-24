@@ -38,49 +38,50 @@ var deserializer = function (obj) {
 
 class ElasticService {
     // use this for testing locally
-    static * getData(sql, params) {
-        sql = sql.replace('{location}', getLocationString(params))
-                 .replace('{vars}', getLocationVars(params))
-                 .replace('{threshold}', params.thresh)
-        let url = '';
-        let id = '';
-        if (params.gadm && params.gadm === '2.8') {
-            id = config.get('elasticTable.v2');
-            url = `https://production-api.globalforestwatch.org/v1/query/${id}?sql=`;
-        } else if (params.gadm && params.gadm === '3.6') {
-            id = config.get('elasticTable.v3');
-            url = `https://production-api.globalforestwatch.org/v1/query/${id}?sql=`;
-        }
-        logger.debug('Obtaining data with:', url+sql);
-        let result = yield request.get(url+sql);
-        if (result.statusCode !== 200) {
-            console.error('Error obtaining data:');
-            console.error(result);
-            return null;
-        }
-        return JSON.parse(result.body);
-    }
+    // static * getData(sql, params) {
+    //     const { iso, adm1, adm2 } = params;
+    //     console.log(`${JSON.stringify(adm2)}`)
+    //     sql = sql.replace('{location}', getLocationString(params))
+    //              .replace('{vars}', getLocationVars(params))
+    //              .replace('{threshold}', params.thresh)
+    //     const id = config.get('elasticTable.v3_adm2')
+    //     const url = `https://production-api.globalforestwatch.org/v1/query/${id}?sql=`;
+    //     logger.debug('Obtaining data with:', url+sql);
+    //     let result = yield request.get(url+sql);
+    //     if (result.statusCode !== 200) {
+    //         console.error('Error obtaining data:');
+    //         console.error(result);
+    //         return null;
+    //     }
+    //     return JSON.parse(result.body);
+    // }
 
     // Use this one for prod/staging
-    // static* getData(sqlTemplate, params) {
-    //     const sql = sqlTemplate.replace('{location}', getLocationString(params))
-    //         .replace('{vars}', getLocationVars(params))
-    //         .replace('{threshold}', params.thresh)
-    //     logger.debug('Obtaining data with:', sql);
-    //     const tableId = params.gadm === '2.8' ? config.get('elasticTable.v2') : config.get('elasticTable.v3');
-    //     try {
-    //         const result = yield MicroServiceClient.requestToMicroservice({
-    //             uri: `/query/${tableId}?sql=${sql}`,
-    //             method: 'GET',
-    //             json: true
-    //         });
-    //         logger.debug(result);
-    //         return result.body;
-    //     } catch (err) {
-    //         logger.error(err);
-    //         throw err;
-    //     }
-    // }
+    static* getData(sqlTemplate, params) {
+        const sql = sqlTemplate.replace('{location}', getLocationString(params))
+            .replace('{vars}', getLocationVars(params))
+            .replace('{threshold}', params.thresh)
+        logger.debug('Obtaining data with:', sql);
+        let tableId = config.get('elasticTable.v3_adm2');
+        if (!adm2 && adm1) {
+            tableId = config.get('elasticTable.v3_adm1');
+        }
+        else if (!adm2) {
+            tableId = config.get('elasticTable.v3_iso');
+        }
+        try {
+            const result = yield MicroServiceClient.requestToMicroservice({
+                uri: `/query/${tableId}?sql=${sql}`,
+                method: 'GET',
+                json: true
+            });
+            logger.debug(result);
+            return result.body;
+        } catch (err) {
+            logger.error(err);
+            throw err;
+        }
+    }
 
     static getYearTotals(data, periods) {
         const filtered = periods ? data.filter(year => year.year >= periods[0] && year.year <= periods[1]) : data;
