@@ -49,8 +49,7 @@ describe('UMD Losstests', () => {
             .get(`/api/v3/umd-loss-gain/admin/foo`)
             .send();
 
-        response.status.should.equal(200);
-        response.body.should.have.property('data').and.be.an('array').and.length(0);
+        response.status.should.equal(500);
     });
 
     it('Make a query to a real level 1 region should return ...', async () => {
