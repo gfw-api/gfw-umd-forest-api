@@ -68,6 +68,9 @@ class ElasticService {
             .replace('{vars}', getLocationVars(params))
             .replace('{threshold}', params.thresh)
         logger.debug('Obtaining data with:', sql);
+        let iso = this.params.iso || null;
+        let adm1 = this.params.adm1 || null;
+        let adm2 = this.params.adm2 || null;
         let tableId = config.get('elasticTable.v3_adm2');
         if (!adm2 && adm1) {
             tableId = config.get('elasticTable.v3_adm1');
