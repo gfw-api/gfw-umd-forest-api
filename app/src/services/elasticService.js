@@ -63,7 +63,7 @@ class ElasticService {
     // }
 
     // Use this one for prod/staging
-    static* getData(sqlTemplate, params) {
+    static * getData(sqlTemplate, params) {
         const sql = sqlTemplate.replace('{location}', getLocationString(params))
             .replace('{vars}', getLocationVars(params))
             .replace('{threshold}', params.thresh)
