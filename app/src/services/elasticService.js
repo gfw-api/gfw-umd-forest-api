@@ -40,7 +40,7 @@ var deserializer = function (obj) {
 class ElasticService {
     // // use this for testing locally
     // static * getData(sql, params) {
-    //     const { iso, adm1, adm2 } = params;
+    //     const { adm1, adm2 } = params;
     //     console.log(`${JSON.stringify(adm2)}`)
     //     sql = sql.replace('{location}', getLocationString(params))
     //              .replace('{vars}', getLocationVars(params))
@@ -65,7 +65,7 @@ class ElasticService {
 
     // Use this one for prod/staging
     static * getData(sqlTemplate, params) {
-        const {iso, adm1, adm2} = params
+        const { adm1, adm2} = params
         const sql = sqlTemplate.replace('{location}', getLocationString(params))
             .replace('{vars}', getLocationVars(params))
             .replace('{threshold}', params.thresh)
