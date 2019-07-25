@@ -25,7 +25,7 @@ describe('UMD Losstests', () => {
         nock(process.env.CT_URL)
             .get('/v1/query/82a317da-1fec-4bd0-b9d6-ebe786b9f269')
             .query({
-                sql: 'SELECT iso, adm1, adm2, year_data.year as year, SUM(year_data.area_loss) as area_loss,                 SUM(year_data.carbon_emissions) as emissions,                 FROM data\n                WHERE iso = \'FOO\' AND adm1 = 1 AND adm2 = 1                 AND threshold = 30                 GROUP BY nested(year_data.year)'
+                sql: 'SELECT iso, adm1, adm2, year_data.year as year, SUM(year_data.area_loss) as area_loss,                 SUM(year_data.carbon_emissions) as emissions,                 SUM(year_data.biomass_loss) as biomass_loss                 FROM data\n                WHERE iso = \'FOO\' AND adm1 = 1 AND adm2 = 1                 AND threshold = 30                 GROUP BY nested(year_data.year)'
             })
             .reply(500, {});
         const response = await requester
@@ -34,7 +34,7 @@ describe('UMD Losstests', () => {
         response.status.should.equal(200);
         response.body.should.have.property('data').and.be.an('array').and.length(0);
     });
-    it('Make a query to a real level 1 region should return ...', async () => {
+    it('Make a query to a real level 2 region should return ...', async () => {
         const jsonResponseBase = JSON.parse(fs.readFileSync(`${__dirname}/../data/BRA_base.json`, 'utf8'));
         const jsonResponseYear = JSON.parse(fs.readFileSync(`${__dirname}/../data/BRA_year.json`, 'utf8'));
         nock(process.env.CT_URL)
@@ -47,13 +47,12 @@ describe('UMD Losstests', () => {
         nock(process.env.CT_URL)
             .get('/v1/query/82a317da-1fec-4bd0-b9d6-ebe786b9f269')
             .query({
-                sql: 'SELECT iso, adm1, adm2, year_data.year as year, SUM(year_data.area_loss) as area_loss,                 SUM(year_data.carbon_emissions) as emissions,                 FROM data\n                WHERE iso = \'BRA\' AND adm1 = 1 AND adm2 = 1                 AND threshold = 30                 GROUP BY nested(year_data.year)'
+                sql: 'SELECT iso, adm1, adm2, year_data.year as year, SUM(year_data.area_loss) as area_loss,                 SUM(year_data.carbon_emissions) as emissions,                 SUM(year_data.biomass_loss) as biomass_loss                 FROM data\n                WHERE iso = \'BRA\' AND adm1 = 1 AND adm2 = 1                 AND threshold = 30                 GROUP BY nested(year_data.year)'
             })
             .reply(200, jsonResponseYear);
         const response = await requester
             .get(`/api/v3/umd-loss-gain/admin/BRA/1/1`)
             .send();
-        console.log(`\n\n\n\n RESPONSE ${JSON.stringify(response)}`)
         response.status.should.equal(200);
         response.body.should.have.property('data').and.be.an('object');
         response.body.data.should.have.property('attributes').and.be.an('object');

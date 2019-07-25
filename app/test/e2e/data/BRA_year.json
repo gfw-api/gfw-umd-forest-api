@@ -1,93 +1,111 @@
 {
 "data": [
 {
-"area_loss": 4768.091321751475,
-"emissions": 2159893.00299263,
+"biomass_loss": 226785.9811038971,
+"area_loss": 677.8766504600644,
+"emissions": 415774.2948913574,
 "year": 2001
 },
 {
-"area_loss": 3276.3399663195014,
-"emissions": 1636784.9384422302,
+"biomass_loss": 256215.99760437012,
+"area_loss": 714.6124356240034,
+"emissions": 469729.31732940674,
 "year": 2002
 },
 {
-"area_loss": 2642.844773426652,
-"emissions": 1311702.2865028381,
+"biomass_loss": 111974.26381826401,
+"area_loss": 300.96349124610424,
+"emissions": 205286.14462661743,
 "year": 2003
 },
 {
-"area_loss": 4674.886954516172,
-"emissions": 2407658.9331588745,
+"biomass_loss": 352249.7008957863,
+"area_loss": 965.7737747877836,
+"emissions": 645791.130153656,
 "year": 2004
 },
 {
-"area_loss": 13355.864562369883,
-"emissions": 6395889.384691238,
+"biomass_loss": 260768.77634620667,
+"area_loss": 715.819806151092,
+"emissions": 478076.085483551,
 "year": 2005
 },
 {
-"area_loss": 2524.40728341043,
-"emissions": 1331719.0206222534,
+"biomass_loss": 52721.23272514343,
+"area_loss": 144.06290471553802,
+"emissions": 96655.5945968628,
 "year": 2006
 },
 {
-"area_loss": 1815.915377408266,
-"emissions": 978089.5762653351,
+"biomass_loss": 165307.66187381744,
+"area_loss": 437.68600256741047,
+"emissions": 303064.0415458679,
 "year": 2007
 },
 {
-"area_loss": 4118.74820266664,
-"emissions": 2071830.14890337,
+"biomass_loss": 74636.49497032166,
+"area_loss": 201.04582377523184,
+"emissions": 136833.57746887207,
 "year": 2008
 },
 {
-"area_loss": 2151.5216715186834,
-"emissions": 1127024.172870636,
+"biomass_loss": 118076.42397499084,
+"area_loss": 312.6759767308831,
+"emissions": 216473.4426460266,
 "year": 2009
 },
 {
-"area_loss": 2866.057698428631,
-"emissions": 1523255.3515777588,
+"biomass_loss": 206592.2858657837,
+"area_loss": 546.6789771020412,
+"emissions": 378752.51219940186,
 "year": 2010
 },
 {
-"area_loss": 1081.8102425783873,
-"emissions": 551502.8269081116,
+"biomass_loss": 92827.61026000977,
+"area_loss": 245.26422552764416,
+"emissions": 170183.94510650635,
 "year": 2011
 },
 {
-"area_loss": 1105.802498407662,
-"emissions": 570051.7641716003,
+"biomass_loss": 316392.6796603203,
+"area_loss": 832.693184748292,
+"emissions": 580053.2438631058,
 "year": 2012
 },
 {
-"area_loss": 1390.3128814399242,
-"emissions": 698383.1617870331,
+"biomass_loss": 161321.67562103271,
+"area_loss": 441.52928064763546,
+"emissions": 295756.4108066559,
 "year": 2013
 },
 {
-"area_loss": 2110.202195867896,
-"emissions": 1099038.8812217712,
+"biomass_loss": 304758.4600286484,
+"area_loss": 837.9527289196849,
+"emissions": 558723.8502674103,
 "year": 2014
 },
 {
-"area_loss": 2035.8996200934052,
-"emissions": 1026391.7597770691,
+"biomass_loss": 199808.21224212646,
+"area_loss": 562.7640748620033,
+"emissions": 366315.06339263916,
 "year": 2015
 },
 {
-"area_loss": 3126.6696196720004,
-"emissions": 1498474.4744243622,
+"biomass_loss": 274341.84168195724,
+"area_loss": 792.4555531069636,
+"emissions": 502960.0253715515,
 "year": 2016
 },
 {
-"area_loss": 2654.3692891150713,
-"emissions": 1334380.936870575,
+"biomass_loss": 293897.7050514221,
+"area_loss": 826.3054681047797,
+"emissions": 538812.4542350769,
 "year": 2017
 },
 {
-"area_loss": 1699.6715628057718,
-"emissions": 844194.8835983276,
+"biomass_loss": 285061.4087905884,
+"area_loss": 789.7350456118584,
+"emissions": 522612.5791320801,
 "year": 2018
 }
 ],
@@ -97,7 +115,7 @@
 "url": "/v1/dataset/82a317da-1fec-4bd0-b9d6-ebe786b9f269/clone",
 "body": {
 "dataset": {
-"datasetUrl": "/v1/query/82a317da-1fec-4bd0-b9d6-ebe786b9f269?sql=%20SELECT%20iso%2C%20adm1%2C%20adm2%2C%20year_data.year%20as%20year%2C%20SUM%28year_data.area_loss%29%20as%20area_loss%2C%20SUM%28year_data.carbon_emissions%29%20as%20emissions%20FROM%20data%20WHERE%20iso%20%3D%20%27BRA%27%20AND%20adm1%20%3D%201%20AND%20adm2%20%3D%201%20AND%20threshold%20%3D%2030%20GROUP%20BY%20nested%28year_data.year%29",
+"datasetUrl": "/v1/query/82a317da-1fec-4bd0-b9d6-ebe786b9f269?sql=%20SELECT%20iso%2C%20adm1%2C%20adm2%2C%20year_data.year%20as%20year%2C%20SUM%28year_data.area_loss%29%20as%20area_loss%2C%20SUM%28year_data.carbon_emissions%29%20as%20emissions%2C%20SUM%28year_data.biomass_loss%29%20as%20biomass_loss%20FROM%20data%20WHERE%20iso%20%3D%20%27BRA%27%20AND%20adm1%20%3D%201%20AND%20adm2%20%3D%202%20AND%20threshold%20%3D%2030%20GROUP%20BY%20nested%28year_data.year%29",
 "application": [
 "your",
 "apps"

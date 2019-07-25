@@ -18,6 +18,7 @@ const getLocationVars = ({ adm1, adm2 }) => {
 
 const YEAR_QUERY = `SELECT {vars} year_data.year as year, SUM(year_data.area_loss) as area_loss, \
                 SUM(year_data.carbon_emissions) as emissions, \
+                SUM(year_data.biomass_loss) as biomass_loss \
                 FROM data
                 WHERE {location} \
                 AND threshold = {threshold} \
@@ -38,57 +39,57 @@ var deserializer = function (obj) {
 
 class ElasticService {
     // use this for testing locally
-    // static * getData(sql, params) {
-    //     const { iso, adm1, adm2 } = params;
-    //     console.log(`${JSON.stringify(adm2)}`)
-    //     sql = sql.replace('{location}', getLocationString(params))
-    //              .replace('{vars}', getLocationVars(params))
-    //              .replace('{threshold}', params.thresh)
-    //     let id = config.get('elasticTable.v3_adm2')
-    //      if (!adm2 && adm1) {
-    //         id = config.get('elasticTable.v3_adm1');
-    //     }
-    //     else if (!adm2) {
-    //         id = config.get('elasticTable.v3_iso');
-    //     }
-    //     const url = `https://production-api.globalforestwatch.org/v1/query/${id}?sql=`;
-    //     logger.debug('Obtaining data with:', url+sql);
-    //     let result = yield request.get(url+sql);
-    //     if (result.statusCode !== 200) {
-    //         console.error('Error obtaining data:');
-    //         console.error(result);
-    //         return null;
-    //     }
-    //     return JSON.parse(result.body);
-    // }
-
-    // Use this one for prod/staging
-    static * getData(sqlTemplate, params) {
-        const {iso, adm1, adm2} = params
-        const sql = sqlTemplate.replace('{location}', getLocationString(params))
-            .replace('{vars}', getLocationVars(params))
-            .replace('{threshold}', params.thresh)
-        logger.debug('Obtaining data with:', sql);
-        let tableId = config.get('elasticTable.v3_adm2');
-        if (!adm2 && adm1) {
-            tableId = config.get('elasticTable.v3_adm1');
+    static * getData(sql, params) {
+        const { iso, adm1, adm2 } = params;
+        console.log(`${JSON.stringify(adm2)}`)
+        sql = sql.replace('{location}', getLocationString(params))
+                 .replace('{vars}', getLocationVars(params))
+                 .replace('{threshold}', params.thresh)
+        let id = config.get('elasticTable.v3_adm2')
+         if (!adm2 && adm1) {
+            id = config.get('elasticTable.v3_adm1');
         }
         else if (!adm2) {
-            tableId = config.get('elasticTable.v3_iso');
+            id = config.get('elasticTable.v3_iso');
         }
-        try {
-            const result = yield MicroServiceClient.requestToMicroservice({
-                uri: `/query/${tableId}?sql=${sql}`,
-                method: 'GET',
-                json: true
-            });
-            logger.debug(result);
-            return result.body;
-        } catch (err) {
-            logger.error(err);
-            throw err;
+        const url = `https://production-api.globalforestwatch.org/v1/query/${id}?sql=`;
+        logger.debug('Obtaining data with:', url+sql);
+        let result = yield request.get(url+sql);
+        if (result.statusCode !== 200) {
+            console.error('Error obtaining data:');
+            console.error(result);
+            return null;
         }
+        return JSON.parse(result.body);
     }
+
+    // Use this one for prod/staging
+    // static * getData(sqlTemplate, params) {
+    //     const {iso, adm1, adm2} = params
+    //     const sql = sqlTemplate.replace('{location}', getLocationString(params))
+    //         .replace('{vars}', getLocationVars(params))
+    //         .replace('{threshold}', params.thresh)
+    //     logger.debug('Obtaining data with:', sql);
+    //     let tableId = config.get('elasticTable.v3_adm2');
+    //     if (!adm2 && adm1) {
+    //         tableId = config.get('elasticTable.v3_adm1');
+    //     }
+    //     else if (!adm2) {
+    //         tableId = config.get('elasticTable.v3_iso');
+    //     }
+    //     try {
+    //         const result = yield MicroServiceClient.requestToMicroservice({
+    //             uri: `/query/${tableId}?sql=${sql}`,
+    //             method: 'GET',
+    //             json: true
+    //         });
+    //         logger.debug(result);
+    //         return result.body;
+    //     } catch (err) {
+    //         logger.error(err);
+    //         throw err;
+    //     }
+    // }
 
     static getYearTotals(data, periods) {
         const filtered = periods ? data.filter(year => year.year >= periods[0] && year.year <= periods[1]) : data;
@@ -111,8 +112,10 @@ class ElasticService {
                 year: el.year,
                 loss: el.area_loss,
                 emissions: el.area_loss,
+                biomassLoss: el.biomass_loss,
                 lossPerc: 100 * el.area_loss / data.area,
-                emissionsPerc: 100 * el.emissions / data.area
+                emissionsPerc: 100 * el.emissions / data.area,
+                biomassLossPerc: 100 * el.biomass_loss / data.area
             };
         });
         return parsedData
@@ -133,10 +136,13 @@ class ElasticService {
         const year_totals = ElasticService.getYearTotals(data.year_data, periods);
         const total_loss = year_totals.loss;
         const total_emissions = year_totals.emissions;
+        const total_biomass_loss = year_totals.biomassLoss;
         returnData.loss = total_loss;
         returnData.lossPerc = 100 * total_loss / returnData.areaHa;
         returnData.emissions = total_emissions;
         returnData.emissionsPerc = 100 * total_emissions / returnData.areaHa;
+        returnData.biomassLoss = total_biomass_loss;
+        returnData.biomassLossPerc = 100 * total_biomass_loss / returnData.areaHa;
         return returnData;
     }
 
