@@ -38,50 +38,56 @@ var deserializer = function (obj) {
 
 class ElasticService {
     // use this for testing locally
-    // static * getData(sql, params) {
-    //     const { iso, adm1, adm2 } = params;
-    //     console.log(`${JSON.stringify(adm2)}`)
-    //     sql = sql.replace('{location}', getLocationString(params))
-    //              .replace('{vars}', getLocationVars(params))
-    //              .replace('{threshold}', params.thresh)
-    //     const id = config.get('elasticTable.v3_adm2')
-    //     const url = `https://production-api.globalforestwatch.org/v1/query/${id}?sql=`;
-    //     logger.debug('Obtaining data with:', url+sql);
-    //     let result = yield request.get(url+sql);
-    //     if (result.statusCode !== 200) {
-    //         console.error('Error obtaining data:');
-    //         console.error(result);
-    //         return null;
-    //     }
-    //     return JSON.parse(result.body);
-    // }
-
-    // Use this one for prod/staging
-    static* getData(sqlTemplate, params) {
-        const sql = sqlTemplate.replace('{location}', getLocationString(params))
-            .replace('{vars}', getLocationVars(params))
-            .replace('{threshold}', params.thresh)
-        logger.debug('Obtaining data with:', sql);
-        let tableId = config.get('elasticTable.v3_adm2');
-        if (!adm2 && adm1) {
-            tableId = config.get('elasticTable.v3_adm1');
+    static * getData(sql, params) {
+        const { iso, adm1, adm2 } = params;
+        console.log(`${JSON.stringify(adm2)}`)
+        sql = sql.replace('{location}', getLocationString(params))
+                 .replace('{vars}', getLocationVars(params))
+                 .replace('{threshold}', params.thresh)
+        let id = config.get('elasticTable.v3_adm2')
+         if (!adm2 && adm1) {
+            id = config.get('elasticTable.v3_adm1');
         }
         else if (!adm2) {
-            tableId = config.get('elasticTable.v3_iso');
+            id = config.get('elasticTable.v3_iso');
         }
-        try {
-            const result = yield MicroServiceClient.requestToMicroservice({
-                uri: `/query/${tableId}?sql=${sql}`,
-                method: 'GET',
-                json: true
-            });
-            logger.debug(result);
-            return result.body;
-        } catch (err) {
-            logger.error(err);
-            throw err;
+        const url = `https://production-api.globalforestwatch.org/v1/query/${id}?sql=`;
+        logger.debug('Obtaining data with:', url+sql);
+        let result = yield request.get(url+sql);
+        if (result.statusCode !== 200) {
+            console.error('Error obtaining data:');
+            console.error(result);
+            return null;
         }
+        return JSON.parse(result.body);
     }
+
+    // Use this one for prod/staging
+    // static* getData(sqlTemplate, params) {
+    //     const sql = sqlTemplate.replace('{location}', getLocationString(params))
+    //         .replace('{vars}', getLocationVars(params))
+    //         .replace('{threshold}', params.thresh)
+    //     logger.debug('Obtaining data with:', sql);
+    //     let tableId = config.get('elasticTable.v3_adm2');
+        // if (!adm2 && adm1) {
+        //     tableId = config.get('elasticTable.v3_adm1');
+        // }
+        // else if (!adm2) {
+        //     tableId = config.get('elasticTable.v3_iso');
+        // }
+    //     try {
+    //         const result = yield MicroServiceClient.requestToMicroservice({
+    //             uri: `/query/${tableId}?sql=${sql}`,
+    //             method: 'GET',
+    //             json: true
+    //         });
+    //         logger.debug(result);
+    //         return result.body;
+    //     } catch (err) {
+    //         logger.error(err);
+    //         throw err;
+    //     }
+    // }
 
     static getYearTotals(data, periods) {
         const filtered = periods ? data.filter(year => year.year >= periods[0] && year.year <= periods[1]) : data;
@@ -134,18 +140,21 @@ class ElasticService {
     }
 
     * fetchData(params) {
-        const base_data = yield ElasticService.getData(BASE_QUERY, params);
+        let base_data = yield ElasticService.getData(BASE_QUERY, params);
         if (!base_data || !base_data.data || base_data.data.length === 0) {
-            logger.error('No data found.');
-            data = []
+            logger.error('No base data found.');
+            base_data = []
         }
-        const year_data = yield ElasticService.getData(YEAR_QUERY, params);
+        let year_data = yield ElasticService.getData(YEAR_QUERY, params);
         if (!year_data || !year_data.data || year_data.data.length === 0) {
-            logger.error('No data found.');
-            data = []
+            logger.error('No year data found.');
+            year_data = []
         }
+        logger.info('Retrieved SQL response', base_data);
         
-        const data = {
+        const data = base_data.length === 0 || year_data.length === 0
+            ? []
+            : {
             year_data: year_data.data,
             area: base_data.data[0].area,
             extent2000: base_data.data[0].extent2000,
@@ -163,7 +172,7 @@ class ElasticService {
             return returnData;
         }
 
-        return null;
+        return [];
     }
 }
 

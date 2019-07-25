@@ -17,12 +17,13 @@ const GADM = '3.6';
 class UMDLossGainRouterV3 {
 
     static* fetchData() {
-        const { iso, id1, id2 } = this.params;
         logger.info('Obtaining data for', this.params);
         const thresh = this.query.thresh || '30';
         const polyname = this.query.polyname || 'admin';
         const period = this.query.period ? this.query.period.split(',').map(el => el.trim()) : [];
-
+        const iso = this.params.iso || null;
+        const id1 = this.params.id1 || null;
+        const id2 = this.params.id2 || null;
         try {
             let glads = null;
             if (period.length && DateValidator.validatePeriod(period) && config.get('gladWhitelist.iso').includes(iso)) {
