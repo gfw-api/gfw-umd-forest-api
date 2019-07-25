@@ -26,7 +26,7 @@ describe('UMD Losstests', () => {
             .query({
                 sql: 'SELECT%20iso%2C%20SUM(total_area)%20AS%20area%2C%20SUM(total_gain)%20AS%20gain%2C%20%20SUM(extent_2000)%20AS%20extent2000%2C%20SUM(extent_2010)%20AS%20extent2010%2C%20SUM(weighted_biomass_per_ha)%20AS%20biomass_density%20%20FROM%20data%20WHERE%20iso%3D%27XXX%27%20%20AND%20threshold%20%3D%2030'
             })
-            .reply(200, {
+            .reply(500, {
                 "data": [],
                 "meta": {
                     "cloneUrl": {
