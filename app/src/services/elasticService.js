@@ -38,7 +38,7 @@ var deserializer = function (obj) {
 
 class ElasticService {
     // use this for testing locally
-    static * getData(sql, params) {
+    // static * getData(sql, params) {
     //     const { iso, adm1, adm2 } = params;
     //     console.log(`${JSON.stringify(adm2)}`)
     //     sql = sql.replace('{location}', getLocationString(params))
