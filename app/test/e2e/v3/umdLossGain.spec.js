@@ -22,22 +22,30 @@ describe('UMD Losstests', () => {
 
     it('Make a query to a fake level 1 region should return no data', async () => {
         nock(process.env.CT_URL)
-            .get('/v1/query/a20e9c0e-8d7d-422f-90f5-3b9bca355aaf')
+            .get('/v1/query/10e124f0-3703-41e3-8136-492b131d5326')
             .query({
-                sql: 'SELECT iso, area_extent AS extent2010, area_extent_2000 AS extent2000,                 area_admin AS area, year_data AS loss_data, area_gain AS gain                 FROM data\n                WHERE iso = \'FOO\'                   AND thresh = 30                 AND polyname = \'admin\''
+                sql: 'SELECT%20iso%2C%20SUM(total_area)%20AS%20area%2C%20SUM(total_gain)%20AS%20gain%2C%20%20SUM(extent_2000)%20AS%20extent2000%2C%20SUM(extent_2010)%20AS%20extent2010%2C%20SUM(weighted_biomass_per_ha)%20AS%20biomass_density%20%20FROM%20data%20WHERE%20iso%3D%27XXX%27%20%20AND%20threshold%20%3D%2030'
             })
             .reply(200, {
-                data: [],
-                meta: {
-                    cloneUrl: {
-                        http_method: 'POST',
-                        url: '/v1/dataset/a20e9c0e-8d7d-422f-90f5-3b9bca355aaf/clone',
-                        body: {
-                            dataset: {
-                                datasetUrl: '/v1/query/a20e9c0e-8d7d-422f-90f5-3b9bca355aaf?sql=SELECT%20iso%2C%20area_extent%20AS%20extent2010%2C%20area_extent_2000%20AS%20extent2000%2C%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20area_admin%20AS%20area%2C%20year_data%20AS%20loss_data%2C%20area_gain%20AS%20gain%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20FROM%20data%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20WHERE%20iso%20%3D%20%27FOO%27%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20AND%20thresh%20%3D%2030%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20AND%20polyname%20%3D%20%27admin%27',
-                                application: [
-                                    'your',
-                                    'apps'
+                "data": [
+                    {
+                        "area": 0,
+                        "extent2000": 0,
+                        "biomass_density": 0,
+                        "extent2010": 0,
+                        "gain": 0
+                    }
+                ],
+                "meta": {
+                    "cloneUrl": {
+                        "http_method": "POST",
+                        "url": "/v1/dataset/10e124f0-3703-41e3-8136-492b131d5326/clone",
+                        "body": {
+                            "dataset": {
+                                "datasetUrl": "/v1/query/10e124f0-3703-41e3-8136-492b131d5326?sql=SELECT%20iso%2C%20SUM%28total_area%29%20AS%20area%2C%20SUM%28total_gain%29%20AS%20gain%2C%20SUM%28extent_2000%29%20AS%20extent2000%2C%20SUM%28extent_2010%29%20AS%20extent2010%2C%20SUM%28weighted_biomass_per_ha%29%20AS%20biomass_density%20FROM%20data%20WHERE%20iso%3D%27XXX%27%20AND%20threshold%20%3D%2030",
+                                "application": [
+                                    "your",
+                                    "apps"
                                 ]
                             }
                         }
@@ -57,8 +65,8 @@ describe('UMD Losstests', () => {
         const jsonResponse = JSON.parse(fs.readFileSync(`${__dirname}/../data/BRA.json`, 'utf8'));
 
         nock(process.env.CT_URL)
-            .get('/v1/query/a20e9c0e-8d7d-422f-90f5-3b9bca355aaf')
-            .query({ sql: 'SELECT iso, area_extent AS extent2010, area_extent_2000 AS extent2000,                 area_admin AS area, year_data AS loss_data, area_gain AS gain                 FROM data\n                WHERE iso = \'BRA\'                   AND thresh = 30                 AND polyname = \'admin\'' })
+            .get('/v1/query/10e124f0-3703-41e3-8136-492b131d5326')
+            .query({ sql: "SELECT iso, SUM(total_area) AS area, SUM(total_gain) AS gain,  SUM(extent_2000) AS extent2000, SUM(extent_2010) AS extent2010, SUM(weighted_biomass_per_ha) AS biomass_density  FROM data WHERE iso='BRA'  AND threshold = 30" })
             .reply(200, jsonResponse);
 
         const response = await requester
