@@ -19,7 +19,6 @@ class UMDLossGainRouterV3 {
     static* fetchData() {
         logger.info('Obtaining data for', this.params);
         const thresh = this.query.thresh || '30';
-        const polyname = this.query.polyname || 'admin';
         const period = this.query.period ? this.query.period.split(',').map(el => el.trim()) : [];
         const iso = this.params.iso || null;
         const id1 = this.params.id1 || null;
@@ -32,7 +31,6 @@ class UMDLossGainRouterV3 {
                     adm1: id1,
                     adm2: id2,
                     thresh,
-                    polyname,
                     period
                 });
             }
@@ -41,7 +39,6 @@ class UMDLossGainRouterV3 {
                 adm1: id1,
                 adm2: id2,
                 thresh,
-                polyname,
                 period,
                 gadm: GADM
             });
