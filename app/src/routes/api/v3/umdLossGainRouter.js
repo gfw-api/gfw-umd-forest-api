@@ -23,6 +23,7 @@ class UMDLossGainRouterV3 {
         const iso = this.params.iso || null;
         const id1 = this.params.id1 || null;
         const id2 = this.params.id2 || null;
+        logger.info(`Obtaining data for ${iso}, ${id1}, ${id2}`);
         try {
             let glads = null;
             if (period.length && DateValidator.validatePeriod(period) && config.get('gladWhitelist.iso').includes(iso)) {
