@@ -52,46 +52,46 @@ describe('UMD Losstests', () => {
         response.status.should.equal(500);
     });
 
-    it('Make a query to a real level 1 region should return ...', async () => {
-        const jsonResponse = JSON.parse(fs.readFileSync(`${__dirname}/../data/BRA.json`, 'utf8'));
+    // it('Make a query to a real level 1 region should return ...', async () => {
+    //     const jsonResponse = JSON.parse(fs.readFileSync(`${__dirname}/../data/BRA.json`, 'utf8'));
 
-        nock(process.env.CT_URL)
-            .get('/v1/query/10e124f0-3703-41e3-8136-492b131d5326')
-            .query({ sql: "SELECT iso, SUM(total_area) AS area, SUM(total_gain) AS gain,  SUM(extent_2000) AS extent2000, SUM(extent_2010) AS extent2010, SUM(weighted_biomass_per_ha) AS biomass_density  FROM data WHERE iso='BRA'  AND threshold = 30" })
-            .reply(200, jsonResponse);
+    //     nock(process.env.CT_URL)
+    //         .get('/v1/query/10e124f0-3703-41e3-8136-492b131d5326')
+    //         .query({ sql: "SELECT iso, SUM(total_area) AS area, SUM(total_gain) AS gain,  SUM(extent_2000) AS extent2000, SUM(extent_2010) AS extent2010, SUM(weighted_biomass_per_ha) AS biomass_density  FROM data WHERE iso='BRA'  AND threshold = 30" })
+    //         .reply(200, jsonResponse);
 
-        const response = await requester
-            .get(`/api/v3/umd-loss-gain/admin/BRA`)
-            .send();
+    //     const response = await requester
+    //         .get(`/api/v3/umd-loss-gain/admin/BRA`)
+    //         .send();
 
-        response.status.should.equal(200);
-        response.body.should.have.property('data').and.be.an('object');
-        response.body.data.should.have.property('attributes').and.be.an('object');
-        response.body.data.should.have.property('id').and.equal('undefined');
-        response.body.data.should.have.property('type').and.equal('umd-loss-gain');
+    //     response.status.should.equal(200);
+    //     response.body.should.have.property('data').and.be.an('object');
+    //     response.body.data.should.have.property('attributes').and.be.an('object');
+    //     response.body.data.should.have.property('id').and.equal('undefined');
+    //     response.body.data.should.have.property('type').and.equal('umd-loss-gain');
 
-        response.body.data.attributes.should.have.property('gadm').and.equal('3.6');
-        response.body.data.attributes.should.have.property('period').and.be.an('array').and.length(0);
-        response.body.data.attributes.should.have.property('years').and.be.an('array').and.length(18);
-        response.body.data.attributes.should.have.property('iso').and.equal('BRA');
-        response.body.data.attributes.should.have.property('polyname').and.equal('admin');
-        response.body.data.attributes.should.have.property('thresh').and.equal('30');
-        response.body.data.attributes.should.have.property('totals').and.be.an('object');
+    //     response.body.data.attributes.should.have.property('gadm').and.equal('3.6');
+    //     response.body.data.attributes.should.have.property('period').and.be.an('array').and.length(0);
+    //     response.body.data.attributes.should.have.property('years').and.be.an('array').and.length(18);
+    //     response.body.data.attributes.should.have.property('iso').and.equal('BRA');
+    //     response.body.data.attributes.should.have.property('polyname').and.equal('admin');
+    //     response.body.data.attributes.should.have.property('thresh').and.equal('30');
+    //     response.body.data.attributes.should.have.property('totals').and.be.an('object');
 
-        response.body.data.attributes.totals.should.have.property('areaHa').and.equal(850035649.7393854);
-        response.body.data.attributes.totals.should.have.property('extent2000').and.equal(519187508.445711);
-        response.body.data.attributes.totals.should.have.property('extent2000Perc').and.equal(61.07832166861355);
-        response.body.data.attributes.totals.should.have.property('extent2010').and.equal(498198381.95378244);
-        response.body.data.attributes.totals.should.have.property('extent2010Perc').and.equal(58.60911623018709);
-        response.body.data.attributes.totals.should.have.property('gain').and.equal(7586758.106451291);
-        response.body.data.attributes.totals.should.have.property('gainPerc').and.equal(0.8925223440660794);
-        response.body.data.attributes.totals.should.have.property('gladAlerts').and.equal(null);
-        response.body.data.attributes.totals.should.have.property('biomassDensity').and.equal(118326137296.57202);
-        response.body.data.attributes.totals.should.have.property('loss').and.equal(53837550.56402553);
-        response.body.data.attributes.totals.should.have.property('lossPerc').and.equal(6.333563842943731);
-        response.body.data.attributes.totals.should.have.property('emissions').and.equal(18308559246.055298);
-        response.body.data.attributes.totals.should.have.property('emissionsPerc').and.equal(2153.857811924543);
-    });
+    //     response.body.data.attributes.totals.should.have.property('areaHa').and.equal(850035649.7393854);
+    //     response.body.data.attributes.totals.should.have.property('extent2000').and.equal(519187508.445711);
+    //     response.body.data.attributes.totals.should.have.property('extent2000Perc').and.equal(61.07832166861355);
+    //     response.body.data.attributes.totals.should.have.property('extent2010').and.equal(498198381.95378244);
+    //     response.body.data.attributes.totals.should.have.property('extent2010Perc').and.equal(58.60911623018709);
+    //     response.body.data.attributes.totals.should.have.property('gain').and.equal(7586758.106451291);
+    //     response.body.data.attributes.totals.should.have.property('gainPerc').and.equal(0.8925223440660794);
+    //     response.body.data.attributes.totals.should.have.property('gladAlerts').and.equal(null);
+    //     response.body.data.attributes.totals.should.have.property('biomassDensity').and.equal(118326137296.57202);
+    //     response.body.data.attributes.totals.should.have.property('loss').and.equal(53837550.56402553);
+    //     response.body.data.attributes.totals.should.have.property('lossPerc').and.equal(6.333563842943731);
+    //     response.body.data.attributes.totals.should.have.property('emissions').and.equal(18308559246.055298);
+    //     response.body.data.attributes.totals.should.have.property('emissionsPerc').and.equal(2153.857811924543);
+    // });
 
     afterEach(() => {
         if (!nock.isDone()) {
