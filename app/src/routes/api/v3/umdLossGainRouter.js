@@ -17,12 +17,13 @@ const GADM = '3.6';
 class UMDLossGainRouterV3 {
 
     static* fetchData() {
-        const { iso, id1, id2 } = this.params;
         logger.info('Obtaining data for', this.params);
         const thresh = this.query.thresh || '30';
-        const polyname = this.query.polyname || 'admin';
-        const period = this.query.period ? this.query.period.split(',').map(el => el.trim()) : []; // why the second split?
-
+        const period = this.query.period ? this.query.period.split(',').map(el => el.trim()) : [];
+        const iso = this.params.iso || null;
+        const id1 = this.params.id1 || null;
+        const id2 = this.params.id2 || null;
+        logger.info(`Obtaining data for ${iso}, ${id1}, ${id2}`);
         try {
             let glads = null;
             if (period.length && DateValidator.validatePeriod(period) && config.get('gladWhitelist.iso').includes(iso)) {
@@ -31,7 +32,6 @@ class UMDLossGainRouterV3 {
                     adm1: id1,
                     adm2: id2,
                     thresh,
-                    polyname,
                     period
                 });
             }
@@ -40,18 +40,16 @@ class UMDLossGainRouterV3 {
                 adm1: id1,
                 adm2: id2,
                 thresh,
-                polyname,
                 period,
                 gadm: GADM
             });
-            if (data && data.totals) {
-                data.totals.gladAlerts = glads;
+            if (data) {
+                if (data.totals) data.totals.gladAlerts = glads;
+                data.downloadUrls = { 
+                    url: 'https://earthenginepartners.appspot.com/science-2013-global-forest',
+                    xlsx: `https://gfw2-data.s3.amazonaws.com/country-pages/country_stats/download/${iso}.xlsx`
+                };
             }
-            data.downloadUrls = { 
-                url: 'https://earthenginepartners.appspot.com/science-2013-global-forest',
-                xlsx: `https://gfw2-data.s3.amazonaws.com/country-pages/country_stats/download/${iso}.xlsx`
-            };
-
             this.body = ElasticSerializer.serialize(data);
 
         } catch (err) {
