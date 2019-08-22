@@ -113,7 +113,7 @@ class ElasticService {
             return {
                 year: el.year,
                 loss: el.area_loss,
-                emissions: el.area_loss,
+                emissions: el.emissions,
                 biomassLoss: el.biomass_loss,
                 lossPerc: 100 * el.area_loss / data.area,
                 emissionsPerc: 100 * el.emissions / data.area,
