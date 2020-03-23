@@ -93,7 +93,7 @@ class ElasticService {
             areaHa: data.area
         };
 
-        const yearTotals = ElasticService.getYearTotals(data.year_data, periods);
+        const yearTotals = ElasticService.getYearTotals(data.yearData, periods);
         const totalLoss = yearTotals.loss;
         const totalEmissions = yearTotals.emissions;
         const totalBiomassLoss = yearTotals.biomass_loss;
@@ -123,7 +123,7 @@ class ElasticService {
         const data = baseData.length === 0 || yearData.length === 0
             ? []
             : {
-                yeaData: yearData.data,
+                yearData: yearData.data,
                 area: baseData.data[0].area,
                 extent2000: baseData.data[0].extent2000,
                 extent2010: baseData.data[0].extent2010,
