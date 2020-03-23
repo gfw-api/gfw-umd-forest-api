@@ -1,5 +1,3 @@
-'use strict';
-
 const Router = require('koa-router');
 const logger = require('logger');
 const ElasticService = require('services/elasticService');
@@ -19,7 +17,7 @@ class UMDLossGainRouterV3 {
     static* fetchData() {
         logger.info('Obtaining data for', this.params);
         const thresh = this.query.thresh || '30';
-        const period = this.query.period ? this.query.period.split(',').map(el => el.trim()) : [];
+        const period = this.query.period ? this.query.period.split(',').map((el) => el.trim()) : [];
         const iso = this.params.iso || null;
         const id1 = this.params.id1 || null;
         const id2 = this.params.id2 || null;
@@ -35,7 +33,7 @@ class UMDLossGainRouterV3 {
                     period
                 });
             }
-            let data = yield ElasticService.fetchData({
+            const data = yield ElasticService.fetchData({
                 iso: iso.toUpperCase(),
                 adm1: id1,
                 adm2: id2,
@@ -45,7 +43,7 @@ class UMDLossGainRouterV3 {
             });
             if (data) {
                 if (data.totals) data.totals.gladAlerts = glads;
-                data.downloadUrls = { 
+                data.downloadUrls = {
                     url: 'https://earthenginepartners.appspot.com/science-2013-global-forest',
                     xlsx: `https://gfw2-data.s3.amazonaws.com/country-pages/country_stats/download/${iso}.xlsx`
                 };
@@ -60,12 +58,13 @@ class UMDLossGainRouterV3 {
             }
             // just return a generic error if an error is caught but not identified
             this.throw(500, 'Internal Server Error');
-            return;
+
         }
     }
+
 }
 
-var isCached = function* (next) {
+const isCached = function* isCached(next) {
     if (yield this.cashed()) {
         return;
     }

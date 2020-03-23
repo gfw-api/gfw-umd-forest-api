@@ -1,5 +1,3 @@
-'use strict';
-
 const logger = require('logger');
 const moment = require('moment');
 const InvalidPeriod = require('errors/invalidPeriod');

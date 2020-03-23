@@ -1,20 +1,18 @@
-'use strict';
-
 const Router = require('koa-router');
 
 const router = new Router({
     prefix: '/umd-loss-gain'
 });
-const GADM = '2.8';
 
 class UMDLossGainRouterV2 {
 
-    static* fetchData() {
-    this.throw(503, 'The umd-loss-gain v2 service no longer available.');
+    static fetchData() {
+        this.throw(503, 'The umd-loss-gain v2 service no longer available.');
     }
+
 }
 
-var isCached = function* (next) {
+const isCached = function* isCached(next) {
     if (yield this.cashed()) {
         return;
     }

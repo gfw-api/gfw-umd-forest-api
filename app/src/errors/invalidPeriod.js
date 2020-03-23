@@ -1,5 +1,3 @@
-'use strict';
-
 class InvalidPeriod extends Error {
 
     constructor(message) {
@@ -7,6 +5,7 @@ class InvalidPeriod extends Error {
         this.name = 'Invalid Period';
         this.message = message;
     }
+
 }
 
 module.exports = InvalidPeriod;

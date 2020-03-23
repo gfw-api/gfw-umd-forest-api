@@ -1,8 +1,7 @@
-'use strict';
-
-module.exports = function (grunt) {
+module.exports = (grunt) => {
 
     grunt.file.setBase('..');
+    // eslint-disable-next-line import/no-extraneous-dependencies
     require('load-grunt-tasks')(grunt);
 
     grunt.initConfig({
@@ -31,7 +30,7 @@ module.exports = function (grunt) {
             dev: {
                 options: {
                     script: 'app/index.js',
-                    'node_env': 'dev',
+                    node_env: 'dev',
                     port: process.env.PORT,
                     output: 'started'
                 }
@@ -118,5 +117,7 @@ module.exports = function (grunt) {
     grunt.registerTask('serve', ['express:dev', 'watch']);
 
     grunt.registerTask('default', 'serve');
+
+    grunt.loadNpmTasks('grunt-simple-nyc');
 
 };

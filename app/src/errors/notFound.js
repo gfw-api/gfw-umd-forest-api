@@ -1,5 +1,3 @@
-'use strict';
-
 class NotFound extends Error {
 
     constructor(message) {
@@ -7,6 +5,7 @@ class NotFound extends Error {
         this.name = 'NotFound';
         this.message = message;
     }
+
 }
 
 module.exports = NotFound;
