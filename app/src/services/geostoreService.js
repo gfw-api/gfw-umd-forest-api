@@ -1,27 +1,23 @@
-'use strict';
-
 const logger = require('logger');
 const JSONAPIDeserializer = require('jsonapi-serializer').Deserializer;
 
 
-var deserializer = function (obj) {
-    return function (callback) {
-        new JSONAPIDeserializer({ keyForAttribute: 'camelCase' }).deserialize(obj, callback);
-    };
+const deserializer = (obj) => (callback) => {
+    new JSONAPIDeserializer({ keyForAttribute: 'camelCase' }).deserialize(obj, callback);
 };
 
-
 class GeostoreService {
+
     static* getGeostore(path) {
         logger.debug('Obtaining geostore with path %s', path);
-        let result = yield require('vizz.microservice-client').requestToMicroservice({
-            uri: '/geostore/' + path,
+        const result = yield require('vizz.microservice-client').requestToMicroservice({
+            uri: `/geostore/${path}`,
             method: 'GET',
             json: true
         });
         if (result.statusCode !== 200) {
-            console.error('Error obtaining geostore:');
-            console.error(result);
+            logger.warn('Error obtaining geostore:');
+            logger.warn(result);
             return null;
         }
         return yield deserializer(result.body);
@@ -51,6 +47,7 @@ class GeostoreService {
         logger.debug('Getting geostore by use');
         return yield GeostoreService.getGeostore(`wdpa/${wdpaid}`);
     }
+
 }
 
 module.exports = GeostoreService;

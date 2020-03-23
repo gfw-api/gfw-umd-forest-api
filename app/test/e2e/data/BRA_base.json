@@ -1,26 +1,26 @@
 {
-"data": [
-{
-"area": 158570.5076035058,
-"extent2000": 122284.80057176348,
-"biomass_density": 33080613.697113037,
-"extent2010": 92075.59489374634,
-"gain": 440.82270197906
-}
-],
-"meta": {
-"cloneUrl": {
-"http_method": "POST",
-"url": "/v1/dataset/82a317da-1fec-4bd0-b9d6-ebe786b9f269/clone",
-"body": {
-"dataset": {
-"datasetUrl": "/v1/query/82a317da-1fec-4bd0-b9d6-ebe786b9f269?sql=SELECT%20iso%2C%20adm1%2C%20adm2%2C%20SUM%28total_area%29%20AS%20area%2C%20SUM%28total_gain%29%20AS%20gain%2C%20SUM%28extent_2000%29%20AS%20extent2000%2C%20SUM%28extent_2010%29%20AS%20extent2010%2C%20SUM%28weighted_biomass_per_ha%29%20AS%20biomass_density%20FROM%20data%20WHERE%20iso%20%3D%20%27BRA%27%20AND%20adm1%20%3D%201%20AND%20adm2%20%3D%201%20AND%20threshold%20%3D%2030",
-"application": [
-"your",
-"apps"
-]
-}
-}
-}
-}
+  "data": [
+    {
+      "area": 158570.5076035058,
+      "extent2000": 122284.80057176348,
+      "biomass_density": 33080613.697113037,
+      "extent2010": 92075.59489374634,
+      "gain": 440.82270197906
+    }
+  ],
+  "meta": {
+    "cloneUrl": {
+      "http_method": "POST",
+      "url": "/v1/dataset/82a317da-1fec-4bd0-b9d6-ebe786b9f269/clone",
+      "body": {
+        "dataset": {
+          "datasetUrl": "/v1/query/82a317da-1fec-4bd0-b9d6-ebe786b9f269?sql=SELECT%20iso%2C%20adm1%2C%20adm2%2C%20SUM%28total_area%29%20AS%20area%2C%20SUM%28total_gain%29%20AS%20gain%2C%20SUM%28extent_2000%29%20AS%20extent2000%2C%20SUM%28extent_2010%29%20AS%20extent2010%2C%20SUM%28weighted_biomass_per_ha%29%20AS%20biomass_density%20FROM%20data%20WHERE%20iso%20%3D%20%27BRA%27%20AND%20adm1%20%3D%201%20AND%20adm2%20%3D%201%20AND%20threshold%20%3D%2030",
+          "application": [
+            "your",
+            "apps"
+          ]
+        }
+      }
+    }
+  }
 }

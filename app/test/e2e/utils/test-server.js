@@ -15,7 +15,7 @@ exports.getTestServer = function getTestServer() {
         .post(`/api/v1/microservice`)
         .reply(200);
 
-    const server = require('../../src/app');
+    const server = require('../../../src/app');
     requester = chai.request(server).keepOpen();
 
     return requester;

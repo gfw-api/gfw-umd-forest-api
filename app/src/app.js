@@ -3,6 +3,8 @@ const logger = require('logger');
 const path = require('path');
 const koa = require('koa');
 const bodyParser = require('koa-bodyparser');
+const koaSimpleHealthCheck = require('koa-simple-healthcheck');
+const convert = require('koa-convert');
 const koaLogger = require('koa-logger');
 const loader = require('loader');
 const validate = require('koa-validate');
@@ -21,17 +23,27 @@ app.use(bodyParser({
 }));
 
 // catch errors and send in jsonapi standard. Always return vnd.api+json
-app.use(function* (next) {
+app.use(function* handleErrors(next) {
     try {
         yield next;
-    } catch (err) {
-        this.status = err.status || 500;
-        this.body = ErrorSerializer.serializeError(this.status, err.message);
+    } catch (inErr) {
+        let error = inErr;
+        try {
+            error = JSON.parse(inErr);
+        } catch (e) {
+            logger.debug('Could not parse error message - is it JSON?: ', inErr);
+            error = inErr;
+        }
+        this.status = error.status || this.status || 500;
+        if (this.status >= 500) {
+            logger.error(error);
+        } else {
+            logger.info(error);
+        }
+
+        this.body = ErrorSerializer.serializeError(this.status, error.message);
         if (process.env.NODE_ENV === 'prod' && this.status === 500) {
             this.body = 'Unexpected error';
-        }
-        if (process.env.NODE_ENV !== 'prod') {
-            logger.error(err);
         }
     }
     this.response.type = 'application/vnd.api+json';
@@ -58,6 +70,8 @@ app.use(require('koa-cash')({
 
 // load custom validator
 app.use(validate());
+
+app.use(convert.back(koaSimpleHealthCheck()));
 
 // load routes
 loader.loadRoutes(app);

@@ -1,11 +1,14 @@
 const nock = require('nock');
 const chai = require('chai');
 const fs = require('fs');
-const { getTestServer } = require('../test-server');
-const should = chai.should();
+const { getTestServer } = require('../utils/test-server');
+
+chai.should();
 const requester = getTestServer();
+
 nock.disableNetConnect();
 nock.enableNetConnect(process.env.HOST_IP);
+
 describe('UMD Losstests', () => {
     before(() => {
         if (process.env.NODE_ENV !== 'test') {

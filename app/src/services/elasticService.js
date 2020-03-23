@@ -1,20 +1,11 @@
-'use strict';
-
-let co = require('co');
-let request = require('co-request');
+/* eslint-disable no-mixed-operators */
 const logger = require('logger');
 const config = require('config');
-const NotFound = require('errors/notFound');
-const JSONAPIDeserializer = require('jsonapi-serializer').Deserializer;
 const MicroServiceClient = require('vizz.microservice-client');
 
-const getLocationString = ({ iso, adm1, adm2 }) => {
-    return `iso = '${iso}' ${adm1 ? `AND adm1 = ${adm1}` : ''} ${adm2 ? `AND adm2 = ${adm2}` : ''}`;
-};
+const getLocationString = ({ iso, adm1, adm2 }) => `iso = '${iso}' ${adm1 ? `AND adm1 = ${adm1}` : ''} ${adm2 ? `AND adm2 = ${adm2}` : ''}`;
 
-const getLocationVars = ({ adm1, adm2 }) => {
-    return `iso${adm1 ? `, adm1` : ''}${adm2 ? `, adm2` : ''},`;
-};
+const getLocationVars = ({ adm1, adm2 }) => `iso${adm1 ? `, adm1` : ''}${adm2 ? `, adm2` : ''},`;
 
 const YEAR_QUERY = `SELECT {vars} year_data.year as year, SUM(year_data.area_loss) as area_loss, \
                 SUM(year_data.carbon_emissions) as emissions, \
@@ -31,50 +22,19 @@ const BASE_QUERY = `SELECT {vars} SUM(total_area) AS area, SUM(total_gain) AS ga
                 WHERE {location} \
                 AND threshold = {threshold}`;
 
-var deserializer = function (obj) {
-    return function (callback) {
-        new JSONAPIDeserializer({ keyForAttribute: 'camelCase' }).deserialize(obj, callback);
-    };
-};
 
 class ElasticService {
-    // // use this for testing locally
-    // static * getData(sql, params) {
-    //     const { adm1, adm2 } = params;
-    //     console.log(`${JSON.stringify(adm2)}`)
-    //     sql = sql.replace('{location}', getLocationString(params))
-    //              .replace('{vars}', getLocationVars(params))
-    //              .replace('{threshold}', params.thresh)
-    //     let id = config.get('elasticTable.v3_adm2')
-    //      if (!adm2 && adm1) {
-    //         id = config.get('elasticTable.v3_adm1');
-    //     }
-    //     else if (!adm2) {
-    //         id = config.get('elasticTable.v3_iso');
-    //     }
-    //     const url = `https://production-api.globalforestwatch.org/v1/query/${id}?sql=`;
-    //     logger.debug('Obtaining data with:', url+sql);
-    //     let result = yield request.get(url+sql);
-    //     if (result.statusCode !== 200) {
-    //         console.error('Error obtaining data:');
-    //         console.error(result);
-    //         return null;
-    //     }
-    //     return JSON.parse(result.body);
-    // }
 
-    // Use this one for prod/staging
-    static * getData(sqlTemplate, params) {
-        const { adm1, adm2} = params
+    static* getData(sqlTemplate, params) {
+        const { adm1, adm2 } = params;
         const sql = sqlTemplate.replace('{location}', getLocationString(params))
             .replace('{vars}', getLocationVars(params))
-            .replace('{threshold}', params.thresh)
+            .replace('{threshold}', params.thresh);
         logger.debug('Obtaining data with:', sql);
         let tableId = config.get('elasticTable.v3_adm2');
         if (!adm2 && adm1) {
             tableId = config.get('elasticTable.v3_adm1');
-        }
-        else if (!adm2) {
+        } else if (!adm2) {
             tableId = config.get('elasticTable.v3_iso');
         }
         try {
@@ -92,35 +52,33 @@ class ElasticService {
     }
 
     static getYearTotals(data, periods) {
-        const filtered = periods ? data.filter(year => year.year >= periods[0] && year.year <= periods[1]) : data;
-        let tmp = {
+        const filtered = periods ? data.filter((year) => year.year >= periods[0] && year.year <= periods[1]) : data;
+        const tmp = {
             loss: 0,
             emissions: 0,
             biomass_loss: 0
         };
-        filtered.forEach(el => {
-            tmp['loss'] += el.area_loss;
-            tmp['emissions'] += el.emissions;
-            tmp['biomass_loss'] += el.biomass_loss;
+        filtered.forEach((el) => {
+            tmp.loss += el.area_loss;
+            tmp.emissions += el.emissions;
+            tmp.biomass_loss += el.biomass_loss;
         });
         return tmp;
     }
 
     static getYearArray(data, periods) {
-        const year_array = data.year_data;
-        const filtered = periods ? year_array.filter(year => year.year >= periods[0] && year.year <= periods[1]) : year_array;   
-        const parsedData = filtered.map(el => {
-            return {
-                year: el.year,
-                loss: el.area_loss,
-                emissions: el.emissions,
-                biomassLoss: el.biomass_loss,
-                lossPerc: 100 * el.area_loss / data.area,
-                emissionsPerc: 100 * el.emissions / data.area,
-                biomassLossPerc: 100 * el.biomass_loss / data.area
-            };
-        });
-        return parsedData
+        const yearArray = data.yearData;
+        const filtered = periods ? yearArray.filter((year) => year.year >= periods[0] && year.year <= periods[1]) : yearArray;
+        const parsedData = filtered.map((el) => ({
+            year: el.year,
+            loss: el.area_loss,
+            emissions: el.emissions,
+            biomassLoss: el.biomass_loss,
+            lossPerc: 100 * el.area_loss / data.area,
+            emissionsPerc: 100 * el.emissions / data.area,
+            biomassLossPerc: 100 * el.biomass_loss / data.area
+        }));
+        return parsedData;
     }
 
     static getTotals(data, periods) {
@@ -135,54 +93,57 @@ class ElasticService {
             areaHa: data.area
         };
 
-        const year_totals = ElasticService.getYearTotals(data.year_data, periods);
-        const total_loss = year_totals.loss;
-        const total_emissions = year_totals.emissions;
-        const total_biomass_loss = year_totals.biomass_loss;
-        returnData.loss = total_loss;
-        returnData.lossPerc = 100 * total_loss / returnData.areaHa;
-        returnData.emissions = total_emissions;
-        returnData.emissionsPerc = 100 * total_emissions / returnData.areaHa;
-        returnData.biomassLoss = total_biomass_loss;
-        returnData.biomassLossPerc = 100 * total_biomass_loss / returnData.areaHa;
+        const yearTotals = ElasticService.getYearTotals(data.year_data, periods);
+        const totalLoss = yearTotals.loss;
+        const totalEmissions = yearTotals.emissions;
+        const totalBiomassLoss = yearTotals.biomass_loss;
+        returnData.loss = totalLoss;
+        returnData.lossPerc = 100 * totalLoss / returnData.areaHa;
+        returnData.emissions = totalEmissions;
+        returnData.emissionsPerc = 100 * totalEmissions / returnData.areaHa;
+        returnData.biomassLoss = totalBiomassLoss;
+        returnData.biomassLossPerc = 100 * totalBiomassLoss / returnData.areaHa;
         return returnData;
     }
 
+    // eslint-disable-next-line class-methods-use-this
     * fetchData(params) {
-        let base_data = yield ElasticService.getData(BASE_QUERY, params);
-        if (!base_data || !base_data.data || base_data.data.length === 0) {
+        let baseData = yield ElasticService.getData(BASE_QUERY, params);
+        if (!baseData || !baseData.data || baseData.data.length === 0) {
             logger.error('No base data found.');
-            base_data = []
+            baseData = [];
         }
-        let year_data = yield ElasticService.getData(YEAR_QUERY, params);
-        if (!year_data || !year_data.data || year_data.data.length === 0) {
+        let yearData = yield ElasticService.getData(YEAR_QUERY, params);
+        if (!yearData || !yearData.data || yearData.data.length === 0) {
             logger.error('No year data found.');
-            year_data = []
+            yearData = [];
         }
-        logger.info('Retrieved SQL response', base_data);
-        
-        const data = base_data.length === 0 || year_data.length === 0
+        logger.info('Retrieved SQL response', baseData);
+
+        const data = baseData.length === 0 || yearData.length === 0
             ? []
             : {
-            year_data: year_data.data,
-            area: base_data.data[0].area,
-            extent2000: base_data.data[0].extent2000,
-            extent2010: base_data.data[0].extent2010,
-            biomass_density: base_data.data[0].biomass_density,
-            gain: base_data.data[0].gain
-        };
+                yeaData: yearData.data,
+                area: baseData.data[0].area,
+                extent2000: baseData.data[0].extent2000,
+                extent2010: baseData.data[0].extent2010,
+                biomass_density: baseData.data[0].biomass_density,
+                gain: baseData.data[0].gain
+            };
         const periodsYears = params.period.length ? [params.period[0].slice(0, 4), params.period[1].slice(0, 4)] : null;
         if (data && Object.keys(data).length > 0) {
             const totals = ElasticService.getTotals(data, periodsYears);
-            const returnData = Object.assign({
+            const returnData = {
                 totals,
-                years: ElasticService.getYearArray(data, periodsYears)
-            }, params);
+                years: ElasticService.getYearArray(data, periodsYears),
+                ...params
+            };
             return returnData;
         }
 
         return [];
     }
+
 }
 
 module.exports = new ElasticService();
