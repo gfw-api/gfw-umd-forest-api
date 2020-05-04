@@ -4776,10 +4776,10 @@ punycode@^2.1.0, punycode@^2.1.1:
   resolved "https://registry.yarnpkg.com/punycode/-/punycode-2.1.1.tgz#b58b010ac40c22c5657616c8d2c2c02c7bf479ec"
   integrity sha512-XRsRjdf+j5ml+y/6GKHPZbrF/8p2Yga0JPtdqTIY2Xe5ohJPD9saDJJLPvp9+NSBprVvevdXZybnj2cv8OEd0A==
 
-python-shell@0.4.0:
-  version "0.4.0"
-  resolved "https://registry.yarnpkg.com/python-shell/-/python-shell-0.4.0.tgz#259c5470d885292b22e906a57b085f651752f956"
-  integrity sha1-JZxUcNiFKSsi6QalewhfZRdS+VY=
+python-shell@2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/python-shell/-/python-shell-2.0.0.tgz#d09c47c9f1e99704250a4c51bd4a9936209fafdd"
+  integrity sha512-0FCKvCPs0Bl09AGfuzd5kHVdg/SYtkVPt5sILpuJWNJ7JQ+QKAdd93TYg/AfLR6/uldvZopSk3F2vUQ4IY50gg==
 
 qs@^6.4.0, qs@^6.5.1:
   version "6.9.2"
