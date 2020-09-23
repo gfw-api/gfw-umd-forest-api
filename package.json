@@ -56,7 +56,7 @@
     "moment": "2.22.2",
     "mustache": "2.2.1",
     "newrelic": "1.27.1",
-    "python-shell": "0.4.0",
+    "python-shell": "2.0.2",
     "vizz.microservice-client": "1.6.2"
   },
   "devDependencies": {
