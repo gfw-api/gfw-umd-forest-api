@@ -36,7 +36,7 @@
   },
   "homepage": "https://github.com/gfw-api/gfw-umd-forest-api#readme",
   "dependencies": {
-    "bunyan": "1.7.1",
+    "bunyan": "1.8.15",
     "cartodb": "^0.5.1",
     "co": "4.6.0",
     "co-request": "1.0.0",
