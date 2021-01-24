@@ -52,7 +52,7 @@
     "koa-simple-healthcheck": "^0.0.1",
     "koa-router": "5.4.0",
     "koa-validate": "0.2.11",
-    "lru-cache": "4.0.1",
+    "lru-cache": "6.0.0",
     "moment": "2.22.2",
     "mustache": "2.2.1",
     "rw-api-microservice-node": "^3.2.1"
