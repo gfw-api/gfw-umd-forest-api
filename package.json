@@ -54,7 +54,7 @@
     "koa-validate": "0.2.11",
     "lru-cache": "4.0.1",
     "moment": "2.22.2",
-    "mustache": "2.2.1",
+    "mustache": "4.1.0",
     "rw-api-microservice-node": "^3.2.1"
   },
   "devDependencies": {
