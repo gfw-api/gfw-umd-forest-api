@@ -1,7 +1,7 @@
 /* eslint-disable no-mixed-operators */
 const logger = require('logger');
 const config = require('config');
-const MicroServiceClient = require('vizz.microservice-client');
+const { RWAPIMicroservice } = require('rw-api-microservice-node');
 
 const getLocationString = ({ iso, adm1, adm2 }) => `iso = '${iso}' ${adm1 ? `AND adm1 = ${adm1}` : ''} ${adm2 ? `AND adm2 = ${adm2}` : ''}`;
 
@@ -38,12 +38,13 @@ class ElasticService {
             tableId = config.get('elasticTable.v3_iso');
         }
         try {
-            const result = yield MicroServiceClient.requestToMicroservice({
+            const result = yield RWAPIMicroservice.requestToMicroservice({
                 uri: `/query/${tableId}?sql=${sql}`,
                 method: 'GET',
-                json: true
+                json: true,
+                resolveWithFullResponse: true
             });
-            logger.debug(result);
+            logger.debug(result.body);
             return result.body;
         } catch (err) {
             logger.error(err);

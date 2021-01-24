@@ -17,6 +17,7 @@ develop:
     CARTODB_USER: ${CARTODB_USER}
     API_VERSION: v1
     CT_REGISTER_MODE: auto
+    FASTLY_ENABLED: "false"
   command: develop
   volumes:
     - ./app:/opt/gfw-umd-forest-api/app

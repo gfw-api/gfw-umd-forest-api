@@ -1,6 +1,6 @@
 const logger = require('logger');
 const moment = require('moment');
-const MicroServiceClient = require('vizz.microservice-client');
+const { RWAPIMicroservice } = require('rw-api-microservice-node');
 
 const getLocationVars = ({ iso, adm1 }) => (adm1 ? `${iso}/${adm1}` : `${iso}`);
 
@@ -15,13 +15,13 @@ class GladAlertsService {
             .replace('{threshold}', `&thresh=${params.thresh}`);
         logger.debug('Obtaining data');
         try {
-            const result = yield MicroServiceClient.requestToMicroservice({
+            const result = yield RWAPIMicroservice.requestToMicroservice({
                 uri: url,
                 method: 'GET',
                 json: true
             });
             logger.debug(result);
-            return result.body;
+            return result;
         } catch (err) {
             logger.error(err);
             throw err;
