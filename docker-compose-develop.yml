@@ -1,17 +1,17 @@
 develop:
-  extends:
-    file: base.yml
-    service: base
+  build: .
   ports:
-    - "35737:35729"
+    - "3603:3603"
   container_name: gfw-umd-forest-api-develop
   environment:
+    PORT: 3603
     NODE_ENV: dev
+    NODE_PATH: app/src
     ENVIRONMENT: dev
     DEBUG: "True"
     CT_URL: http://mymachine:9000
     CT_TOKEN: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Im1pY3Jvc2VydmljZSIsImNyZWF0ZWRBdCI6IjIwMTYtMDktMTQifQ.IRCIRm1nfIQTfda_Wb6Pg-341zhV8soAgzw7dd5HxxQ
-    LOCAL_URL: http://mymachine:3600
+    LOCAL_URL: http://mymachine:3603
     API_GATEWAY_URL: http://mymachine:9000
     EE_PRIVATE_KEY: ${EE_PRIVATE_KEY}
     CARTODB_USER: ${CARTODB_USER}
