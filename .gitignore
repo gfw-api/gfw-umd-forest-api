@@ -5,3 +5,4 @@ npm-debug.*
 coverage
 .nyc_output
 /dev.env
+dist
